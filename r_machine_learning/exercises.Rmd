@@ -1,0 +1,216 @@
+---
+title: "Introduction to machine learning"
+author: "Kevin Rue-Albrecht"
+date: "02/03/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(caret)
+library(ggplot2)
+library(cowplot)
+library(ellipse)
+library(kernlab)
+library(mlbench)
+```
+
+# Exercise
+
+## Classification
+
+The `iris` data set gives the measurements in centimeters of the variables sepal length and width and petal length and width, respectively, for 50 flowers from each of 3 species of iris.
+
+We will use machine learning to build a model that classifies flowers, predicting a species based on the measurements.
+
+- Get familiar with the data set. What are rows? What are columns?
+
+```{r}
+head(iris)
+```
+
+- Use the [caret::featurePlot()](http://topepo.github.io/caret/visualizations.html) function to visualise species and measurements.
+  Try the different options for the `plot` argument.
+
+```{r}
+featurePlot(x = iris[, 1:4], 
+            y = iris$Species,
+            plot = "ellipse")
+```
+
+```{r}
+featurePlot(x = iris[, 1:4], 
+            y = iris$Species, 
+            plot = "pairs",
+            ## Add a key at the top
+            auto.key = list(columns = 3))
+```
+
+```{r}
+featurePlot(x = iris[, 1:4], 
+            y = iris$Species,
+            plot = "density",
+            ## Pass in options to xyplot() to 
+            ## make it prettier
+            scales = list(x = list(relation="free"), 
+                          y = list(relation="free")))
+```
+
+```{r}
+featurePlot(x = iris[, 1:4], 
+            y = iris$Species, 
+            plot = "box",
+            scales = list(y = list(relation="free")))
+```
+
+- [Partition](http://topepo.github.io/caret/data-splitting.html) the data set into one training and one test set.
+  Make sure the two sets are balanced with respect to `Species`.
+
+```{r}
+set.seed(3456)
+trainIndex <- createDataPartition(iris$Species, p = .8, 
+                                  list = FALSE, 
+                                  times = 1)
+dim(trainIndex)
+```
+
+```{r}
+irisTrain <- iris[ trainIndex,]
+irisTest  <- iris[-trainIndex,]
+```
+
+```{r}
+table(irisTrain$Species)
+table(irisTest$Species)
+```
+
+- [Train a model](http://topepo.github.io/caret/model-training-and-tuning.html#an-example), e.g. linear SVM (Support Vector Machine), random forest.
+
+```{r}
+modelLookup("svmLinear")
+```
+
+```{r}
+svmLinearFit <- train(x = irisTrain[, 1:4],
+                      y = irisTrain[, 5],
+                      method = "svmLinear",
+                      tuneGrid = expand.grid(C = c(0.5, 1, 1.5, 2)))
+svmLinearFit
+```
+
+- Inspect and evaluate the performance of the model during training.
+
+```{r}
+plot(svmLinearFit)
+```
+
+```{r}
+ggplot(svmLinearFit)
+```
+
+- Use the model to make predictions on the test set.
+  How accurate is the model?
+
+```{r}
+svmLinearPred <- predict(svmLinearFit, newdata = irisTest[, 1:4])
+svmLinearPred
+```
+
+```{r}
+confusionMatrix(svmLinearPred, irisTest$Species)
+```
+
+```{r}
+table(svmLinearPred, irisTest$Species)
+```
+
+# Exercise
+
+## Regression
+
+The `BostonHousing` data set contains housing data for 506 census districts of Boston from the 1970 census.
+Load it from the `r BiocStyle::CRANpkg("mlbench")` using `data(BostonHousing)`.
+
+We will use machine learning to build a model that predicts the value of properties based on various pieces of information about properties and their environment.
+
+- Get familiar with the data set. What are rows? What are columns? Are there outliers?
+
+```{r}
+data("BostonHousing")
+head(BostonHousing)
+```
+
+```{r}
+hist(BostonHousing$medv, breaks = 100)
+```
+
+- [Partition](http://topepo.github.io/caret/data-splitting.html) the data set into one training and one test set.
+  Make sure the two sets are balanced with respect to `medv` (the median house value of districts).
+
+```{r}
+set.seed(3456)
+trainIndex <- createDataPartition(BostonHousing$medv, p = .8, 
+                                  list = FALSE, 
+                                  times = 1)
+dim(trainIndex) # 407 rows = 80% of 506 original rows
+```
+
+```{r}
+bostonTrain <- BostonHousing[ trainIndex,]
+bostonTest  <- BostonHousing[-trainIndex,]
+```
+
+```{r}
+plot_data <- BostonHousing %>%
+  mutate(split = "test")
+plot_data$split[trainIndex] <- "train"
+ggplot(plot_data, aes(medv)) +
+  geom_histogram() +
+  facet_wrap(~split, ncol = 1, scales = "free_y")
+```
+
+- [Train a model](http://topepo.github.io/caret/model-training-and-tuning.html#an-example), e.g. a linear regression model.
+  Start with a subset of predictors, e.g. `lstat`.
+
+```{r}
+modelLookup("lm")
+```
+
+```{r}
+lmFit <- train(form = medv~lstat,
+               data = bostonTrain,
+               method = "lm")
+lmFit
+```
+
+- Inspect and evaluate the performance of the model during training.
+
+```{r}
+summary(lmFit)
+```
+
+```{r}
+lmFit$finalModel
+```
+
+- Use the model to make predictions on the test set.
+  How accurate is our model?
+
+```{r}
+lmPred <- predict(lmFit, newdata = bostonTest)
+lmPred
+```
+
+```{r}
+lmCompare <- data.frame(
+  medv_predicted = lmPred,
+  medv_truth = bostonTest$medv
+)
+ggplot(lmCompare, aes(medv_truth, medv_predicted)) +
+  geom_point() +
+  geom_abline(slope = 1, intercept = 0) +
+  cowplot::theme_cowplot()
+```
+
+- Can we improve the predictive accuracy of our model?
+  e.g. using other variables (or combinations thereof) in the data set, removing outliers.
