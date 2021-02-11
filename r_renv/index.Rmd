@@ -119,19 +119,23 @@ It is up to you to decide how to manage projects:
 
 To create a new project use the **Create Project** command (available on the **Projects** menu and on the global toolbar):
 
-```{r, include=TRUE, echo=FALSE, fig.align='center'}
+```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='450px', out.width='700px'}
 knitr::include_graphics("img/projects_new.png")
 ```
 
 ---
 
-# Create a test project
+# Exercise
+
+## Create a project
+
+- Launch the **new Project Wizard**.
 
 - Select **New Directory**.
 
 - Select **New Project**.
 
-- In **Directory name:**, type `"obds-test-project"`.
+- In **Directory name:**, type `r_ggplot2`.
 
 - In **Create project as subdirectory of :**, click on **Browse** and select the directory of your personal GitHub repository for this course.
 
@@ -141,12 +145,14 @@ knitr::include_graphics("img/projects_new.png")
   
   + **Use renv with this project** (we will use `r BiocStyle::CRANpkg("renv")` later).
 
-> **Note:** The latter may not be visible if `r BiocStyle::CRANpkg("renv")` is not installed.
+**Note:** The latter may not be visible if `r BiocStyle::CRANpkg("renv")` is not installed.
   We will install it later.
+
+- Click on the button **Create Project**.
 
 ---
 
-# New project
+# New project RStudio session
 
 ```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='550px'}
 knitr::include_graphics("img/project-blank.png")
@@ -154,7 +160,7 @@ knitr::include_graphics("img/project-blank.png")
 
 ---
 
-# New project
+# How new project are set up in RStudio
 
 When a new project is created, RStudio:
 
@@ -218,7 +224,7 @@ When you are within a project and choose to either Quit, close the project, or o
 
 - The <i class="fab fa-r-project"></i> session is terminated.
 
-> **Note:** in a moment, we will disable `.RData` and `.Rhistory`.
+**Note:** in a moment, we will disable `.RData` and `.Rhistory`.
 
 ---
 
@@ -242,7 +248,7 @@ There are two ways to accomplish this:
 There are several options that can be set on a per-project basis to customize the behavior of RStudio.
 You can edit these options using the **Project Options** command on the **Project** menu:
 
-```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='400px'}
+```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='350px', out.width='450px'}
 knitr::include_graphics("img/project_options.png")
 ```
 
@@ -304,7 +310,7 @@ You may want to change the setting for the following reasons:
 
 Having created a new project within your personal <i class="fab fa-git"></i> repository, the RStudio <i class="fab fa-git"></i> pane should report the presence of new files:
 
-```{r, include=TRUE, echo=FALSE, fig.align='center'}
+```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='300px', out.width='500px'}
 knitr::include_graphics("img/rstudio_git.png")
 ```
 
@@ -358,21 +364,39 @@ Underlying the philosophy of `r BiocStyle::CRANpkg("renv")` is that any of your 
 
 ---
 
-# Install `renv`
+# Exercise
+
+## Install `renv`
 
 In RStudio:
 
-> **Note:** if you are currently in a project, close it. <img src="img/no-project.png" align="right"></img>
+**Note:** if you are currently in a project, close it. <img src="img/no-project.png" align="right"></img>
 
 - Install `r BiocStyle::CRANpkg("renv")`.
 
-> **Note:** this installs `r BiocStyle::CRANpkg("renv")` in your _system_ R library, i.e. it is available outside of any project, as soon as you open <i class="fab fa-r-project"></i>.
+```{r, include=TRUE, eval=FALSE}
+install.packages("renv")
+```
+
+**Note:** this installs `r BiocStyle::CRANpkg("renv")` in your _system_ package library, i.e. it is available outside of any project, as soon as you open <i class="fab fa-r-project"></i>.
 
 - Restart RStudio, to make sure that the changes take effect, and that RStudio has access to the newly installed package(s).
 
 ---
 
-# Initialise a new project environment
+# Exercise
+
+## Open a project
+
+- Switch back to the `r_ggplot2` project that you created earlier.
+
+**Note:** at this point the project still uses your _system_ package library.
+
+---
+
+# Exercise
+
+## Initialise a new project environment
 
 Call `renv::init()` to initialize a new project-local environment with a private R library.
 
@@ -386,11 +410,11 @@ The following package(s) will be updated in the lockfile:
 # CRAN ===============================
 - renv   [* -> 0.12.5]
 
-* Lockfile written to '~/github/kevinrue/obds-training-jan2021/obds-test-project/renv.lock'.
+* Lockfile written to '~/github/kevinrue/obds-training-2021jan/r_ggplot2/renv.lock'.
 
 Restarting R session...
 
-* Project '~/github/kevinrue/obds-training-jan2021/obds-test-project' loaded. [renv 0.12.5]
+* Project '~/github/kevinrue/obds-training-2021jan/r_ggplot2' loaded. [renv 0.12.5]
 ```
 
 ---
@@ -418,9 +442,9 @@ When a new environment is created, `r BiocStyle::CRANpkg("renv")` :
 .pull-left[
 In a new R environment, the **Packages** pane will include:
 
-- base packages, in the system library (installed with <i class="fab fa-r-project"></i>).
+- base packages, in the _system_ library (installed with <i class="fab fa-r-project"></i>).
 
-- the `r BiocStyle::CRANpkg("renv")` package, installed in the project library.
+- the `r BiocStyle::CRANpkg("renv")` package, installed in the _project_ library.
 
 ```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='300px'}
 knitr::include_graphics("img/renv-library-init.png")
@@ -442,7 +466,7 @@ devtools::install_github()
 remotes::install_github()
 ```
 
-> **Note:** in the **Packages** pane, you will see several new packages listed under **Project library**: the package(s) that you asked for, as well as its dependencies.
+**Note:** in the **Packages** pane, you will see several new packages listed under **Project library**: the package(s) that you asked for, as well as its dependencies.
 ]
 
 ---
@@ -458,7 +482,7 @@ The renv package cache provides two primary benefits:
 - Space - The renv cache should also help you save disk space, because it is not necessary to have duplicate versions of your packages installed in each project.
 
 .pull-left[
-> **Note:** if you navigate to the `renv/library` subdirectory, you should see that each package is a symbolic link (to the global cache) rather than an actual folder.
+**Note:** if you navigate to the `renv/library` subdirectory, you should see that each package is a symbolic link (to the global cache) rather than an actual folder.
 ]
 
 .pull-right[
@@ -473,9 +497,11 @@ knitr::include_graphics("img/renv-global-cache.png")
 
 <br/>
 
+<br/>
+
 Call `renv::remove()` remove packages from the project library.
 
-> **Note:** The package is kept in the global cache (it may be used in other projects).
+**Note:** The package is kept in the global cache (it may be used in other projects).
 
 <br/>
 
@@ -483,8 +509,7 @@ Call `renv::remove()` remove packages from the project library.
 
 Call `renv::update()` to update packages that are out-of-date.
 
-> **Note:** Currently, only CRAN and GitHub package sources are supported (e.g.., not Bioconductor).
-
+**Note:** Currently, only CRAN and GitHub package sources are supported (e.g.., not Bioconductor).
 
 ---
 
@@ -508,7 +533,7 @@ library(ggplot2)
 
 Then, call `renv::snapshot()` again.
 
-> **Note:** this time, you should be prompted to proceed with the snapshot, thereby updating the `renv.lock` file with the package dependencies effectively used in your project.
+**Note:** this time, you should be prompted to proceed with the snapshot, thereby updating the `renv.lock` file with the package dependencies effectively used in your project.
 
 Enter `y` to proceed with the snapshot.
 Open the file `renv.lock`, and inspect its contents.
@@ -523,7 +548,7 @@ The function `renv::restore()` :
 
 - installs or updates packages in your project library to match the versions described in `renv.lock`.
 
-> **Note:** we will use this functionality in the coming days and weeks, to give you project environments that we have tested for the course.
+**Note:** we will use this functionality in the coming days and weeks, to give you project environments that we have tested for the course.
 
 ## Example usage
 
@@ -559,10 +584,6 @@ The function `renv::restore()` :
 
 .small-text[
 ```{r, include=TRUE, echo=FALSE, results="asis"}
-if (length(bib) > 0) {
-  PrintBibliography(bib)
-} else {
-  cat("<p align='center'>n/a</p>")
-}
+PrintBibliography(bib)
 ```
 ]
