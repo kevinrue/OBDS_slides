@@ -1,0 +1,13 @@
+name: obds-py-dimred
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - pandas
+  - matplotlib
+  - scikit-learn
+  - jupyterlab
+  - python=3.8
+  - umap-learn
+prefix: /Users/kevin/miniconda3/envs/obds-py-dimred
