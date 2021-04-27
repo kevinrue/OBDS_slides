@@ -57,15 +57,15 @@ bib <- ReadBib("bibliography.bib")
 <br/>
 
 .x-large-list[
-- A working installation of [git](https://git-scm.com/).
-
 - A clone of the shared GitHub repository for this course.
 
 - A working installation of [R](https://www.r-project.org/) (4.0.3).
 
+- A working installation of [git](https://git-scm.com/).
+
 - A working installation of [RStudio](https://rstudio.com/).
 
-- The `r BiocStyle::CRANpkg("renv")` package.
+- The R package `r BiocStyle::CRANpkg("renv")`
 ]
 
 ---
@@ -104,6 +104,11 @@ The resulting file structure should look like the following:
 
   + Select the HTML output format.
 
+```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='300px', out.width='400px'}
+knitr::include_graphics("img/rstudio-new-rmarkdown.png")
+# Source: screen capture
+```
+
 **Note:** you will use this file to write your code as well as notes.
 One convenient feature of R markdown documents is that they display outputs (e.g. plots) next to the code chunks that produced them.
 
@@ -114,19 +119,21 @@ One convenient feature of R markdown documents is that they display outputs (e.g
 ## Learning goals
 
 .x-large-list[
-- Describe how to build and display `r BiocStyle::CRANpkg("ggplot2")` figures.
+- Describe how to build and display figures using `r BiocStyle::CRANpkg("ggplot2")`.
 
-- Understand the notion of aesthetics.
-
-- Describe tidy data.
+- Understand the key differences between `ggplot` objects and base R graphics.
 ]
 
 ## Learning objectives
 
 .x-large-list[
-- Set up a project environment to work with `r BiocStyle::CRANpkg("ggplot2")`.
+- Use the `r BiocStyle::CRANpkg("ggplot2")` package to generate figures from various data sets.
 
-- Build and display, manage, and share `r BiocStyle::CRANpkg("ggplot2")` figures.
+- Overlay multiple layers for the same data on a single plot.
+
+- Use faceting and plotting grids.
+
+- Customise plot themes.
 ]
 
 ---
