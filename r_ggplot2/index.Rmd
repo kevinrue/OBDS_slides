@@ -3,7 +3,7 @@ title: 'Introduction to `r BiocStyle::CRANpkg("ggplot2")`'
 subtitle: '<i class="fab fa-r-project"></i>'
 author: "Kevin Rue-Albrecht"
 institute: "Oxford Biomedical Data Science Training Programme"
-date: "2021-02-24 (updated: `r Sys.Date()`)"
+date: "2021-06-09 (updated: `r Sys.Date()`)"
 output:
   xaringan::moon_reader:
     css: [default, metropolis, rladies-fonts, "my-theme.css"]
@@ -57,29 +57,49 @@ bib <- ReadBib("bibliography.bib")
 <br/>
 
 .x-large-list[
-- A clone of a personal GitHub repository for this course.
-
-- A clone of a shared GitHub repository for this course.
-
-- A working installation of [R](https://www.r-project.org/) (4.0.3) including the `r BiocStyle::CRANpkg("renv")` package.
-
 - A working installation of [git](https://git-scm.com/).
+
+- A clone of the shared GitHub repository for this course.
+
+- A working installation of [R](https://www.r-project.org/) (4.0.3).
 
 - A working installation of [RStudio](https://rstudio.com/).
 
-- An RStudio project with a project library including `r BiocStyle::CRANpkg("ggplot2")`.
+- The `r BiocStyle::CRANpkg("renv")` package.
 ]
+
+---
+
+# Set up
+
+- In the daily sub-directory of the shared repository, create a sub-directory with your name.
+
+- Copy the subdirectory `r_ggplot2` from the `OBDS_environments` repository to your clone of the shared repository for this course.
+
+- Rename the new sub-directory `r_ggplot2` to your HPC username.
+
+The resulting file structure on your computer should look like the following:
+
+```
+  OBDS_Training_May_2021/
+  |_ week5/
+    |_ day3_ggplot2/
+      |_ albrecht (renamed from 'r_ggplot2')
+        |_ ... (files)
+        |_ r_ggplot2.Rproj
+```
+
+- Launch the RStudio project `r_ggplot2.Rproj`.
+
+- Restore the project environment using `r BiocStyle::CRANpkg("renv")`.
 
 ---
 
 # Setup
 
-- Open the RStudio project `r_ggplot2` that we created earlier.
-
-**Note:** this project has a project library that contains the package `r BiocStyle::CRANpkg("ggplot2")` and its dependencies.
-
 - Open a new R markdown document.
-  Select the HTML output format.
+
+  + Select the HTML output format.
 
 **Note:** you will use this file to write your code as well as notes.
 One convenient feature of R markdown documents is that they display outputs (e.g. plots) next to the code chunks that produced them.
