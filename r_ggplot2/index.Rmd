@@ -72,24 +72,27 @@ bib <- ReadBib("bibliography.bib")
 
 # Set up
 
-- In the daily sub-directory of the shared repository, create a sub-directory with your name.
+- Pull the `master` branch of the shared repository.
 
-- Copy the subdirectory `r_ggplot2` from the `OBDS_environments` repository to your clone of the shared repository for this course.
+> We have added some files to get you started.
 
-- Rename the new sub-directory `r_ggplot2` to your HPC username.
+- In the daily sub-directory, make a copy the `template` sub-directory with your HPC username.
 
-The resulting file structure on your computer should look like the following:
+> e.g. `cp template albrecht`
+
+The resulting file structure should look like the following:
 
 ```
   OBDS_Training_May_2021/
   |_ week5/
     |_ day3_ggplot2/
-      |_ albrecht (renamed from 'r_ggplot2')
+      |_ template
+      |_ albrecht (copied from 'template')
         |_ ... (files)
         |_ r_ggplot2.Rproj
 ```
 
-- Launch the RStudio project `r_ggplot2.Rproj`.
+- Launch the RStudio project `r_ggplot2.Rproj` in your sub-directory.
 
 - Restore the project environment using `r BiocStyle::CRANpkg("renv")`.
 
