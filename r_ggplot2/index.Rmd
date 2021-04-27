@@ -52,6 +52,28 @@ bib <- ReadBib("bibliography.bib")
 
 ---
 
+# Lesson goals and objectives
+
+## Learning goals
+
+- Describe how to build and display figures using `r BiocStyle::CRANpkg("ggplot2")`.
+
+- Identify the key differences between `ggplot` objects and base R graphics.
+
+- Understand the concept of tidy data.
+
+## Learning objectives
+
+- Use the `r BiocStyle::CRANpkg("ggplot2")` package to generate figures from various data sets.
+
+- Overlay multiple layers for the same data on a single plot.
+
+- Use faceting and plotting grids.
+
+- Customise plot themes.
+
+---
+
 # Prerequisites
 
 <br/>
@@ -98,7 +120,7 @@ The resulting file structure should look like the following:
 
 ---
 
-# Setup
+# Set up
 
 - Open a new R markdown document.
 
@@ -111,30 +133,6 @@ knitr::include_graphics("img/rstudio-new-rmarkdown.png")
 
 **Note:** you will use this file to write your code as well as notes.
 One convenient feature of R markdown documents is that they display outputs (e.g. plots) next to the code chunks that produced them.
-
----
-
-# Lesson goals and objectives
-
-## Learning goals
-
-.x-large-list[
-- Describe how to build and display figures using `r BiocStyle::CRANpkg("ggplot2")`.
-
-- Understand the key differences between `ggplot` objects and base R graphics.
-]
-
-## Learning objectives
-
-.x-large-list[
-- Use the `r BiocStyle::CRANpkg("ggplot2")` package to generate figures from various data sets.
-
-- Overlay multiple layers for the same data on a single plot.
-
-- Use faceting and plotting grids.
-
-- Customise plot themes.
-]
 
 ---
 
@@ -209,7 +207,7 @@ print(plot1)
 .pull-left[
 - Currently the most popular plotting framework in <i class="fab fa-r-project"></i>
 
-- Uses tidy data (part of the `r BiocStyle::CRANpkg("tidyverse")`
+- Uses tidy data (part of the `r BiocStyle::CRANpkg("tidyverse")`)
 
   + e.g. `data.frame`, `datatable`, `tibble`
   
@@ -232,7 +230,8 @@ knitr::include_graphics("img/rstudio-cheatsheet-ggplot.png")
 # Geometric objects
 
 A **layer** combines **data**, **aesthetic** mapping, a **geom** (geometric object), a **stat** (statistical transformation), and a **position** adjustment.
-Typically, you will create layers using a `geom_` function, overriding the default **position** and **stat** if needed.
+Typically, you will create layers using a `geom_` function,
+occasionally overriding the default **position** and **stat** if needed.
 
 Reference: <https://ggplot2.tidyverse.org/reference/#section-geoms>
 
@@ -276,19 +275,19 @@ What does `ggplot(diamonds, aes(x = carat, y = price))` do?
 
 ## Add geometric objects
 
-- Draw points showing `carat` on the x-axis and `price` on the y-axis.
+- Add data points showing `carat` on the x-axis and `price` on the y-axis.
 
 - Color data points by `cut`.
 
 - Add a smoothed mean trend line.
 
-**Note:** identify the relevant `geom_` function and add it as an additional layer.
+- Save the last plot as `obds_diamonds`.
 
 ---
 
 # Exercise
 
-## Predict the difference between these two plots
+## Spot (and predict) the difference!
 
 ### Plot 1
 
@@ -305,6 +304,10 @@ ggplot(diamonds, aes(x = carat, y = price)) +
   geom_point(aes(colour = cut)) +
   geom_smooth()
 ```
+
+.center[
+**Predict the difference between these two plots**
+]
 
 ---
 
@@ -458,35 +461,31 @@ ggplot(diamonds, aes(x = carat, y = price)) +
 
 ---
 
-# Exercise
+# Save a plot to file
 
-- Load the `ChickWeight` data set.
+The `ggsave()` function can be used to save a plot to a file.
 
-- Plot a histogram of chick weight.
+```{r, include=TRUE, eval=FALSE}
+ggsave(
+  filename,
+  plot = last_plot(),
+  ...
+)
+```
 
-- Change the fill and border color of the bars.
+## Notes
 
-- Change the number of bins (i.e.,bars).
+- The first argument is the `filename`, not the `plot`!
 
-**Note:** you may change the bin width or the total number of bars.
+- If `plot` is not given, the latest plot generated is used.
 
-- Change the label and font size of the axes.
-
-- Change the font size and angle of the x-axis tick labels.
-
-**Note:** you will probably want to justify the text labels as right-aligned.
-
-- Change the y-axis upper limit to an arbitrary number, e.g. 100.
-
-- Facet a vertical strip of histograms, one for each diet.
-
-**Note:** you may also like to fill bars with a different color for each diet.
-
-- Allow each facet to fit the y-axis range to its own data.
+- The extension of `filename` is used to automatically generate the right kind of file.
 
 ---
 
 # Exercise
+
+## Trend lines
 
 Using the `ChickWeight` data set:
 
@@ -496,11 +495,57 @@ Using the `ChickWeight` data set:
 
 - Add a linear mean trend line for each diet.
 
-- Which diet leads to the highest mean increase in weight?
+At this point you should be able to visually identify
+the diet that leads to the highest mean increase in weight.
 
-- Collate that last plot with the last histogram in the previous exercise.
+- Facet a ribbon of sub-plots, one per diet.
 
-- Label the panels "A" and "B".
+- Save the last plot as `obds_chickweight`.
+
+---
+
+# Exercise
+
+## Bar plot
+
+- Load the `ggplot2::msleep` data set.
+
+- Draw a bar plot of number of observations by taxonomic order.
+
+- Change the angle and font size of the x-axis tick labels.
+  Justify the text labels as right-aligned.
+
+- Change the label and font size of the axes.
+
+- Fill each bar with colors, proportionally to the count of each genus.
+
+> From this point onwards, you may need to iteratively resize the labels of the ticks and axes.
+
+- Reduce the legend key size.
+  (Recommendation: use `unit(2, "mm")`).
+
+- Force the legend to be display in 3 columns.
+  (Recommendation: use `guide_legend(...)`).
+
+- Add a contour of thin black lines to the bars.
+
+- Save the last plot as `obds_msleep`.
+
+---
+
+# Exercise
+
+## Plotting grid
+
+- Collate the plots that we saved through the day, as a single plot.
+
+  + Plots: `obds_diamonds`, `obds_chickweight`, `obds_msleep`.
+  
+  + Methods: `cowplot::plot_grid()`, `patchwork`, `gridExtra::grid.arrange()`.
+
+- Save the new plot in a PDF file, and open it in a PDF viewer (e.g. Adobe Acrobat Reader DC).
+
+> You will likely need a few attempts to fine-tune the width and height of the output file.
 
 ---
 

@@ -1,7 +1,7 @@
 ---
 title: "Example code for ggplot2"
 author: "Kevin Rue-Albrecht"
-date: "24/02/2021"
+date: "09/06/2021"
 output: html_document
 ---
 
@@ -37,7 +37,7 @@ ggplot(diamonds, aes(x = carat, y = price))
 
 ## Add geometric objects
 
-- Draw points showing `carat` on the x-axis and `price` on the y-axis.
+- Add data points showing `carat` on the x-axis and `price` on the y-axis.
 
 ```{r}
 ggplot(diamonds, aes(x = carat, y = price)) +
@@ -59,7 +59,14 @@ ggplot(diamonds, aes(x = carat, y = price, color = cut)) +
   geom_smooth()
 ```
 
-**Note:** identify the relevant `geom_` function and add it as an additional layer.
+- Save the last plot as `obds_diamonds`.
+
+```{r}
+obds_diamonds <- ggplot(diamonds, aes(x = carat, y = price, color = cut)) +
+  geom_point() +
+  geom_smooth()
+```
+
 
 # Exercise
 
@@ -67,7 +74,7 @@ ggplot(diamonds, aes(x = carat, y = price, color = cut)) +
 
 ### Plot 1
 
-```{r, include=TRUE, eval=FALSE}
+```{r, include=TRUE}
 ggplot(diamonds, aes(x = carat, y = price, colour = cut)) +
   geom_point() +
   geom_smooth()
@@ -75,7 +82,7 @@ ggplot(diamonds, aes(x = carat, y = price, colour = cut)) +
 
 ### Plot 2
 
-```{r, include=TRUE, eval=FALSE}
+```{r, include=TRUE}
 ggplot(diamonds, aes(x = carat, y = price)) +
   geom_point(aes(colour = cut)) +
   geom_smooth()
@@ -83,106 +90,9 @@ ggplot(diamonds, aes(x = carat, y = price)) +
 
 # Exercise
 
-- Load the `ChickWeight` data set.
+## Time series
 
-```{r}
-data(ChickWeight)
-head(ChickWeight)
-```
-
-- Plot a histogram of chick weight.
-
-```{r}
-ggplot(ChickWeight, aes(weight)) +
-  geom_histogram()
-```
-
-- Change the fill and border color of the bars.
-
-```{r}
-ggplot(ChickWeight, aes(weight)) +
-  geom_histogram(fill = "grey", color = "black")
-```
-
-- Change the number of bins (i.e.,bars).
-
-**Note:** you may change the bin width or the total number of bars.
-
-```{r}
-ggplot(ChickWeight, aes(weight)) +
-  geom_histogram(fill = "grey", color = "black", binwidth = 10)
-```
-
-- Change the label and font size of the axes.
-
-```{r}
-ggplot(ChickWeight, aes(weight)) +
-  geom_histogram(fill = "grey", color = "black", binwidth = 10) +
-  labs(x = "Chick weight", y = "Count") +
-  theme(axis.title = element_text(size = rel(2)))
-```
-
-- Change the font size and angle of the x-axis tick labels.
-
-**Note:** you will probably want to justify the text labels as right-aligned.
-
-```{r}
-ggplot(ChickWeight, aes(weight)) +
-  geom_histogram(fill = "grey", color = "black", binwidth = 10) +
-  labs(x = "Chick weight", y = "Count") +
-  theme(
-    axis.title = element_text(size = rel(2)),
-    axis.text.x = element_text(size = rel(2), angle = 30, hjust = 1, vjust = 1)
-    )
-```
-
-- Change the y-axis upper limit to an arbitrary number, e.g. 100.
-
-```{r}
-ggplot(ChickWeight, aes(weight)) +
-  geom_histogram(fill = "grey", color = "black", binwidth = 10) +
-  labs(x = "Chick weight", y = "Count") +
-  theme(
-    axis.title = element_text(size = rel(2)),
-    axis.text.x = element_text(size = rel(2), angle = 30, hjust = 1, vjust = 1)
-    ) +
-  coord_cartesian(ylim = c(0, 100))
-```
-
-- Facet a vertical strip of histograms, one for each diet.
-
-**Note:** you may also like to fill bars with a different color for each diet.
-
-```{r}
-ggplot(ChickWeight, aes(weight, fill = Diet)) +
-  geom_histogram(color = "black", bins = 100) +
-  labs(x = "Chick weight", y = "Count") +
-  theme(
-    axis.title = element_text(size = rel(2)),
-    axis.text.x = element_text(size = rel(2), angle = 30, hjust = 1, vjust = 1)
-    ) +
-  scale_x_log10() +
-  facet_wrap(~ Diet, ncol = 1)
-```
-
-- Allow each facet to fit the y-axis range to its own data.
-
-```{r}
-histogram_plot <- ggplot(ChickWeight, aes(weight, fill = Diet)) +
-  geom_histogram(color = "black", bins = 100) +
-  labs(x = "Chick weight", y = "Count") +
-  theme(
-    axis.title = element_text(size = rel(2)),
-    axis.text.x = element_text(size = rel(2), angle = 30, hjust = 1, vjust = 1)
-    ) +
-  scale_x_log10() +
-  facet_wrap(~ Diet, ncol = 1, scales = "free_y")
-histogram_plot
-```
-
-# Exercise
-
-Using the `ChickWeight` data set:
+Using the built-in `ChickWeight` data set:
 
 - Create a scatter plot of weight (y-axis) over time (x-axis).
 
@@ -201,10 +111,9 @@ ggplot(ChickWeight) +
 - Add a linear mean trend line for each diet.
 
 ```{r}
-scatter_plot <- ggplot(ChickWeight, aes(Time, weight, color = Diet)) +
+ggplot(ChickWeight, aes(Time, weight, color = Diet)) +
   geom_point() +
   geom_smooth(method = "lm", formula = y ~ x)
-scatter_plot
 ```
 
 - Which diet leads to the highest mean increase in weight?
@@ -213,16 +122,168 @@ scatter_plot
 "Diet 3"
 ```
 
-- Collate that last plot with the last histogram in the previous exercise.
+- Facet a ribbon of sub-plots, one per diet.
 
 ```{r}
-library(cowplot)
-plot_grid(histogram_plot, scatter_plot)
+ggplot(ChickWeight, aes(Time, weight, color = Diet)) +
+  geom_point() +
+  geom_smooth(method = "lm", formula = y ~ x) +
+  facet_wrap(~Diet)
 ```
 
-- Label the panels "A" and "B".
+- Save the last plot as `obds_chickweight`.
 
 ```{r}
-plot_grid(histogram_plot, scatter_plot, labels = c("A", "B"))
+obds_chickweight <- ggplot(ChickWeight, aes(Time, weight, color = Diet)) +
+  geom_point() +
+  geom_smooth(method = "lm", formula = y ~ x) +
+  facet_wrap(~Diet)
 ```
 
+# Exercise
+
+## Bar plot
+
+- Load the `ggplot2::msleep` data set.
+
+```{r}
+data(msleep)
+head(msleep)
+```
+
+- Draw a bar plot of number of observations by taxonomic order.
+
+```{r}
+ggplot(msleep, aes(order)) +
+  geom_bar()
+```
+
+- Change the angle and font size of the x-axis tick labels.
+
+> You will probably want to justify the text labels as right-aligned.
+
+```{r}
+ggplot(msleep, aes(order)) +
+  geom_bar() +
+  theme(
+    axis.text.x = element_text(size = rel(1.5), angle = 60, hjust = 1, vjust = 1)
+    )
+```
+
+- Change the label and font size of the axes.
+
+```{r}
+ggplot(msleep, aes(order)) +
+  geom_bar() +
+  labs(x = "Taxonomic order", y = "Observations") +
+  theme(
+    axis.text.x = element_text(size = rel(1.5), angle = 60, hjust = 1, vjust = 1),
+    axis.title = element_text(size = rel(2))
+    )
+```
+
+- Fill each bar with colors, proportionally to the count of each genus.
+
+> You may need to iteratively resize the labels of the ticks and axes.
+
+```{r}
+ggplot(msleep, aes(order)) +
+  geom_bar(aes(fill = genus)) +
+  labs(x = "Taxonomic order", y = "Observations") +
+  theme(
+    axis.text.x = element_text(size = rel(1.5), angle = 60, hjust = 1, vjust = 1),
+    axis.title = element_text(size = rel(2))
+    )
+```
+
+- Reduce the legend key size.
+  (Recommendation: use `unit(2, "mm")`).
+
+```{r}
+ggplot(msleep, aes(order)) +
+  geom_bar(aes(fill = genus)) +
+  labs(x = "Taxonomic order", y = "Observations") +
+  theme(
+    axis.text.x = element_text(size = rel(1.5), angle = 60, hjust = 1, vjust = 1),
+    axis.title = element_text(size = rel(2)),
+    legend.key.size = unit(2, "mm")
+    )
+```
+
+- Force the legend to be display in 3 columns.
+ (Recommendation: use `guide_legend(...)`).
+
+```{r}
+ggplot(msleep, aes(order)) +
+  geom_bar(aes(fill = genus)) +
+  labs(x = "Taxonomic order", y = "Observations") +
+  theme(
+    axis.text.x = element_text(size = rel(1.2), angle = 60, hjust = 1, vjust = 1),
+    axis.text.y = element_text(size = rel(1.2)),
+    axis.title = element_text(size = rel(1.5)),
+    legend.key.size = unit(2, "mm")
+    ) +
+  guides(fill = guide_legend(ncol = 3))
+```
+
+- Add a contour of thin black lines to the bars.
+
+```{r}
+ggplot(msleep, aes(order)) +
+  geom_bar(aes(fill = genus), color = "black", size = 0.2) +
+  labs(x = "Taxonomic order", y = "Observations") +
+  theme(
+    axis.text.x = element_text(size = rel(1.2), angle = 60, hjust = 1, vjust = 1),
+    axis.text.y = element_text(size = rel(1.2)),
+    axis.title = element_text(size = rel(1.5)),
+    legend.key.size = unit(2, "mm")
+    ) +
+  guides(fill = guide_legend(ncol = 3))
+```
+
+- Save the last plot as `obds_msleep`.
+
+```{r}
+obds_msleep <- ggplot(msleep, aes(order)) +
+  geom_bar(aes(fill = genus), color = "black", size = 0.2) +
+  labs(x = "Taxonomic order", y = "Observations") +
+  theme(
+    axis.text.x = element_text(size = rel(1.2), angle = 60, hjust = 1, vjust = 1),
+    axis.text.y = element_text(size = rel(1.2)),
+    axis.title = element_text(size = rel(1.5)),
+    legend.key.size = unit(2, "mm")
+    ) +
+  guides(fill = guide_legend(ncol = 3))
+```
+
+# Exercise
+
+## Plotting grid
+
+- Collate the plots that we saved through the day, as a single plot.
+
+  + Plots: `obds_diamonds`, `obds_chickweight`, `obds_msleep`.
+  
+  + Methods: `cowplot::plot_grid()`, `patchwork`, `gridExtra::grid.arrange()`.
+
+```{r}
+first_row <- cowplot::plot_grid(
+  obds_diamonds, obds_chickweight,
+  ncol = 2
+)
+second_row <- cowplot::plot_grid(
+  obds_msleep, ncol = 1
+)
+super_plot <- cowplot::plot_grid(
+  first_row, second_row,
+  nrow = 2
+)
+```
+
+- Save the new plot in a PDF file.
+
+> You will likely need a few attempts to fine-tune the width and height of the output file.
+
+```{r}
+ggsave("final_plot.pdf", super_plot, width = 12, height = 12)
+```
