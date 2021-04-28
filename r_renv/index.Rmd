@@ -152,7 +152,7 @@ knitr::include_graphics("img/projects_new.png")
 
 # New project RStudio session
 
-```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='500px'}
+```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='500px', out.width='700px'}
 knitr::include_graphics("img/project-blank.png")
 ```
 
