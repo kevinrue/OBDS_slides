@@ -350,8 +350,6 @@ You can use this panel to stage the changes, commit, and push/pull:
 
 # Introduction to `r BiocStyle::CRANpkg("renv")`
 
-<https://kevinushey-2020-rstudio-conf.netlify.app/slides.html> (rstudio::conf 2020)
-
 The `r BiocStyle::CRANpkg("renv")` package is a new effort to bring project-local R dependency management to your projects.
 
 > `r BiocStyle::CRANpkg("renv")` = <ins>r</ins>eproducible <ins>env</ins>ironment.
@@ -386,6 +384,8 @@ knitr::include_graphics("img/renv-shared-library.svg")
 
 .center[
 **What happens when you install a new version of a package in the library?**
+
+**Use `.libPaths()` to display your current library path(s).**
 ]
 
 ---
@@ -480,6 +480,10 @@ When a new environment is created, `r BiocStyle::CRANpkg("renv")` :
 - creates or updates the file `.Rprofile` to automatically activate the environment every time you open the project
 
 - creates the file `renv.lock` to store the name, version, source, and checksum of packages installed in the project library.
+
+.center[
+**Call `.libPaths()` to display the library paths now. Compare with what you saw earlier.**
+]
 
 ---
 
