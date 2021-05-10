@@ -78,6 +78,8 @@ bib <- ReadBib("bibliography.bib")
 
 # Pre-requisites
 
+- Access to the University VPN.
+
 - A [<i class="fab fa-github"></i> GitHub](https://github.com/) account.
 
 - Accept the invitation to be a member of the GitHub Organisation [OBDS-Training](https://github.com/OBDS-Training).
@@ -147,7 +149,9 @@ Other examples:
 Google Docs [version history](https://support.google.com/docs/answer/190843?hl=en),
 LibreOffice [Recording and Displaying Changes](https://help.libreoffice.org/Common/Recording_and_Displaying_Changes).
 
+.center[
 **In your opinion, what are pros/cons of track changes in this way?**
+]
 
 ---
 
@@ -346,7 +350,7 @@ $ git config --global core.editor "nano -w"
 
 # Clone the shared repository
 
-In this step, you will each get (i.e., _clone_) your own copy of the shared repository for this course.
+In this step, you will each create (i.e., _clone_) your own copy of the shared repository for this course.
 
 The `git clone` sub-command takes the address of a remote repository and creates a copy of that repository in a new local directory.
 
@@ -363,6 +367,8 @@ knitr::include_graphics("img/atlassian-clone.svg")
 
 ???
 
+- A clone contains both the files _and_ the history of changes.
+
 - By default, the local directory will be named identically to the repository, it is possible to name it differently using `git clone git@github.com:OBDS-Training/OBDS_Training_May_2021.git local_directory_name`
 
 ---
@@ -377,7 +383,7 @@ $ ls -a
 ```
 
 ```
-.  ..  .git  README.md
+.  ..  .git  README.md week2
 ```
 
 Git uses the `.git` sub-directory to store all the information about the project history.
@@ -425,7 +431,9 @@ nothing to commit, working tree clean
 knitr::include_graphics("img/branch-conflict.png")
 ```
 
+.center[
 **What do you think will happen when David and Kevin push their respective `master` branch to <i class="fab fa-github"></i> GitHub?**
+]
 
 ---
 
@@ -447,7 +455,8 @@ We will discuss later how to incorporate changes made on branches back into the 
 The `git branch` sub-command can be used to inspect and create branches in a copy of the repository.
 
 - This does not automatically synchronise remote copies of the repository.
-- You can only create branches with names that are not already used.
+- You can only create branches with names that are not already used (locally*).
+- The new branch is created from the commit on the current branch (not necessarily `master`).
 
 The `git checkout` sub-command can be used to switch between branches.
 
@@ -475,19 +484,15 @@ $ git checkout -b kevin
 
 First make sure that you have checked out a branch other than `master`.
 
-In the repository sub-directory `week2/day1_git`, create a file called `<username>.md`, replacing `<username>` by your own <i class="fab fa-github"></i> GitHub user name.
+In the repository sub-directory `week2/day1_version_control_using_git`, create a file called `<username>.md`, replacing `<username>` by your own cluster user name (i.e. Bash command `whoami`).
 
-> I included an example `kevinrue.md`, as `kevinrue` is my <i class="fab fa-github"></i> GitHub user name.
+> I included an example `albrecht.md`, as `albrecht` is CCB user name.
 
-In that file, write you full name as a first level header (preceded by a `#` symbol and s a space).
+In that file, write you full name as a first level header (preceded by a `#` symbol and a space).
 
-> For me, that looks like:
-```
-# Kevin Rue-Albrecht
-```
+As second level header (i.e., `##`), add a section 'Expertise' with a list of bullet points, and another second level header 'Operating System' to indicate whether you use 'macOS', 'Windows', or 'Linux' during this course.
 
-It is best practice to add a newline character at the end of this line.
-<i class="fab fa-git"></i> works best files end with an empty line.
+It is best practice to add a newline character at the end of this line as <i class="fab fa-git"></i> works best in that case.
 
 #### Practice Bash
 
@@ -499,6 +504,7 @@ You can also make a copy the example file and edit that copy, instead of creatin
 
 We have just made changes to files in the repository.
 However, we have not told <i class="fab fa-git"></i> to record those changes yet.
+In other words, we have edited the files, but we haven't committed those changes.
 
 > Remember that changes are separate from the files themselves!
 
@@ -514,7 +520,7 @@ Your branch is up to date with 'origin/master'.
 
 Untracked files:
   (use "git add <file>..." to include in what will be committed)
-	week2/day1_git/kevinrue.md
+	week2/day1_version_control_using_git/albrecht.md
 ```
 
 The "Untracked files" section reports files that are new and not track by <i class="fab fa-git"></i> yet.
@@ -529,7 +535,7 @@ The `git add` sub-command can be used to add new files to the list of files trac
 - In other words, the file will exist, but changes to that file will not be tracked, and we will not be able to restore past versions of that file.
 
 ```{bash, eval=FALSE, echo=TRUE}
-$ git add kevinrue.md
+$ git add albrecht.md
 $ git status
 ```
 
@@ -537,10 +543,12 @@ $ git status
 On branch kevin
 Changes to be committed:
   (use "git restore --staged <file>..." to unstage)
-	new file:   week2/day1_git/kevinrue.md
+	new file:   week2/day1_version_control_using_git/albrecht.md
 ```
 
+.center[
 **What changed in `git status` after running `git add`?**
+]
 
 ---
 
@@ -574,10 +582,12 @@ $ git commit -m "Added a file for kevin rue"
 ```
 [kevin 41121a3] Added a file for kevin rue
  1 file changed, 1 insertion(+)
- create mode 100644 week2/day1_git/kevinrue.md
+ create mode 100644 week2/day1_version_control_using_git/albrecht.md
 ```
 
+.center[
 **What information do you recognise in the message displayed as a result of the `git commit` command?**
+]
 
 ---
 
@@ -604,7 +614,9 @@ When everything is in place, you can tell <i class="fab fa-git"></i> to push a b
 $ git push origin my_branch
 ```
 
-**Do not run this yet, we will do it in a moment.**
+.center[
+**Do not run this yet, we will do it in a moment, with a difference.**
+]
 
 ---
 
@@ -667,7 +679,7 @@ However, we are not going to use it, at least not explicitly at the command line
 knitr::include_graphics("img/branch-merge.png")
 ```
 
-**Do not do this!** To incorporate the changes from branch `kevin` into branch `master` locally:
+**Do not do this:** To incorporate the changes from branch `kevin` into branch `master` locally, one could run:
 
 ```{bash, eval=FALSE, echo=TRUE}
 $ git checkout master
@@ -748,7 +760,9 @@ Often considered cumbersome, in practice manual reviews offer another chance to 
 knitr::include_graphics("img/github-pull-request-review.png")
 ```
 
-**Crucially, a pull request can only be applied if the reviewer selects the "Approve" radio button.**
+.center[
+**In this setup, a pull request can only be applied if the reviewer selects the "Approve" radio button.**
+]
 
 ---
 
@@ -770,7 +784,9 @@ knitr::include_graphics("img/github-merge-pull-request.png")
 knitr::include_graphics("img/github-merge-commit.png")
 ```
 
+.center[
 **Merging a pull request creates a new commit. This commit needs its own commit message.**
+]
 
 ---
 
@@ -914,11 +930,11 @@ Date:   Wed Apr 7 17:16:13 2021 +0100
 
     Add an example file in the git sub-directory
 
-diff --git a/git/kevinrue.md b/git/kevinrue.md
+diff --git a/git/albrecht.md b/git/albrecht.md
 new file mode 100644
 index 0000000..468faf4
 --- /dev/null
-+++ b/git/kevinrue.md
++++ b/git/albrecht.md
 @@ -0,0 +1 @@
 +# Kevin Rue-Albrecht
 ```
@@ -942,11 +958,11 @@ The `git diff` sub-command can be used to compare two states of the repository.
 .small-code[
 ```{bash, eval=FALSE, echo=TRUE}
 $ git diff 5d0241c 0c4eacc
-diff --git a/git/kevinrue.md b/git/kevinrue.md
+diff --git a/git/albrecht.md b/git/albrecht.md
 new file mode 100644
 index 0000000..468faf4
 --- /dev/null
-+++ b/git/kevinrue.md
++++ b/git/albrecht.md
 @@ -0,0 +1 @@
 +# Kevin Rue-Albrecht
 diff --git a/git/username.md b/git/username.md
