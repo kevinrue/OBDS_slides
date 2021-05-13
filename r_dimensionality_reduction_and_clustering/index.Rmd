@@ -56,60 +56,63 @@ library(e1071)
 <br/>
 
 .x-large-list[
-- A clone of a personal GitHub repository for this course.
-
-- A clone of a shared GitHub repository for this course.
-
-- A clone of <https://github.com/OBDS-Training/OBDS_environments>
+- A clone of the shared GitHub repository for this course.
 
 - A working installation of [R](https://www.r-project.org/) (4.0.3).
 
 - A working installation of [git](https://git-scm.com/).
 
 - A working installation of [RStudio](https://rstudio.com/).
-
-- Access to the CGAT cluster and the shared data folder.
 ]
 
 ---
 
 # Set up
 
-- Copy the subdirectory `r_dimensionality_reduction_and_clustering` from the `OBDS_environments` repository to your personal <i class="fab fa-git"></i> repository for the course.
+- Pull the `master` branch of the shared repository.
 
-- Download the shared folder `r/dimensionality_reduction_and_clustering/data` from the CGAT cluster as a subdirectory of the OBDS environment in your personal repository.
+> We have added some files to get you started.
 
-The result on your computer should look like the following
+- In the daily sub-directory, make a recursive copy the `template` sub-directory with your HPC username.
+
+> e.g. `cp -R template albrecht`
+
+The resulting file structure should look like the following:
 
 ```
-  obds_training/
-  |_ r_dimensionality_reduction_and_clustering/
-    |_ data/
-      |_ ... (data files)
+  OBDS_Training_May_2021/
+  |_ 6_r_stats_genomics/
+    |_ 2_dimred_clustering/
+      |_ template
+        |_ ... (files)
+      |_ albrecht (copied from 'template')
+        |_ ... (files)
+        |_ r_dim_red_and_clustering.Rproj
 ```
 
-- Launch the R project in `r_dimensionality_reduction_and_clustering`.
-
-- Restore the project environment using `r BiocStyle::CRANpkg("renv")`.
+- Launch the RStudio project `r_dim_red_and_clustering.Rproj` in your sub-directory.
 
 ---
 
 # Learning objectives
 
-<br/>
+## Learning goals
 
-.x-large-list[
-- Learn more about some of the common statistical methods, which can also be
-applied to various data types.
+- Describe the dimensionality reduction and clustering methods.
 
-  + Dimensionality reduction (PCA, t-SNE).
+- Understand the differences between dimensionality reduction and clustering.
 
-  + Clustering (k-means, hierarchical clustering)
+- Learn how to use those methods as part of analytical workflow in R.
 
-- Learn how to use R to perform these analyses.
+## Learning objectives
 
-  + R packages + functions
-]
+- Apply dimensionality reduction methods to data; visualise and compare results.
+
+- Identify and visualise features contributing most to principal components.
+
+- Apply clustering methods to data; visualise and compare results.
+
+- Integrate clustering and dimensionality reduction results for visualisation.
 
 ---
 
@@ -363,15 +366,16 @@ In the context of PCA:
 
 # PCA
 
+Optionally:
+
 - First, center data.
+
 - If comparing different units, scale data.
   + i.e., using correlation matrix instead of covariance matrix<sup>1</sup>
   + Genes have very different dynamic ranges!
 
 .footnote[
-**See also:**
-
-1. [Towards data science](https://towardsdatascience.com/let-us-understand-the-correlation-matrix-and-covariance-matrix-d42e6b643c22), "Correlation matrix and covariance matrix"
+**See also:** [Towards data science](https://towardsdatascience.com/let-us-understand-the-correlation-matrix-and-covariance-matrix-d42e6b643c22), "Correlation matrix and covariance matrix"
 ]
 
 --
@@ -797,6 +801,79 @@ assay(airway)[keep_gene, keep_samples, drop=FALSE] %>%
 
 ---
 
+# Exercise
+
+## Setup
+
+- Import the `iris` data set.
+
+- Display the first 5 rows of the data set.
+
+- Split measurements from class labels.
+
+Name the object `iris_features`.
+
+---
+
+# Exercise
+
+## Apply Principal components analysis (PCA)
+
+The `prcomp()` function allows you to standardise the data as part of the principal components analysis itself.
+
+- Apply PCA while centering and scaling the variables (i.e., measurements).
+
+- Examine the PCA output.
+  How does each principal component relate to each variable?
+
+- Create a data frame of PCA coordinates.
+
+Use the return value of the PCA to create a `data.frame` called `pca_iris_dataframe` that contains the coordinates projected on principal components.
+
+- Visualise the PCA projection using `ggplot2::geom_point()`.
+
+### Bonus point
+
+- Color data points according to their class label.
+
+Save the PCA plot as an object named `pca_iris_species`.
+
+---
+
+# Exercise
+
+## Variable loading
+
+- Visualise the value of the variable most strongly associated with the first principal component, as color on the PCA plot.
+
+What do you observe?
+
+## Variance explained
+
+- Compute the variance explained by principal components.
+
+- Visualise the variance explained by each principal component using `ggplot2::geom_col()`.
+
+---
+
+# Exercise
+
+## UMAP
+
+- Apply UMAP on the output of the PCA.
+
+- Inspect the UMAP output.
+
+- Visualise the UMAP projection using `ggplot2::geom_point()`.
+
+### Bonus point
+
+- Color data points according to their class label.
+
+Save the UMAP plot as an object named `umap_plot`.
+
+---
+
 # t-SNE
 
 .center[**t-Distributed Stochastic Neighbor Embedding**]
@@ -941,28 +1018,23 @@ tsne_out$Y %>%
 
 # Exercise
 
-## Dimensionality reduction
+## t-SNE
 
-- Import the matrix data from the file `logcounts.csv`.
-  
-- Perform PCA.
-  Inspect the structure of the output.
+- Apply t-SNE and inspect the output.
 
-- Draw a scatter plot of the top two principal components and color by various experimental metadata in `cell_metadata.csv`.
-  Which experimental factors show the largest variance in the data?
-  
-- Draw a density plot, faceted by time and infection, colored by status, to inspect the variance of each experimental factor on the top principal component.
+- Create a data frame of t-SNE coordinates.
 
-- Draw a bar plot of variance explained by each principal component.
-  How many principal components would you keep for downstream analyses?
+Use the return value of the t-SNE to create a `data.frame` called `tsne_iris_dataframe` that contains the coordinates.
 
-- Find the names of the top genes associated with the top principal components.
+- Visualise the t-SNE projection.
 
-- Visualise the gene expression value of the gene with the highest loading for PC1 as color on a scatter plot of PC1 and PC2.
-  What do you observe?
+### Bonus points
 
-- Compare PCA to t-SNE to UMAP.
-  Note that t-SNE and UMAP should be given the subset of principal components selected above.
+- Color data points according to their class label.
+
+Save the t-SNE plot as an object named `tsne_iris_species`.
+
+- Combine PCA, UMAP and t-SNE plots in a single figure.
 
 ---
 
@@ -1152,20 +1224,85 @@ knitr::include_graphics("https://scikit-learn.org/stable/_images/sphx_glr_plot_c
 
 # Exercise
 
-## Clustering
+## K-means
 
-- Cluster using k-means, for $k$ ranging from 1 to an arbitrary number (e.g. 30).
-  Store the sums of square (total, between, within) for each $k$ as a table.
+- Apply K-means clustering with K set to 3 clusters.
 
-- Draw a line and dot plot to visualise the within-cluster sum of squares for each value of $k$.
-  How many clusters would you choose?
+- Inspect the output.
 
-- Compare the cluster labels that you obtained with known metadata.
+- Extract the cluster labels.
 
-- Draw scatter plots colored by cluster label and experimental metadata.
-  Display them as a grid in a single figure using `r BiocStyle::CRANpkg("cowplot")`.
+- Extract the cluster centers.
 
-- Compare k-means with other clustering methods (e.g. hierarchical clustering).
+- Construct a data frame that includes the cluster label.
+
+- Plot the data set as a scatter plot.
+
+Color by cluster label.
+
+### Bonus point
+
+- Add cluster centers to the plot.
+
+---
+
+# Exercise
+
+## Cross-tabulation with ground truth
+
+- Cross-tabulate cluster labels with known labels.
+
+How many observations are mis-classified by K-means clustering?
+
+## Elbow plot
+
+- Plot the "total within-cluster sum of squares" for K ranging from 2 to 10.
+
+Do you agree that 3 is the optimal number of clusters for this data set?
+
+---
+
+# Exercise
+
+## Hierarchical clustering
+
+- Perform hierarchical clustering using method `ward.D2`.
+
+- Plot the clustering tree.
+
+How many clusters would you call from a visual inspection of the tree?
+
+- Color leaves by known species (use `dendextend`).
+
+- Cut the tree in 3 clusters and extract the cluster labels.
+
+- Repeat clustering using 3 other agglomeration methods:
+
+  + `complete`
+  + `average`
+  + `single`
+
+- Compare clustering results on scatter plots of the data.
+
+---
+
+# Exercise
+
+## dbscan
+
+- Apply `dbscan` to the set of iris measurements.
+
+- Visualise the `dbscan` cluster label on a scatter plot of the data.
+
+## hdbscan
+
+- Apply `hdbscan` to the set of iris measurements.
+
+- Visualise the `hdbscan` cluster label on a scatter plot of the data.
+
+## Bonus point
+
+- Combine the plots of `dbscan` and `hdbscan` into a single plot.
 
 ---
 
