@@ -3,7 +3,7 @@ title: 'Dimensionality reduction and clustering'
 subtitle: 'in <i class="fab fa-r-project"></i>'
 author: "Kevin Rue-Albrecht"
 institute: "Oxford Biomedical Data Science Training Programme"
-date: "2021-03-01 (updated: `r Sys.Date()`)"
+date: "2021-06-15 (updated: `r Sys.Date()`)"
 output:
   xaringan::moon_reader:
     css: [default, metropolis, rladies-fonts, "my-theme.css"]
@@ -51,6 +51,28 @@ library(e1071)
 
 ---
 
+# Learning objectives
+
+## Learning goals
+
+- Describe dimensionality reduction and clustering methods.
+
+- Explain the difference between dimensionality reduction and clustering.
+
+- Learn how to use those methods as part of analytical workflow in R.
+
+## Learning objectives
+
+- Apply dimensionality reduction methods to data; visualise and compare results.
+
+- Identify and visualise features contributing most to principal components.
+
+- Apply clustering methods to data; visualise and compare results.
+
+- Integrate clustering and dimensionality reduction results for visualisation.
+
+---
+
 # Prerequisites
 
 <br/>
@@ -91,28 +113,6 @@ The resulting file structure should look like the following:
 ```
 
 - Launch the RStudio project `r_dim_red_and_clustering.Rproj` in your sub-directory.
-
----
-
-# Learning objectives
-
-## Learning goals
-
-- Describe the dimensionality reduction and clustering methods.
-
-- Understand the differences between dimensionality reduction and clustering.
-
-- Learn how to use those methods as part of analytical workflow in R.
-
-## Learning objectives
-
-- Apply dimensionality reduction methods to data; visualise and compare results.
-
-- Identify and visualise features contributing most to principal components.
-
-- Apply clustering methods to data; visualise and compare results.
-
-- Integrate clustering and dimensionality reduction results for visualisation.
 
 ---
 
@@ -157,6 +157,8 @@ Heatmap(
 ---
 
 # Sources of variation in data
+
+<br/>
 
 .x-large-text[
 Difference in data (e.g., expression) can come from multiple sources:
