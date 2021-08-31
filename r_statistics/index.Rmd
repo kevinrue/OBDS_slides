@@ -948,7 +948,7 @@ t.test(value ~ group, test_data)
 
 # Choosing a test
 
-```{r, include=TRUE, echo=FALSE, out.height='400px', fig.align='center'}
+```{r, include=TRUE, echo=FALSE, out.height='400px', out.width='600px' fig.align='center'}
 # Source: https://python.plainenglish.io/statistical-tests-with-python-880251e9b572
 knitr::include_graphics("img/choose-statistical-test.png")
 ```
