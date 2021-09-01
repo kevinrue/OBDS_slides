@@ -82,13 +82,11 @@ bib <- ReadBib("bibliography.bib")
 
 - A [<i class="fab fa-github"></i> GitHub](https://github.com/) account.
 
-- Accept the invitation to be a member of the GitHub Organisation [OBDS-Training](https://github.com/OBDS-Training).
+- Membership to the [OBDS-Training](https://github.com/OBDS-Training) GitHub organisation.
 
 Those last two points are required to grant you access to private repositories that are only visible to members of the organisation.
 
-- A [SSH key pair](https://www.ssh.com/ssh/public-key-authentication) - ideally password-protected - added to your <i class="fab fa-github"></i> GitHub account.
-
-This will allow the <i class="fab fa-github"></i> GitHub server to verify your identity when you programmatically interact with it.
+- A working installation of [Git](https://git-scm.com/) (on your personal computer).
 
 ---
 
