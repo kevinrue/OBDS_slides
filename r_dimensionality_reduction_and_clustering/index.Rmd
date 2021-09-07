@@ -3,7 +3,7 @@ title: 'Dimensionality reduction and clustering'
 subtitle: 'in <i class="fab fa-r-project"></i>'
 author: "Kevin Rue-Albrecht"
 institute: "Oxford Biomedical Data Science Training Programme"
-date: "2021-06-15 (updated: `r Sys.Date()`)"
+date: "2021-10-12 (updated: `r Sys.Date()`)"
 output:
   xaringan::moon_reader:
     css: [default, metropolis, rladies-fonts, "my-theme.css"]
@@ -97,17 +97,17 @@ library(e1071)
 
 - In the daily sub-directory, make a copy of the `template` sub-directory with your HPC username.
 
-> e.g. `cp -R template albrecht`
+> e.g. `cp -R template kevinrue`
 
 The resulting file structure should look like the following:
 
 ```
   OBDS_Training_May_2021/
-  |_ 6_r_stats_genomics/
+  |_ 3_r_stats_genomics/
     |_ 2_dim_red_and_clustering/
       |_ template
         |_ ... (files)
-      |_ albrecht (copied from 'template')
+      |_ kevinrue (copied from 'template')
         |_ ... (files)
         |_ dim_red_and_clustering.Rproj
 ```
@@ -354,7 +354,8 @@ $$PC2 = \beta_{(2,1)} * gene_1 + \beta_{(2,2)} * gene_2$$
 Eigenvalue decomposition is matrix factorization algorithm.
 
 ```{r, include=TRUE, echo=FALSE, fig.align="center"}
-knitr::include_graphics("https://s3-us-west-2.amazonaws.com/articles-dimred/pca/eigen1.png")
+## Source: https://notes.andrewgurung.com/data-science/linear-algebra/eigenvalues-and-eigenvectors
+knitr::include_graphics("img/eigen_decomposition.png")
 ```
 
 In the context of PCA:
@@ -362,7 +363,7 @@ In the context of PCA:
 - An eigenvector represents a direction or axis.
 - The corresponding eigenvalue represents variance along that eigenvector.
 
-**Source:** https://blog.paperspace.com/dimension-reduction-with-principal-component-analysis/
+**Source:** https://notes.andrewgurung.com/data-science/linear-algebra/eigenvalues-and-eigenvectors
 
 ---
 
