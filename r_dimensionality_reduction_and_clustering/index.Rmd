@@ -1312,3 +1312,5 @@ How many clusters would you call from a visual inspection of the tree?
 # Further reading
 
 - `r BiocStyle::CRANpkg("dimRed")` vignette.
+
+- [Hitchhiker’s Guide to Matrix Factorization and PCA](https://aedin.github.io/PCAworkshop/index.html)
