@@ -3,7 +3,7 @@ title: 'Statistics'
 subtitle: '<i class="fab fa-r-project"></i>'
 author: "Kevin Rue-Albrecht"
 institute: "Oxford Biomedical Data Science Training Programme"
-date: "2021-06-14 (updated: `r Sys.Date()`)"
+date: "2021-10-11 (updated: `r Sys.Date()`)"
 output:
   xaringan::moon_reader:
     css: [default, metropolis, rladies-fonts, "my-theme.css"]
@@ -115,7 +115,7 @@ The resulting file structure should look like the following:
 
 ```
   OBDS_Training_May_2021/
-  |_ 6_r_stats_genomics/
+  |_ 3_r_genomics_data_science/
     |_ 1_statistics/
       |_ template
         |_ ... (files)
@@ -725,7 +725,7 @@ ggplot(test_data, aes(variable, value)) +
 .pull-right[
 .small-code[
 ```{r, include=TRUE}
-t.test(value ~ variable, test_data, paired = TRUE)
+t.test(x, y, paired = TRUE)
 ```
 ]
 
@@ -948,7 +948,7 @@ t.test(value ~ group, test_data)
 
 # Choosing a test
 
-```{r, include=TRUE, echo=FALSE, out.height='400px', out.width='600px' fig.align='center'}
+```{r, include=TRUE, echo=FALSE, out.height='400px', out.width='600px', fig.align='center'}
 # Source: https://python.plainenglish.io/statistical-tests-with-python-880251e9b572
 knitr::include_graphics("img/choose-statistical-test.png")
 ```
@@ -1073,22 +1073,6 @@ qqnorm(x)
 
 ---
 
-# Exercise
-
-## Statistical tests
-
-The `iris` data set gives the measurements in centimeters of the variables sepal length and width and petal length and width, respectively, for 50 flowers from each of 3 species of iris.
-
-- Use the `summary()` function to view some information about each column.
-
-- Visualise the distribution of `Sepal.Length`, stratified by species.
-
-- Is `Sepal.Length` length normally distributed? Overall? Within each species?
-
-- Is there a significant variation of `Sepal.Length` between the various species?
-
----
-
 # Multiple-testing correction
 
 ## Hypothesis
@@ -1205,7 +1189,7 @@ ggplot(result_table) +
 ```
 
 ```{r, include=TRUE, echo=FALSE, results='asis'}
-cat(sprintf("There are %i raw p-values smaller than 0.05", sum(result_table$pvalue < 0.05), n_tests))
+cat(sprintf("There are %i out of %i raw p-values smaller than 0.05", sum(result_table$pvalue < 0.05), n_tests))
 ```
 ]
 
@@ -1239,7 +1223,7 @@ cat(sprintf("There are %i bonferonni corrected p-values smaller than 0.05", sum(
 
 ## Testing & Multiple testing correction
 
-Given a matrix of log-normalised counts (`logcounts_matrix.csv`) and experimental metadata (`cell_metadata.csv`),
+Given an Excel file that contains a matrix of log-normalised counts (`logcounts`) and experimental metadata (`cell_info`),
 test each gene (i.e., row) in the matrix for differential expression between the two experimental groups.
 
 ### Approach
@@ -1255,7 +1239,7 @@ test each gene (i.e., row) in the matrix for differential expression between the
 - Correct p-values for multiple testing.
   How many genes remain before and after multiple testing?
 
-- Use `gene_metadata.csv` to get the gene name for the gene identifier with the smallest p-value.
+- Use `gene_info` to get the gene name for the gene identifier with the smallest p-value.
 
 ---
 
@@ -1264,7 +1248,7 @@ test each gene (i.e., row) in the matrix for differential expression between the
 ## Over-representation analysis (ORA)
 
 Given the list of genes (Ensembl gene identifiers) that your identified as differentially expressed in the previous exercise,
-and a list of gene sets (`human_go_bp.csv`),
+and a list of gene sets (`go_db`),
 test each gene set for over-representation of differentially expressed genes.
 
 ### Approach
@@ -1280,7 +1264,7 @@ test each gene set for over-representation of differentially expressed genes.
 - Correct p-values for multiple testing.
   How many gene sets remain before and after multiple testing?
 
-- Use `go_info.csv` to annotate each GO gene set with its corrected p-value,
+- Use `go_info` to annotate each GO gene set with its corrected p-value,
   and arrange the table by increasing p-value.
 
 ---
