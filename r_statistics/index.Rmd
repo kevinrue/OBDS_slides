@@ -109,7 +109,7 @@ bib <- ReadBib("bibliography.bib")
 
 - In the daily sub-directory, make a copy of the `template` sub-directory with your HPC username.
 
-> e.g. `cp -R template albrecht`
+> e.g. `cp -R template kevinrue`
 
 The resulting file structure should look like the following:
 
