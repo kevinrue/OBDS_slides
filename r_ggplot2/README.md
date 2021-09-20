@@ -41,7 +41,7 @@ More concrete and measurable outputs.
 ## Pre-requisites
 
 - A clone of the shared GitHub repository for this course.
-- A working installation of [R](https://www.r-project.org/) (4.0.3).
+- A working installation of [R](https://www.r-project.org/) (4.1).
 - A working installation of [git](https://git-scm.com/).
 - A working installation of [RStudio](https://rstudio.com/).
 
