@@ -3,7 +3,11 @@
 ## Instructor(s)
 
 - Kevin Rue-Albrecht (@kevinrue)
-- Lucy Garner (@lc822)
+- Nicki Gray (@nickigray)
+
+Past instructors:
+
+- Lucy Garner (@lucygarner)
 
 ## Lesson goals and objectives
 
@@ -37,10 +41,10 @@ More concrete and measurable outputs.
 
 ## Pre-requisites
 
-- An account on [GitHub](https://github.com/)
-- Membership to the [OBDS-Training](https://github.com/OBDS-Training) GitHub organisation
-- A working installation of [Git](https://git-scm.com/)
-- An [SSH key pair](https://www.ssh.com/ssh/keygen/)
+- Access to the CCB cluster over SSH.
+- A [GitHub](https://github.com/) account.
+- Membership to the [OBDS-Training](https://github.com/OBDS-Training) GitHub organisation.
+- A working installation of [Git](https://git-scm.com/).
 
 ## Data sets
 
