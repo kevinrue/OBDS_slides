@@ -1,62 +1,66 @@
-# Contents
+# Dimensionality reduction and clustering in R
 
-## General
+## Instructor(s)
 
-- [x] Learning objectives
-- [x] Turning data into information
-- [x] Sources of data variation can be biological or technical
-- [x] Confounded experimental design
-- [x] Feature selection
+- Kevin Rue-Albrecht (@kevinrue)
+- Charlie George (@Charlie-George)
 
-## Dimensionality reduction
+Past instructors:
 
-- [x] Motivation
+- Lucy Garner (@lucygarner)
 
-## PCA
+## Lesson goals and objectives
 
-- [x] Illustrate principal components
-- [x] Eigenvalue decomposition
-- [x] PCA data preprocessing and selection of principal components
-- [x] Illustration of clustering applied to gene expression data
-- [x] Illustration of PCA applied to gene expression data
-- [x] Visualising the loading of top genes for a given principal component
-- [x] Visualising the expression of top genes for a given principal component (box plot)
-- [x] Visualising the expression of multiple top genes for a given principal component (heat map)
-- [x] Visualising information by coloring samples in a PCA scatter plot
+<!--
+Refer to:
+https://github.com/Bioconductor/BioC2019/blob/master/docs/workshop-syllabus.md#a-note-about-learning-goals-and-objectives-bloom
+https://cft.vanderbilt.edu/guides-sub-pages/blooms-taxonomy/
+-->
 
-## t-SNE
+### Learning goals
 
-- [x] Motivation
-- [x] Overview
-- [x] Steps
-- [x] Illustration of t-SNE and PCA side by side
-- [x] Exercise: dimensionality reduction
+<!--
+High-level "big picture" objectives of the learning process.
+-->
 
-## Clustering
+- Describe dimensionality reduction and clustering methods.
+- Explain the difference between dimensionality reduction and clustering.
+- Learn how to use those methods as part of analytical workflow in R.
 
-- [x] Motivation
+### Learning objectives
 
-## K-mean clustering
+<!--
+More concrete and measurable outputs.
+-->
 
-- [x] Pros and cons
-- [x] Steps
-- [x] Illustrating the challenge of choosing the number of clusters
-- [x] Method to choose the number of clusters
+- Apply dimensionality reduction methods to data; visualise and compare results.
+- Identify and visualise features contributing most to principal components.
+- Apply clustering methods to data; visualise and compare results.
+- Integrate clustering and dimensionality reduction results for visualisation.
 
-## Hierarchical clustering
+## Pre-requisites
 
-- [x] Illustration
-- [x] Illustration of hierarchical clustering applied to expression data
-- [x] Evaluating the stability of clusters
-- [x] Diversity of clustering methods
-- [x] Exercise: clustering
+- A clone of the shared GitHub repository for this course.
+- A working installation of [R](https://www.r-project.org/) (4.1).
+- A working installation of [git](https://git-scm.com/).
+- A working installation of [RStudio](https://rstudio.com/).
 
-## Conclusion
+## Data sets
 
-- [x] Further reading
-- [x] References
+- Publicly available data, preprocessed for the course.
+  Source: <https://doi.org/10.1038/s41467-018-07329-0>
 
-## Setup
+## Time outline
 
-- [x] Create a folder `week5/pca/` in the cohort shared folder
-- [x] Upload gene expression data files in that folder
+| Activity                                      |  Time |
+|-----------------------------------------------|-------|
+| Setup                                         |  9:30 |
+| Lecture: Dimensionality reduction (DR)        | 10:00 |
+| **Morning Break**                             | 10:30 |
+| Exercise: Dimensionality reduction            | 10:40 |
+| **Lunch Break**                               | 12:30 |
+| Lecture: Clustering                           | 13:30 |
+| Exercise: Clustering                          | 14:00 |
+| **Afternoon Break**                           | 14:50 |
+| Exercise: Integrated DR and clustering        | 15:00 |
+| **Day End**                                   | 16:00 |
