@@ -56,7 +56,7 @@ More concrete and measurable outputs.
 |-----------------------------------------------|-------|
 | Setup                                         |  9:30 |
 | Lecture: Dimensionality reduction (DR)        | 10:00 |
-| **Morning Break**                             | 10:30 |
+| **Morning Break**                             | 10:50 |
 | Exercise: Dimensionality reduction            | 10:40 |
 | **Lunch Break**                               | 12:30 |
 | Lecture: Clustering                           | 13:30 |
