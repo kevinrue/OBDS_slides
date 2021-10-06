@@ -102,7 +102,7 @@ The resulting file structure should look like the following:
 
 ```
   OBDS_Training_Sep_2021/
-  |_ 5_r/
+  |_ 2_r/
     |_ 4_ggplot2/
       |_ template
         |_ ... (files)
