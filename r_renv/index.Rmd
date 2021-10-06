@@ -133,7 +133,7 @@ knitr::include_graphics("img/projects_new.png")
 
 - In **Directory name:**, type your username (e.g. `kevinrue`).
 
-- In **Create project as subdirectory of :**, click on **Browse** and select the sub-directory `5_r/3_renv` in the shared GitHub repository for this course.
+- In **Create project as subdirectory of :**, click on **Browse** and select the sub-directory `2_r/4_renv` in the shared GitHub repository for this course.
 
 - Untick the following checkboxes, if there are present:
 
