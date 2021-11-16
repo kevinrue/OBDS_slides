@@ -31,9 +31,17 @@ knit: pagedown::chrome_print
 
 # Set up
 
-.center[
-_To be defined._
-]
+- Pull the main branch of the shared repository.
+
+> We have added some files to get you started.
+
+- Make a copy of the file `solution.Rmd` for this lesson. Use your username to make it unique.
+
+> e.g. `cp solution.Rmd solution_kevinrue.Rmd`
+
+- Open your copy of the notebook in RStudio.
+
+- Follow along, running code from the notebook as mentioned during the lesson.
 
 ---
 
