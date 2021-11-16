@@ -1,339 +1,19 @@
----
-title: 'Version control with <i class="fab fa-git"></i> and <i class="fab fa-github"></i> GitHub'
-subtitle: '&emsp;'
-author: "Kevin Rue-Albrecht"
-institute: "Oxford Biomedical Data Science Training Programme"
-date: "2021-10-04 (updated: `r Sys.Date()`)"
-output:
-  xaringan::moon_reader:
-    css: [default, metropolis, rladies-fonts, "my-theme.css"]
-    lib_dir: libs
-    nature:
-      highlightStyle: github
-      highlightLines: true
-      countIncrementalSlides: false
-# uncomment this line to produce HTML and PDF in RStudio:
-knit: pagedown::chrome_print
----
+# Configure <i class="fab fa-git"></i>
 
-layout: true
+On each computer where we use <i class="fab fa-git"></i>, we need to configure at least two pieces of information:
 
-<div class="my-header"><img src="img/ox_brand1_pos.gif" alt="Oxford University Logo" align="right" height="90%"></div>
+- our name
+- our email address
 
-<div class="my-footer"><span>
-Kevin Rue-Albrecht
-&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
-Version control with <i class="fab fa-git"></i> and <i class="fab fa-github"></i> GitHub
-</span></div> 
+These two settings should apply _globally_ (i.e. to all our projects on this computer).
 
-```{r setup, include = FALSE}
-stopifnot(requireNamespace("htmltools"))
-htmltools::tagList(rmarkdown::html_dependency_font_awesome())
-knitr::opts_chunk$set(
-  message = FALSE, warning = FALSE, error = FALSE, include = TRUE, echo = FALSE,
-  fig.align='center', out.height='500px'
-)
-options(width = 90)
-stopifnot(require(base))
-```
-
-```{r, load_refs, include=FALSE, cache=FALSE}
-options(htmltools.dir.version = FALSE)
-library(RefManageR)
-BibOptions(
-  check.entries = FALSE,
-  bib.style = "authoryear",
-  cite.style = "authoryear",
-  style = "markdown",
-  hyperlink = "to.doc",
-  dashed = TRUE)
-bib <- ReadBib("bibliography.bib")
-```
-
----
-
-# Learning Objectives & Goals
-
-## Learning Objectives
-
-- Understand what version control is and when you should use it.
-
-- Identify where <i class="fab fa-git"></i> stores information.
-
-- Practice how to record changes in <i class="fab fa-git"></i>.
-
-## Goals
-
-- Get (i.e., _clone_) your own copy of the shared repository for this course.
-
-- Edit files and record (i.e., _commit_) your changes.
-
-- Publish (i.e., _push_) your contributions in the shared repository.
-
-- Retrieve (i.e., _pull_) contributions from other participants in the shared repository.
-
-- Examine the history (i.e., _log_) of contributions to the shared repository.
-
----
-
-# Pre-requisites
-
-- Access to the CCB cluster over SSH.
-
-- A [<i class="fab fa-github"></i> GitHub](https://github.com/) account.
-
-- Membership to the [OBDS-Training](https://github.com/OBDS-Training) GitHub organisation.
-
-Those last two points are required to grant you access to private repositories that are only visible to members of the organisation.
-
-- A working installation of [Git](https://git-scm.com/) (on your personal computer).
-
----
-
-# Credits
-
-```{r, out.height='300px'}
-knitr::include_graphics("img/TheCarpentries.svg")
-# Source: https://carpentries.org/
-```
-
-.center[
-Version Control with Git
-
-<https://swcarpentry.github.io/git-novice/>
-]
-
----
-
-# What is version control and why should I use it?
-
-.pull-left[
-```{r}
-knitr::include_graphics("img/phd101212s.gif")
-# Source: http://www.phdcomics.com/comics/archive/phd101212s.gif
-```
-]
-
-.pull-right[
-- Try various ideas.
-
-- Track additions and deletions to a base document.
-
-- Undo and re-apply changes.
-
-- Integrate contributions from multiple authors.
-
-- Backup important work.
-
-- Manage and resolve conflicting changes.
-
-- Go back to any version at any time.
-
-**What do _you_ expect from a tool to track changes?**
-]
-
----
-
-# Track changes
-
-## Microsoft Word
-
-```{r, out.height='350px', out.width='500px'}
-# Source: https://medium.com/jumpto365/sharepoint-version-history-isnt-track-changes-fae1b71754ea
-knitr::include_graphics("img/microsoft-word-track-changes.png")
-```
-
-Other examples:
-Google Docs [version history](https://support.google.com/docs/answer/190843?hl=en),
-LibreOffice [Recording and Displaying Changes](https://help.libreoffice.org/Common/Recording_and_Displaying_Changes).
-
-.center[
-**In your opinion, what are pros/cons of track changes in this way?**
-]
-
----
-
-# Track changes using version control
-
-## Versions and changes
-
-```{r, fig.align='center', out.height='200px'}
-# Source: https://swcarpentry.github.io/git-novice/01-basics/index.html
-knitr::include_graphics("img/carpentries-play-changes.svg")
-```
-
-#### Process
-
-- Start with a base version of the document.
-- Then, record changes that you make along the way (i.e. checkpoints).
-
-#### Result
-
-- You can rewind to any version of the document (up to the base version).
-- You can play back each change that you made (up to the most recent version).
-
----
-
-# Changes can be made independently
-
-## Different versions
-
-.pull-left[
-```{r, fig.align='center', out.height='300px'}
-# Source: https://swcarpentry.github.io/git-novice/01-basics/index.html
-knitr::include_graphics("img/carpentries-versions.svg")
-```
-]
-
-.pull-right[
-Changes are separate from the document itself.
-
-- You can play back different sets of changes on the base document.
-
-- Those changes result in different versions of that document.
-
-For example, different users make independent changes on the same document.
-]
-
----
-
-# Independent changes can be incorporated
-
-## Merge sets of changes
-
-.pull-left[
-```{r, fig.align='center', out.height='300px'}
-# Source: https://swcarpentry.github.io/git-novice/01-basics/index.html
-knitr::include_graphics("img/carpentries-merge.svg")
-```
-]
-
-.pull-right[
-Unless changes affect the same lines of the document (i.e., conflicts):
-
-- changes can be _merged_ into the same base document.
-]
-
----
-
-# Tracking simultaneous changes to multiple files 
-
-```{r, fig.align='center', out.height='200px', out.width='800px'}
-# In-house illustration made using Adobe Illustrator
-knitr::include_graphics("img/commit-multiple-files.png")
-```
-
-Process:
-
-- Add each file to the next set of changes (i.e., _staging area_).
-- Then, add this set of changes to the repository (i.e., _commit_).
-
-Result:
-
-- That set of changes is recorded as a single unit in the repository.
-- Undoing or playing back these changes applies all the changes simultaneously.
-- It is _not_ possible to undo or play back these changes in one file independently from the other files.
-
----
-
-# Summary: version tracking software
-
-- Keep track of changes (i.e. differences or _diffs_).
-
-  + Effectively creating different _versions_ of our files.
-
-- Allows users to decide which changes are made to the next version.
-
-  + Each record of changes is called a _commit_.
-
-- The complete history of _commits_ for a given project makes up a _repository_.
-
-- Copies of a _repository_ can be kept in sync across different computers (i.e. _remotes_).
-
-  + Each copy of the repository is called a _clone_.
-
----
-
-# The Long History of Version Control Systems
-
-Tools like [RCS](https://git.savannah.gnu.org/cgit/rcs.git), [CVS](https://savannah.nongnu.org/projects/cvs), or [Subversion](https://subversion.apache.org/) have been around since the early 1980s and are used by many large companies.
-
-However, many of these are now considered legacy systems (i.e., _outdated_) due to various limitations in their capabilities.
-
-More modern systems, such as [Git](https://git-scm.com/) and [Mercurial](https://www.mercurial-scm.org/), are _distributed_, meaning that they do not need a centralized server to host the repository.
-
----
-
-# Using <i class="fab fa-git"></i> as an HPC module
-
-Use SSH to open a terminal on the HPC cluster.
-
-The system executable of `git` on your default `PATH` is a rather old version.
-What is the path to the system `git`?
-What version of `git` is it?
-
-```{bash, eval=FALSE, echo=TRUE}
-$ which git
-$ git --version
-```
-
-Instead, we will use the `module` command to put a more recent version of `git` on our `PATH`.
-
-```{bash, eval=FALSE, echo=TRUE}
-$ module avail git
-$ module load git/2.31.1
-```
-
-Examine your `PATH` variable, the path to the new `git` executable, and the version of this new `git` executable.
-
-```{bash, eval=FALSE, echo=TRUE}
-$ which git
-$ git --version
-```
-
----
-
-# Getting started with <i class="fab fa-git"></i>
-
-The `git` command has many sub-commands, options, and flags.
-You can run `git` alone to list the sub-commands and a short description of each.
-How many sub-commands do you see?
-
-```{bash, eval=FALSE, echo=TRUE}
-$ git
-```
-
-The `--version` flag asks `git` to print the version of the `git` executable that is used.
-The <i class="fab fa-git"></i> program is generally backward compatible, but you may observe subtle differences in the way different version of <i class="fab fa-git"></i> display information.
-
-```{bash, eval=FALSE, echo=TRUE}
-$ git --version
-```
-
-You can access more detailed help for any sub-command using the `--help` flag.
-
-```{bash, eval=FALSE, echo=TRUE}
-$ git clone --help
-```
-
----
-
-# Setting up <i class="fab fa-git"></i>
-
-On each computer where we use <i class="fab fa-git"></i>, we need to configure a few things:
-
-- our name and email address
-- our preferred text editor
-- that these settings should apply _globally_ (i.e. to all our projects on this computer)
-
-The `git config` sub-command can be used to get and set those settings.
+In the Terminal, the `git config` sub-command can be used to get and set those settings.
 
 #### Getting
 
 ```{bash, eval=FALSE, echo=TRUE}
 $ git config --global user.name
 $ git config --global user.email
-$ git config --global core.editor
 ```
 
 #### Setting
@@ -341,63 +21,20 @@ $ git config --global core.editor
 ```{bash, eval=FALSE, echo=TRUE}
 $ git config --global user.name "Kevin Rue-Albrecht"
 $ git config --global user.email "kevinrue@users.noreply.github.com"
-$ git config --global core.editor "nano -w"
 ```
+
+Other pieces of information can be configured (e.g., preferred text editor), but those are optional.
 
 ---
 
-# Setting up an SSH key for <i class="fab fa-github"></i> GitHub
+# Exercise
 
-## Generate an SSH key pair
-
-At this point, you have likely generated an SSH key pair on your personal computer, but not on the HPC cluster.
-
-We need to generate a key pair *on the cluster*, so that you can programmatically identify yourself to <i class="fab fa-github"></i> GitHub and access private repositories.
-
-```{bash, eval=FALSE, echo=TRUE}
-$ ssh-keygen -t rsa -b 4096
-# leave default location to store the key (leave field empty)
-# do set a passphrase (do not leave field empty)
-$ cat ~/.ssh/id_rsa.pub
-ssh-rsa [...] username@hostname
-# copy the whole line (including 'ssh-rsa' and 'username@hostname')
-```
-
----
-
-# Setting up an SSH key for <i class="fab fa-github"></i> GitHub
-
-## Add the public key to your <i class="fab fa-github"></i> GitHub account
-
-```{r, fig.align='center', out.height='350px'}
-# Screenshot
-knitr::include_graphics("img/github-add-ssh-key.png")
-```
-
----
-
-# Setting up an SSH key for <i class="fab fa-github"></i> GitHub
-
-## Add the public key to your <i class="fab fa-github"></i> GitHub account
-
-```{r, fig.align='center', out.height='350px'}
-# Screenshot
-knitr::include_graphics("img/github-add-ssh-key-form.png")
-```
-
----
-
-# Clone the shared repository
-
-In this step, you will each create (i.e., _clone_) your own copy of the shared repository for this course.
+## Clone the shared repository
 
 The `git clone` sub-command takes the address of a remote repository and creates a copy of that repository in a new local directory.
 
 ```{bash, eval=FALSE, echo=TRUE}
-$ cd /project/obds/kevinrue # adapt for your own folder
-$ mkdir git
-$ cd git
-$ git clone git@github.com:OBDS-Training/OBDS_Training_Sep_2021.git
+$ git clone git@github.com:OBDS-Training/OBDS_Training_Jan_2022.git
 ```
 
 ```{r, fig.align='center', out.height='300px'}
@@ -409,7 +46,7 @@ knitr::include_graphics("img/atlassian-clone.svg")
 
 - A clone contains both the files _and_ the history of changes.
 
-- By default, the local directory will be named identically to the repository, it is possible to name it differently using `git clone git@github.com:OBDS-Training/OBDS_Training_Sep_2021.git local_directory_name`
+- By default, the local directory will be named identically to the repository, it is possible to name it differently using `git clone git@github.com:OBDS-Training/OBDS_Training_Jan_2022.git local_directory_name`
 
 ---
 
@@ -418,12 +55,12 @@ knitr::include_graphics("img/atlassian-clone.svg")
 Change directory to your new local clone of the repository, and list its contents.
 
 ```{bash, eval=FALSE, echo=TRUE}
-$ cd OBDS_Training_Sep_2021
+$ cd OBDS_Training_Jan_2022
 $ ls -a
 ```
 
 ```
-.  ..  .git  .gitignore  1_linux  2_r  README.md
+.  ..  .git  .gitignore  README.md  setup
 ```
 
 Git uses the `.git` sub-directory to store all the information about the project history.
@@ -441,6 +78,46 @@ $ ls -a .git/
 
 .center[
 **Changes are stored separately from the files themselves.**
+]
+
+---
+
+# Ignore files
+
+One or more special files named `.gitignore` can be placed in your project.
+
+Each line in those file specifies a file name or pattern that <i class="fab fa-git"></i> will ignore (i.e., not track) in the future.
+
+- Files that are already tracked will continue to be tracked even after they are added to `.gitignore`, unless they are explicitly removed from the repository using `git rm` (use the `--cached` option to only remove the file from the index, but keep the file itself).
+
+.pull-left[
+## .gitignore
+```
+ .DS_Store
+ data/
+ *fastq.gz
+ *sam
+ *bam
+```
+
+**Can you tell which files will be tracked when this `.gitignore` exists in the project root directory?**
+]
+
+.pull-right[
+```
+my-project/
+|_ .gitignore
+|_ data_raw/
+| |_ sample1.1.fastq
+| |_ sample1.2.fastq
+| |_ sample2.1.fastq.gz
+| |_ sample2.2.fastq.gz
+|_ data/
+| |_ sample1.bam
+| |_ sample2.bam
+|_ scripts/
+  |_ fastq_to_bam.sh
+```
 ]
 
 ---
@@ -503,7 +180,6 @@ The `git checkout` sub-command can be used to switch between branches.
 ```{bash, eval=FALSE, echo=TRUE}
 $ git branch          # list existing branches
 $ git branch kevin    # create a new branch named kevin
-$ git branch          # list existing branches (again)
 $ git checkout kevin  # switch to the branch named kevin
 $ git status          # check the status of the repository (currently on branch kevin)
 ```
@@ -644,8 +320,8 @@ $ git remote -v
 ```
 
 ```
-origin	git@github.com:OBDS-Training/OBDS_Training_Sep_2021.git (fetch)
-origin	git@github.com:OBDS-Training/OBDS_Training_Sep_2021.git (push)
+origin	git@github.com:OBDS-Training/OBDS_Training_Jan_2022.git (fetch)
+origin	git@github.com:OBDS-Training/OBDS_Training_Jan_2022.git (push)
 ```
 
 When everything is in place, you can tell <i class="fab fa-git"></i> to push a branch (e.g. `my_branch`) to a given remote (e.g. `origin`):
@@ -690,9 +366,9 @@ Total 5 (delta 1), reused 0 (delta 0)
 remote: Resolving deltas: 100% (1/1), completed with 1 local object.
 remote: 
 remote: Create a pull request for 'kevin' on GitHub by visiting:
-remote:      https://github.com/OBDS-Training/OBDS_Training_Sep_2021/pull/new/kevin
+remote:      https://github.com/OBDS-Training/OBDS_Training_Jan_2022/pull/new/kevin
 remote: 
-To github.com:OBDS-Training/OBDS_Training_Sep_2021.git
+To github.com:OBDS-Training/OBDS_Training_Jan_2022.git
  * [new branch]      kevin -> kevin
 Branch 'kevin' set up to track remote branch 'kevin' from 'origin'.
 ```
@@ -732,7 +408,7 @@ $ git merge kevin
 
 ## Recently pushed branches
 
-On the page of the repository (<https://github.com/OBDS-Training/OBDS_Training_Sep_2021>), branches that were recently pushed are highlighted, with a button "Compare & pull request".
+On the page of the repository (<https://github.com/OBDS-Training/OBDS_Training_Jan_2022>), branches that were recently pushed are highlighted, with a button "Compare & pull request".
 
 - Unless a pull request already exists for that branch.
 
@@ -1053,46 +729,6 @@ knitr::include_graphics("img/git-reset.png")
 
 .center[
 **What do you think will happen when Kevin and David pushed their `master` branch?**
-]
-
----
-
-# Ignore files
-
-One or more special files named `.gitignore` can be placed in your project.
-
-Each line in those file specifies a file name or pattern that <i class="fab fa-git"></i> will ignore (i.e., not track) in the future.
-
-- Files that are already tracked will continue to be tracked even after they are added to `.gitignore`, unless they are explicitly removed from the repository using `git rm` (use the `--cached` option to only remove the file from the index, but keep the file itself).
-
-.pull-left[
-## .gitignore
-```
- .DS_Store
- data/
- *fastq.gz
- *sam
- *bam
-```
-
-**Can you tell which files will be tracked when this `.gitignore` exists in the project root directory?**
-]
-
-.pull-right[
-```
-my-project/
-|_ .gitignore
-|_ data_raw/
-| |_ sample1.1.fastq
-| |_ sample1.2.fastq
-| |_ sample2.1.fastq.gz
-| |_ sample2.2.fastq.gz
-|_ data/
-| |_ sample1.bam
-| |_ sample2.bam
-|_ scripts/
-  |_ fastq_to_bam.sh
-```
 ]
 
 ---
