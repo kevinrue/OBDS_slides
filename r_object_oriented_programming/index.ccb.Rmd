@@ -43,6 +43,11 @@ knit: pagedown::chrome_print
 
 - Follow along, running code from the notebook as mentioned during the lesson.
 
+## Note
+
+At the end of the day, you will have a chance to commit and push your own notebook to GitHub.
+_Do not_ work in the template solution notebook, to avoid Git conflicts.
+
 ---
 
 ```{r, child='exercises-after-setup.Rmd'}
