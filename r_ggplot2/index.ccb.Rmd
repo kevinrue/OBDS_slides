@@ -1,0 +1,33 @@
+---
+title: 'Introduction to `r BiocStyle::CRANpkg("ggplot2")`'
+subtitle: '<i class="fab fa-r-project"></i>'
+author: "Kevin Rue-Albrecht"
+institute: "Oxford Biomedical Data Science Training Programme"
+date: "2022-01-27 (updated: `r Sys.Date()`)"
+output:
+  xaringan::moon_reader:
+    css: [default, metropolis, rladies-fonts, "my-theme.css"]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+# uncomment this line to produce HTML and PDF in RStudio:
+knit: pagedown::chrome_print
+---
+
+```{r, child='goals_and_objectives.Rmd'}
+```
+
+---
+
+# Prerequisites
+
+- A clone of the shared GitHub repository for this course.
+
+- An account on the CCB cluster.
+
+---
+
+```{r, child='exercises-after-setup.Rmd'}
+```
