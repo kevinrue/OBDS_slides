@@ -40,15 +40,15 @@ bib <- ReadBib("bibliography.bib")
 
 - Understand the concept of object-oriented programming.
 
-- Describe the S3 object system in your <i class="fab fa-r-project"></i>.
+- Describe the S3 class system in <i class="fab fa-r-project"></i>.
 
-- Identify methods that behave differently for objects of different classes.
+- Explain method dispatch in the S3 class system.
 
 - Develop good practices to name objects and functions in your <i class="fab fa-r-project"></i> workspace.
 
 ## Learning objectives
 
-- Create objects of various classes.
+- Create objects of various S3 classes.
 
 - Inspect their contents.
 
