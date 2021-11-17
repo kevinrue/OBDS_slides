@@ -53,22 +53,22 @@ More concrete and measurable outputs.
 
 ## Time outline
 
-| Activity                                      |  Time |
-|-----------------------------------------------|-------|
-| [Introduction to `renv`](../4_r_renv)         | 09:30 |
-| **Morning Break**                             | 10:50 |
-| Setup                                         | 11:00 |
-| Lecture: Introduction to `ggplot2`            | 11:20 |
-| Exercise: make a `ggplot` scatterplot         | 11:30 |
-| Exercise: predict the difference              | 11:40 |
-| Themes                                        | 11:50 |
-| Plot grids                                    | 12:00 |
-| Facets                                        | 12:10 |
-| Save plot to file                             | 12:20 |
-| **Lunch Break**                               | 12:30 |
-| Exercise: smoothed trend lines                | 13:30 |
-| Exercise: make a bar plot                     | 14:00 |
-| Exercise: arrange a plot grid                 | 14:30 |
-| **Afternoon Break**                           | 14:50 |
-| Exercise: pair programming                    | 15:00 |
-| **Day End**                                   | 16:00 |
+| Activity                                                      |  Time |
+|---------------------------------------------------------------|-------|
+| [Object oriented programming](../object_oriented_programming) | 09:30 |
+| **Morning Break**                                             | 10:50 |
+| Setup                                                         | 11:00 |
+| Lecture: Introduction to `ggplot2`                            | 11:20 |
+| Exercise: make a `ggplot` scatterplot                         | 11:30 |
+| Exercise: predict the difference                              | 11:40 |
+| Themes                                                        | 11:50 |
+| Plot grids                                                    | 12:00 |
+| Facets                                                        | 12:10 |
+| Save plot to file                                             | 12:20 |
+| **Lunch Break**                                               | 12:30 |
+| Exercise: smoothed trend lines                                | 13:30 |
+| Exercise: make a bar plot                                     | 14:00 |
+| Exercise: arrange a plot grid                                 | 14:30 |
+| **Afternoon Break**                                           | 14:50 |
+| Exercise: pair programming                                    | 15:00 |
+| **Day End**                                                   | 16:00 |
