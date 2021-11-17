@@ -23,9 +23,9 @@ knit: pagedown::chrome_print
 
 # Prerequisites
 
-- A clone of the shared GitHub repository for this course.
-
 - An account on the CCB cluster.
+
+- A clone of the shared GitHub repository for this course.
 
 ---
 
