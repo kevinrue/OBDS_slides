@@ -37,16 +37,14 @@ knitr::include_graphics("img/functional-programming.png")
 - Classes often have hierarchical (and nested) relationships.
 
 .pull-left[
-```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='200px'}
-## Source: https://medium.com/cultured-perl/test-class-hierarchy-is-an-antipattern-391c6ef1e491
-knitr::include_graphics("img/classes-animals.png")
+```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='300px', out.width='700px'}
+knitr::include_graphics("img/class-animal-inheritance.svg")
 ```
 ]
 
 .pull-right[
-```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='250px'}
-## Source: https://bournetocode.com/projects/AQA_A_Theory/pages/OOP.html
-knitr::include_graphics("img/class-bike.png")
+```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='300px', out.width='250px'}
+knitr::include_graphics("img/class-animal-attributes-methods.svg")
 ```
 ]
 
@@ -120,16 +118,14 @@ Note: Individually described in next few slides
 # Inheritance
 
 .pull-left[
-```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='200px'}
-## Source: https://medium.com/cultured-perl/test-class-hierarchy-is-an-antipattern-391c6ef1e491
-knitr::include_graphics("img/classes-animals.png")
+```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='300px', out.width='700px'}
+knitr::include_graphics("img/class-animal-inheritance.svg")
 ```
 ]
 
 .pull-right[
-```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='250px'}
-## Source: https://bournetocode.com/projects/AQA_A_Theory/pages/OOP.html
-knitr::include_graphics("img/class-bike.png")
+```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='300px', out.width='250px'}
+knitr::include_graphics("img/class-bird-attributes-methods.svg")
 ```
 ]
 
@@ -155,9 +151,8 @@ knitr::include_graphics("img/oop-encapsulation.png")
 ]
 
 .pull-right[
-```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='300px', out.width='300px'}
-## Source: https://www.perltutorial.org/perl-oop/
-knitr::include_graphics("img/getters-setters.png")
+```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='300px', out.width='250px'}
+knitr::include_graphics("img/class-animal-attributes-methods.svg")
 ```
 ]
 
@@ -172,8 +167,7 @@ knitr::include_graphics("img/getters-setters.png")
 - Internal implementation can be changed without affecting other objects.
 
 ```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='300px', out.width='500px'}
-## Source: https://www.journaldev.com/33191/what-is-abstraction-in-oops
-knitr::include_graphics("img/process-abstraction.png")
+knitr::include_graphics("img/class-abstraction.svg")
 ```
 
 ---
@@ -182,14 +176,31 @@ knitr::include_graphics("img/process-abstraction.png")
 
 -  Attributes and public methods can be implemented differently for different classes and sub-classes.
 
-```{r, include=TRUE, echo=FALSE, fig.align='center'}
-## Source: https://expertiza.csc.ncsu.edu/index.php/CSC/ECE_517_Fall_2011/ch1_1g_vn
-knitr::include_graphics("img/oop_polymorphism-shape.png")
+```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='400px'}
+knitr::include_graphics("img/class-polymorphism.svg")
 ```
 
 .center[
 **What do you think `getArea()` does for each class?**
 ]
+
+---
+
+# Now, the sad news ...
+
+- We've just described the _theory_ of object-oriented programming (OOP).
+
+- There are _many_ implementations of OOP. Sometimes multiple implementations for the same programming language!
+
+- <i class="fab fa-r-project"></i> has no less than _three_ implementations of OOP:
+
+  + S3, the original class system in base <i class="fab fa-r-project"></i>.
+  
+  + S4, implemented in the `r BiocStyle::CRANpkg("methods")` package.
+  
+  + R6, implemented in the `r BiocStyle::CRANpkg("R6")` package.
+
+In this lesson, we focus on S3, to understand classes of objects that we frequently come across in base <i class="fab fa-r-project"></i>.
 
 ---
 
@@ -268,7 +279,7 @@ attributes(dataframe_object)
 .pull-left[
 ```{r, include=TRUE}
 matrix_object <- matrix(
-  data = rbinom(8, 10, 0.5),
+  data = c(1, 2, 3, 4, 5, 6, 7, 8),
   nrow = 2
   )
 matrix_object
@@ -295,10 +306,11 @@ Methods are ordinary functions that use a special naming convention: `generic.cl
 options(width = 60)
 ```
 
-
 ```{r, include=TRUE}
 methods("print") %>% head(14)
 ```
+
+**Note:** this is why it is bad practice to use the character `.` in the name of objects and custom functions.
 ]
 
 .pull-right[
@@ -314,6 +326,22 @@ print.default(character_object)
 ]
 
 The whole point of method dispatch is that <i class="fab fa-r-project"></i> uses the class of the object to determine the method to use.
+
+---
+
+# Summary
+
+## Key points
+
+- <i class="fab fa-r-project"></i> implements no less than three systems for object-oriented programming (OOP).
+
+- The S3 class system is the original implementation of classes in base <i class="fab fa-r-project"></i>.
+
+- _S3 classes_ are nothing more than ordinary <i class="fab fa-r-project"></i> objects (e.g., `vector`, `list`) with at least an attribute named `class` that indicate the name of the class(es) as a character vector.
+
+- _S3 methods_ are nothing more than ordinary <i class="fab fa-r-project"></i> functions named following the convention `generic.class` (e.g., `print.factor`)
+
+- Calling `print(factor_object)` will invoke the `print.factor` method if `factor_object` is an object of class `factor`.
 
 ---
 
