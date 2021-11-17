@@ -322,7 +322,7 @@ print.default(character_object)
 ]
 
 .center[
-**You can call methods directly, but you shouldn't!**
+**You can call methods directly, but you shouldn't!**Instead, `print(object)`.
 ]
 
 The whole point of method dispatch is that <i class="fab fa-r-project"></i> uses the class of the object to determine the method to use.
