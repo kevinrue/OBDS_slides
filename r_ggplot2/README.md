@@ -40,10 +40,9 @@ More concrete and measurable outputs.
 
 ## Pre-requisites
 
+- An account on the CCB cluster or [RStudio Cloud](https://rstudio.cloud/).
+- Alternatively, a working installation of [R](https://www.r-project.org/) (4.1.2) and [RStudio Desktop](https://www.rstudio.com/products/rstudio/download/).
 - A clone of the shared GitHub repository for this course.
-- A working installation of [R](https://www.r-project.org/) (4.1).
-- A working installation of [git](https://git-scm.com/).
-- A working installation of [RStudio](https://rstudio.com/).
 
 ## Data sets
 
