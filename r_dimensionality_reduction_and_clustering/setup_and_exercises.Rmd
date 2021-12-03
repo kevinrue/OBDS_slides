@@ -1,118 +1,16 @@
----
-title: 'Dimensionality reduction and clustering'
-subtitle: 'in <i class="fab fa-r-project"></i>'
-author: "Kevin Rue-Albrecht"
-institute: "Oxford Biomedical Data Science Training Programme"
-date: "2021-10-12 (updated: `r Sys.Date()`)"
-output:
-  xaringan::moon_reader:
-    css: [default, metropolis, rladies-fonts, "my-theme.css"]
-    lib_dir: libs
-    nature:
-      highlightStyle: github
-      highlightLines: true
-      countIncrementalSlides: false
-# uncomment this line to produce HTML and PDF in RStudio:
-knit: pagedown::chrome_print
----
-
-layout: true
-
-<div class="my-header"><img src="img/ox_brand1_pos.gif" alt="Oxford University Logo" align="right" height="90%"></div>
-
-<div class="my-footer"><span>
-Kevin Rue-Albrecht
-&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
-Dimensionality reduction and clustering
-</span></div>
-
-```{r setup, include = FALSE}
-stopifnot(requireNamespace("htmltools"))
-htmltools::tagList(rmarkdown::html_dependency_font_awesome())
-knitr::opts_chunk$set(
-  message = FALSE, warning = FALSE, error = FALSE,
-  include = FALSE
-)
-options(width = 90)
-library(tidyverse)
-library(scRNAseq)
-library(ComplexHeatmap)
-library(kableExtra)
-library(scater)
-library(airway)
-library(reshape2)
-library(RColorBrewer)
-library(Rtsne)
-library(pvclust)
-library(pheatmap)
-library(cowplot)
-library(e1071)
-```
-
----
-
-# Learning objectives
-
-## Learning goals
-
-- Describe dimensionality reduction and clustering methods.
-
-- Explain the difference between dimensionality reduction and clustering.
-
-- Learn how to use those methods as part of analytical workflow in R.
-
-## Learning objectives
-
-- Apply dimensionality reduction methods to data; visualise and compare results.
-
-- Identify and visualise features contributing most to principal components.
-
-- Apply clustering methods to data; visualise and compare results.
-
-- Integrate clustering and dimensionality reduction results for visualisation.
-
----
-
-# Prerequisites
-
-<br/>
-
-.x-large-list[
-- A clone of the shared GitHub repository for this course.
-
-- A working installation of [R](https://www.r-project.org/) (4.0.3).
-
-- A working installation of [git](https://git-scm.com/).
-
-- A working installation of [RStudio](https://rstudio.com/).
-]
-
----
-
 # Set up
 
-- Pull the `master` branch of the shared repository.
+- Checkout and pull the main branch of the shared repository.
 
 > We have added some files to get you started.
+- Create a new branch in the Git repository. Use your username and the date to make it unique.
 
-- In the daily sub-directory, make a copy of the `template` sub-directory with your HPC username.
+- Make a copy of the file `template.Rmd` for this lesson. Use your username to make it unique.
 
-> e.g. `cp -R template kevinrue`
+> e.g. `cp template.Rmd template_kevinrue.Rmd`
+- Open your copy of the notebook in RStudio.
 
-The resulting file structure should look like the following:
-
-```
-  OBDS_Training_May_2021/
-  |_ 3_r_stats_genomics/
-    |_ 2_dim_red_and_clustering/
-      |_ template
-        |_ ... (files)
-      |_ kevinrue (copied from 'template')
-        |_ ... (files)
-        |_ dim_red_and_clustering.Rproj
-```
-
-- Launch the RStudio project `dim_red_and_clustering.Rproj` in your sub-directory.
+- Follow along, running and writing code from the notebook as mentioned during the lesson.
 
 ---
 
@@ -158,40 +56,31 @@ Heatmap(
 
 # Sources of variation in data
 
-<br/>
 
-.x-large-text[
 Difference in data (e.g., expression) can come from multiple sources:
-]
 
-.x-large-list[
 - Biological
+
 - Technical
-]
 
-.x-large-text[
-Either of those types could be either:
-]
+Either of those sources could be either:
 
-.x-large-list[
 - Of interest to study
-- Considered confounders
-]
 
-.x-large-text[
-Depending on your research question.
-]
+- Considered a confounding covariate
+
+... depending on your research question.
 
 ---
 
 # Confounding
 
-.x-large-text[
 Experimental design is crucial to ensure that sources of interesting variation are not confounded with independent sources of uninteresting variation (e.g. technical).
-]
 
 .pull-left[
 ## Confounded
+
+<br/>
 
 .small-table[
 ```{r, include=TRUE, echo=FALSE}
@@ -212,6 +101,8 @@ data.frame(
 
 .pull-left[
 ## Balanced
+
+<br/>
 
 .small-table[
 ```{r, include=TRUE, echo=FALSE}
@@ -234,49 +125,28 @@ data.frame(
 
 # Feature selection
 
-<br/>
-
-.x-large-text[
 Many genes are not interesting because they don't vary much, or they
 don’t have enough counts.
-]
 
-<br/>
-
-.x-large-text[
 Filtering for feature selection is needed to:
-]
 
-.x-large-list[
 - Select genes that display useful variation.
+
 - Reduce memory usage and computational cost/time.
-]
 
 ---
 
 # Dimensionality reduction
 
-<br/>
-
-.x-large-text[
 We use dimensionality reduction methods to:
-]
 
-.x-large-list[
 - Find structure in the data.
 
 - Aid in visualization.
-]
 
-<br/>
-
-.x-large-text[
 Unsupervised learning helps finding groups of homogeneous items
-]
 
-.x-large-list[
 - Many approaches to do this (e.g. PCA, t-SNE, UMAP)
-]
 
 ---
 
@@ -362,8 +232,6 @@ In the context of PCA:
 
 - An eigenvector represents a direction or axis.
 - The corresponding eigenvalue represents variance along that eigenvector.
-
-**Source:** https://notes.andrewgurung.com/data-science/linear-algebra/eigenvalues-and-eigenvectors
 
 ---
 
@@ -812,15 +680,19 @@ assay(airway)[keep_gene, keep_samples, drop=FALSE] %>%
 
 - Display the first 5 rows of the data set.
 
-- Split measurements from class labels.
+- Separate measurements from class labels.
 
-Name the object `iris_features`.
+  + Store the matrix of measurements in an object named `iris_features`.
+  
+  + Optionally, store the class labels in a vector named `iris_species`.
+
+> Note: the last bit is not necessary, as we can always refer to `iris$Species`.
 
 ---
 
 # Exercise
 
-## Apply Principal components analysis (PCA)
+## Apply Principal Components Analysis (PCA)
 
 The `prcomp()` function allows you to standardise the data as part of the principal components analysis itself.
 
@@ -828,8 +700,6 @@ The `prcomp()` function allows you to standardise the data as part of the princi
 
 - Examine the PCA output.
   How does each principal component relate to each variable?
-
-- Create a data frame of PCA coordinates.
 
 Use the return value of the PCA to create a `data.frame` called `pca_iris_dataframe` that contains the coordinates projected on principal components.
 
@@ -847,13 +717,13 @@ Save the PCA plot as an object named `pca_iris_species`.
 
 ## Variable loading
 
-- Visualise the value of the variable most strongly associated with the first principal component, as color on the PCA plot.
+- Color a scatter plot of PC1 and PC2 by the value of the variable most strongly associated with the first principal component.
 
 What do you observe?
 
 ## Variance explained
 
-- Compute the variance explained by principal components.
+- Compute the variance explained by principal components, using information present in the return value of the `prcomp()` function.
 
 - Visualise the variance explained by each principal component using `ggplot2::geom_col()`.
 
@@ -969,9 +839,7 @@ tsne_out$Y %>%
 
 - Apply t-SNE and inspect the output.
 
-- Create a data frame of t-SNE coordinates.
-
-Use the return value of the t-SNE to create a `data.frame` called `tsne_iris_dataframe` that contains the coordinates.
+- Use the return value of the t-SNE to create a `data.frame` called `tsne_iris_dataframe` that contains the coordinates.
 
 - Visualise the t-SNE projection.
 
@@ -987,27 +855,46 @@ Save the t-SNE plot as an object named `tsne_iris_species`.
 
 # Clustering
 
-<br/>
-
-.x-large-list[
 - Technique for grouping of given data points and classification into groups.
   + In theory, points with similar properties or features should belong to the same group.
   + Points with dissimilar properties or features should belong to different groups.
   + Method of unsupervised learning (no known labels), common technique used in many fields.
 - Yields valuable insights from data by seeing what groups fall into after clustering
 - Many methods (e.g. K-means clustering, hierarchical clustering)
+
+.pull-left[
+```{r, include=TRUE, echo=FALSE, fig.align="center", fig.height=6}
+ggplot(iris, aes(Sepal.Length, Sepal.Width)) +
+    geom_point() +
+    cowplot::theme_cowplot() +
+    labs(x = "variable 1", y = "variable 2")
+```
+]
+
+.pull-right[
+```{r, include=TRUE, echo=FALSE, fig.align="center", fig.height=6}
+iris %>% 
+    mutate(
+        Cluster = Species %>% 
+            fct_recode(
+                "1" = "setosa",
+                "2" = "versicolor",
+                "3" = "virginica"
+            )
+    ) %>% 
+    ggplot(aes(Sepal.Length, Sepal.Width, color = Cluster)) +
+    geom_point() +
+    cowplot::theme_cowplot() +
+    labs(x = "variable 1", y = "variable 2")
+```
 ]
 
 ---
 
 # K-Means Clustering
 
-<br/>
-
-.x-large-list[
 - Probably the most well known clustering algorithm (unsupervised).
 - Easy to understand and implement.
-]
 
 .pull-left[
 ## Pros
@@ -1069,7 +956,7 @@ airway_counts %>%
 
 To choose $k$, run multiple values and try to maximise `betweenss` / `totss`, which is a measure of how well the data is clustered.
 
-- **Sum of squares between clusters:** how close/far points are _between_ clusters (separation).
+- **Sum of squares between clusters:** how far points are _between_ clusters (separation).
 - **Sum of squares within clusters:** how close points are _within_ clusters (compactness).
 
 For good clustering we want small `sum(withinss)` and large `betweenss`, so this ratio we want to be as large as possible.
@@ -1157,6 +1044,8 @@ pheatmap(log10(assay(airway, "counts")[keep_rows, ] + 1))
 ```
 ]
 
+`r BiocStyle::CRANpkg("pvclust")` (CRAN)
+
 ---
 
 # Comparing clustering algorithms on toy datasets
@@ -1166,61 +1055,20 @@ pheatmap(log10(assay(airway, "counts")[keep_rows, ] + 1))
 knitr::include_graphics("img/sphx_glr_plot_cluster_comparison_0011.png")
 ```
 
-**Source:** https://scikit-learn.org/stable/modules/clustering.html
-
----
-
-# Exercise
-
-## K-means
-
-- Apply K-means clustering with K set to 3 clusters.
-
-- Inspect the output.
-
-- Extract the cluster labels.
-
-- Extract the cluster centers.
-
-- Construct a data frame that includes the cluster label.
-
-- Plot the data set as a scatter plot.
-
-Color by cluster label.
-
-### Bonus point
-
-- Add cluster centers to the plot.
-
----
-
-# Exercise
-
-## Cross-tabulation with ground truth
-
-- Cross-tabulate cluster labels with known labels.
-
-How many observations are mis-classified by K-means clustering?
-
-## Elbow plot
-
-- Plot the "total within-cluster sum of squares" for K ranging from 2 to 10.
-
-Do you agree that 3 is the optimal number of clusters for this data set?
-
 ---
 
 # Exercise
 
 ## Hierarchical clustering
 
-- Perform hierarchical clustering using method `ward.D2`.
+- Perform hierarchical clustering on the `iris_features` data set,
+  using the `euclidean` distance and method `ward.D2`.
 
 - Plot the clustering tree.
 
 How many clusters would you call from a visual inspection of the tree?
 
-- Color leaves by known species (use `dendextend`).
+- Bonus point: Color leaves by known species (use `dendextend`).
 
 - Cut the tree in 3 clusters and extract the cluster labels.
 
@@ -1238,19 +1086,59 @@ How many clusters would you call from a visual inspection of the tree?
 
 ## dbscan
 
-- Apply `dbscan` to the set of iris measurements.
+- Apply `dbscan` to the `iris_features` data set.
 
 - Visualise the `dbscan` cluster label on a scatter plot of the data.
 
 ## hdbscan
 
-- Apply `hdbscan` to the set of iris measurements.
+- Apply `hdbscan` to the `iris_features` data set.
 
 - Visualise the `hdbscan` cluster label on a scatter plot of the data.
 
 ## Bonus point
 
 - Combine the plots of `dbscan` and `hdbscan` into a single plot.
+
+---
+
+# Exercise
+
+## K-means
+
+- Apply $K$-means clustering to `iris_features` with $K$ set to 3 clusters.
+
+- Inspect the output.
+
+- Extract the cluster labels.
+
+- Extract the cluster centers.
+
+- Construct a data frame that combines the `iris` dataset and the cluster label.
+
+- Plot the data set as a scatter plot.
+
+  + Color by cluster label.
+
+### Bonus point
+
+- Add cluster centers to the plot.
+
+---
+
+# Exercise
+
+## Cross-tabulation with ground truth
+
+- Cross-tabulate cluster labels with known labels.
+
+How many observations are mis-classified by $K$-means clustering?
+
+## Elbow plot
+
+- Plot the "total within-cluster sum of squares" for $K$ ranging from 2 to 10.
+
+Do you agree that 3 is the optimal number of clusters for this data set?
 
 ---
 
