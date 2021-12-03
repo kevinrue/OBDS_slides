@@ -40,12 +40,17 @@ More concrete and measurable outputs.
 - Apply multiple testing correction.
 - Visualise data and test results.
 
-## Prerequisites
+## Pre-requisites
 
+<!--
+May be a combination of:
+- Requirements asked from participants before the day.
+- Links to other OBDS course days with goals or objectives feeding in this day.
+-->
+
+- An account on the CCB cluster or [RStudio Cloud](https://rstudio.cloud/).
+- Alternatively, a working installation of [R](https://www.r-project.org/) (4.1.2) and [RStudio Desktop](https://www.rstudio.com/products/rstudio/download/).
 - A clone of the shared GitHub repository for this course.
-- A working installation of [R](https://www.r-project.org/) (4.1).
-- A working installation of [git](https://git-scm.com/).
-- A working installation of [RStudio](https://rstudio.com/).
 
 ## Data sets
 
@@ -55,18 +60,17 @@ More concrete and measurable outputs.
 
 | Activity                                      |  Time |
 |-----------------------------------------------|-------|
-| [Object oriented programming](../1_object_oriented_programming) |  9:30 |
-| **Morning Break**                             | 10:50 |
-| Setup                                         | 11:00 |
-| Distributions and Probabilities               | 11:10 |
+| Setup                                         |  9:30 |
+| Distributions and Probabilities               | 10:00 |
 | Exercise: Statistical distributions           | 11:20 |
 | Exercise: Probabilities                       | 11:30 |
-| Empirical cumulative distribution functions   | 11:40 |
-| Statistical tests                             | 11:50 |
-| Test assumptions                              | 12:10 |
-| Multiple testing correction                   | 12:20 |
+| **Morning Break**                             | 10:50 |
+| Empirical cumulative distribution functions   | 11:00 |
+| Statistical tests                             | 11:20 |
+| Test assumptions                              | 11:50 |
+| Multiple testing correction                   | 12:00 |
 | **Lunch Break**                               | 12:30 |
-| Exercise: statistical tests                   | 14:30 |
+| Exercise: statistical tests                   | 13:30 |
 | **Afternoon Break**                           | 14:50 |
-| Over-representation analysis                  | 15:00 |
+| Exercise: Over-representation analysis        | 15:00 |
 | **Day End**                                   | 16:00 |
