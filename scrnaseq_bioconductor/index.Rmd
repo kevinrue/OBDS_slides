@@ -1,6 +1,6 @@
 ---
 title: 'Single-cell RNA-seq analysis using Bioconductor'
-subtitle: 'Single-cell Genomics in <i class="fab fa-r-project"></i>'
+subtitle: 'Single-cell genomics in <i class="fab fa-r-project"></i>'
 author: "Kevin Rue-Albrecht"
 institute: "Oxford Biomedical Data Science Training Programme"
 date: "2021-06-22 (updated: `r Sys.Date()`)"

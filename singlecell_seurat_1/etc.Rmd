@@ -1,0 +1,13 @@
+# Further reading
+
+- TODO
+
+---
+
+# References
+
+.small-text[
+```{r, include=TRUE, echo=FALSE, results="asis"}
+PrintBibliography(bib)
+```
+]
