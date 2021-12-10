@@ -4,7 +4,7 @@ layout: true
 
 <div class="my-footer"><span>
 Kevin Rue-Albrecht
-&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
+&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
 Introduction to Seurat
 </span></div> 
 
@@ -18,6 +18,7 @@ knitr::opts_chunk$set(
 options(width = 90)
 library(tidyverse)
 library(S4Vectors)
+source("preprocess.R")
 ```
 
 ```{r, load_refs, include=FALSE, cache=FALSE}
@@ -32,6 +33,10 @@ BibOptions(
   hyperlink = "to.doc",
   dashed = TRUE)
 bib <- ReadBib("bibliography.bib")
+NoCite(bib, "Hao2021")
+NoCite(bib, "Stuart2019")
+NoCite(bib, "Butler2018")
+NoCite(bib, "Satija2015")
 ```
 
 ---
@@ -54,4 +59,4 @@ bib <- ReadBib("bibliography.bib")
 
 - Perform the steps of a Seurat workflow in a simple scenario.
 
-- Visualise, interpret, and discuss information produced at each step of a simple workflow.
+- Visualise, interpret, and discuss information produced at each step of a simple Seurat workflow.

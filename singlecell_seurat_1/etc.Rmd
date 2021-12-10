@@ -1,6 +1,846 @@
+# Setup
+
+- Checkout and pull the main branch of the shared repository.
+
+- Create a new branch in the Git repository. Use your username and the date to make it unique.
+- Make a copy of the file `template.Rmd` for this lesson. Use your username to make it unique.
+
+> e.g. `cp template.Rmd template_kevinrue.Rmd`
+
+- Open your copy of the notebook in RStudio.
+
+- Download and uncompress the "Feature / cell matrix (filtered)" file for the 10x Genomics example data set [5k Peripheral blood mononuclear cells (PBMCs) from a healthy donor (Next GEM)](https://www.10xgenomics.com/resources/datasets/5-k-peripheral-blood-mononuclear-cells-pbm-cs-from-a-healthy-donor-next-gem-3-1-standard-3-0-2).
+
+- Follow along, running and writing code from the notebook as mentioned during the lesson.
+
+---
+
+# Overview
+
+```{r, include=TRUE, echo=FALSE}
+## Source: Kevin Rue-Albrecht (Illustrator)
+knitr::include_graphics("img/overview-workflow.png")
+```
+
+---
+
+# Partitioning and barcoding
+
+.pull-left[
+```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='200px'}
+## Source: https://www.10xgenomics.com/instruments/chromium-controller
+knitr::include_graphics("img/overview-graphic-chromium-svg.svg")
+```
+]
+
+.pull-right[
+## GEM Generation & Barcoding
+
+- GEM: Gel bead-in EMulsions
+
+- Partition single cells, nuclei, or gDNA.
+
+- Objective: one GEM = one cell.
+]
+
+--
+
+.pull-left[
+```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='200px'}
+## Source: https://www.10xgenomics.com/products/single-cell-gene-expression
+knitr::include_graphics("img/barcoding.jpeg")
+```
+]
+
+.pull-right[
+## GEM Generation & Barcoding
+
+Gel beads coated with oligonucleotide barcodes.
+
+  + TruSeq primer (fixed)
+
+  + UMI barcode (unique, per bead)
+
+  + 10x barcode (fixed, per bead)
+
+  + A Poly(dT) tail (fixed)
+]
+
+---
+
+# Empty droplets and doublets
+
+Cells are loaded in a limiting dilution on the 10x Chromium controller, so that:
+
+- Most GEMs do not contain any cell.
+
+- Most of the GEMs that do contain a cell, contain a single cell.
+
+- The rate of GEMs that contain doublets (or more) is as small as technically possible.
+
+```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='300px'}
+## Source: https://www.technologynetworks.com/genomics/product-news/10x-genomics-extends-their-application-portfolio-305346
+knitr::include_graphics("img/10x-genomics-extends-their-application-portfolio-305346-640x360.jpeg")
+```
+
+---
+
+# Quantification
+
+## Cell Ranger (10x Genomics)
+
+```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='200px'}
+## Source: https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/using/count
+knitr::include_graphics("img/cellranger_count.png")
+```
+
+- Most of the time, you will start from FASTQ files.
+
+- [cellranger count](https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/using/count)
+  is the method officially supported by 10x Genomics.
+
+- Other methods include
+  [salmon alevin](https://salmon.readthedocs.io/en/latest/alevin.html) and
+  [kallisto | bustools](https://www.kallistobus.tools/).
+
+In all cases, the objective of quantification is to produce a matrix of UMI counts,
+for each feature and each barcode (i.e., cell).
+
+That matrix is the starting point of your analysis using `r BiocStyle::CRANpkg("Seurat")`.
+
+---
+
+# cellranger count - outputs
+
+```{r, include=TRUE, echo=FALSE, fig.align='center'}
+## Source: https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/output/overview
+knitr::include_graphics("img/cellranger_count_output.png")
+```
+
+---
+
+# Seurat workflow - Overview
+
+```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='500px', out.width='400px'}
+## Source: Kevin Rue-Albrecht (Illustrator)
+knitr::include_graphics("img/overview-analysis.png")
+```
+
+---
+
+# Seurat workflow - Create a Seurat object
+
+```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='500px', out.width='400px'}
+## Source: Kevin Rue-Albrecht (Illustrator)
+knitr::include_graphics("img/overview-analysis-import.png")
+```
+
+---
+
+# Exercise
+
+## Import scRNA-seq data and create a Seurat object
+
+- Load the `r BiocStyle::CRANpkg("Seurat")` package.
+
+- Use the function `Read10X()` to import data in the `filtered_feature_bc_matrix/` directory in an object named `read10x_data`.
+  What class of object does the function return?
+
+- Have a look at the object and its structure (first 15 rows and 6 columns).
+  What is a sparse matrix and how does it store data?
+
+- How many features and barcodes (i.e., cells) are present in the data set?
+
+- Create a Seurat object using the function `CreateSeuratObject()`
+  and the object `read10x_data`.
+  Name the object `seurat_object`.
+  Include features detected in at least 3 cells,
+  and cells where at least 200 features detected.
+  Name the project `pbmc5k`.
+  How many features and barcodes are left in the Seurat object?
+
+- How many features and cells were filtered out when you created the Seurat object?
+
+---
+
+# Contents of a Seurat object
+
+```{r, include=TRUE, echo=FALSE, fig.align='center'}
+## Source: https://github.com/satijalab/seurat/wiki/Seurat#slots
+knitr::include_graphics("img/seurat-slots.png")
+```
+
+<https://github.com/satijalab/seurat/wiki/Seurat#slots>
+
+---
+
+# Assay objects
+
+```{r, include=TRUE, echo=FALSE, fig.align='center'}
+## Source: https://github.com/satijalab/seurat/wiki/Assay#slots
+knitr::include_graphics("img/seurat-assay-slots.png")
+```
+
+<https://github.com/satijalab/seurat/wiki/Assay#slots>
+
+---
+
+# Accessing the contents of a Seurat object
+
+Functions designed to access and interact the contents of a Seurat object are stored in a separate package
+called `r BiocStyle::CRANpkg("SeuratObject")`.
+
+- `DefaultAssay()` returns the name of the "active" assay, used by default if unspecified.
+
+- `Assays()` returns the names of the available assays.
+
+- `[[` is a versatile function used to fetch one assay object or one column of cell metadata as a `data.frame`.
+  Get all the metadata using empty brackets, i.e. `seurat_object[[]]`.
+
+- `FetchData()` is a generalised version of `[[` that returns multiple pieces of per-cell information as a `data.frame` (e.g., feature expression, dimensionality reduction coordinates, metadata).
+
+> You will need to know the names of the variables available in the various components of your own Seurat object.
+
+- `$` is used to access one column of cell metadata as a `vector`.
+
+- `GetAssayData()` returns the (sparse) matrix for a given assay.
+
+... but a lot of the slots do not have dedicated functions.
+Instead they are directly accessed using `@`, e.g. `seurat_object@project.name`.
+
+---
+
+# Cell identities
+
+Seurat refers to cell identities as an umbrella for a number of things,
+from experimental conditions to cluster labels.
+
+- Sorted cells already have some form of identity.
+  
+- Clustering at different resolutions produce different set of labels (i.e., different "identities").
+
+Seurat stores the "active" identity of cells in a dedicated slot of the object.
+
+- `Idents()` returns the "active" identity of the cells.
+
+- `Idents(seurat_object) <- "name"` assigns the metadata column called `"name"` as the active identity.
+
+- `SetIdent(object, cells = NULL, value)` can be used to assign a new identity to certain cells, e.g.
+
+```{r, include=TRUE, eval=FALSE}
+SetIdent(seurat_object, cells = 1:10, value = 'B')
+```
+
+
+See `help("Idents", package = "SeuratObject")`.
+
+---
+
+# Exercise
+
+## Accessing the contents of a Seurat object
+
+- Query the name of the default assay in the Seurat object.
+
+- List the names of assays available in the Seurat object.
+
+- Display the first six rows and six columns of the RNA assay data.
+  What function do you use?
+  Which arguments do you need to supply, and which ones are optional?
+
+- Display the entire data.frame of per-cell metadata (first six rows).
+  What column names do you see?
+
+- Fetch one column of metadata using `[[`.
+  What type of object do you get back?
+
+- Instead, fetch the same column of metadata using `$`.
+  What type of object do you get back this time?
+
+- Use the function `FetchData()` to access the library size and expression of the feature named `"LYZ"` (first six rows).
+  What type of object do you get back?
+
+---
+
+# Common operations on Seurat objects
+
+- `WhichCells()` returns the names of cells that match a logical expression.
+
+> e.g. `WhichCells(seurat_object, expression = LYZ > 500)`
+
+- `VariableFeatures()` returns the names of variable features (for a given assay, if computed).
+
+- `subset()` returns a new Seurat object restricted to certain features and cells.
+
+Those functions are often combined together, to achieve the desired result.
+For instance:
+
+```{r, include=TRUE, eval=FALSE}
+subset(
+    x = seurat_object,
+    cells = WhichCells(seurat_object, expression = LYZ > 500),
+    features = VariableFeatures(object = seurat_object)
+)
+```
+
+- `merge()` combines the information from two Seurat objects into one.
+
+... and more miscellaneous functions such as `colMeans()`, `colSums()`, `rowMeans()` and `rowSums()`.
+See `help("Seurat-methods")`.
+
+---
+
+# Seurat workflow - Quality control and filtering
+
+```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='500px', out.width='400px'}
+## Source: Kevin Rue-Albrecht (Illustrator)
+knitr::include_graphics("img/overview-analysis-qc-filter.png")
+```
+
+---
+
+# Quality control
+
+.pull-left[
+## Library size
+
+```{r, include=TRUE, echo=FALSE, fig.align='center'}
+ggplot(seurat_object[[]], aes(nCount_RNA)) +
+    geom_histogram(color = "black", fill = "grey", bins = 100) +
+    cowplot::theme_cowplot()
+```
+]
+
+.pull-right[
+## Number of features detected
+
+```{r, include=TRUE, echo=FALSE, fig.align='center'}
+ggplot(seurat_object[[]], aes(nFeature_RNA)) +
+    geom_histogram(color = "black", fill = "grey", bins = 100) +
+    cowplot::theme_cowplot()
+```
+]
+
+---
+
+# Computing metrics for quality control
+
+- `PercentageFeatureSet()` computes the fraction of reads assigned to a subset of genes, for each cell.
+
+  + The function takes either a vector of feature names or a regex pattern to match feature names against.
+
+```{r, include=TRUE, eval=FALSE}
+PercentageFeatureSet(seurat_object, pattern = "^CCL|^CXCL")
+```
+
+- `VlnPlot()` produces a violin plot for a selection of per-cell features, including gene expression, quality control metrics, and dimensionality reduction results available in a Seurat object.
+
+- `FeatureScatter()` produces a scatter plot of two per-cell features,
+  e.g., two features, a feature and quality control metric.
+
+---
+
+# Seurat visualisations
+
+.pull-left[
+## VlnPlot()
+
+```{r, include=TRUE, echo=FALSE, fig.align='center'}
+Idents(seurat_object) <- "orig.ident"
+VlnPlot(seurat_object, features = c("nCount_RNA", "nFeature_RNA"), slot ="counts")
+```
+]
+
+.pull-right[
+## FeatureScatter()
+
+```{r, include=TRUE, echo=FALSE, fig.align='center'}
+Idents(seurat_object) <- "orig.ident"
+FeatureScatter(seurat_object, feature1 = "nCount_RNA", feature2 = "LYZ", slot = "counts")
+```
+]
+
+... but you will likely use `r BiocStyle::CRANpkg("ggplot2")` to make publication quality plots.
+
+---
+
+# Exercise
+
+## Quality control and visualisation
+
+- The library size and number of features detected per cell is already present in the Seurat object.
+  Use the function `VlnPlot()` to display them in a single violin plot.
+
+- Use the function `PercentageFeatureSet()` to compute the fraction of reads assigned to mitochondrial genes in each cell.
+  Store the metric in the cell metadata of the Seurat object, under the name `"percent_mt"`.
+  Visualise this new metric alongside the previous two in a new violin plot.
+
+- Visualise a scatter plot of the proportion of mitochondrial UMIs against the library size in each cell.
+
+- Create a new Seurat object, called `seurat_after_qc`, that is subsetted to cells that have more than 4,500 UMI counts, less than 15% of UMI counts assigned to mitochondrial features, and more than 1,500 features detected.
+  How many cells were removed in this step?
+
+---
+
+# Seurat workflow - Normalisation
+
+```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='500px', out.width='400px'}
+## Source: Kevin Rue-Albrecht (Illustrator)
+knitr::include_graphics("img/overview-analysis-normalise.png")
+```
+
+---
+
+# Normalisation and transformation strategies
+
+## Standard transformation and normalisation methods
+
+- `NormalizeData()` provides a choice of standard normalisation strategies:
+
+  + `"LogNormalize"`, based on the library size for each cell.
+  
+  + `"CLR"`, assumes an overall fixed abundance in all cells.
+  
+  + `"RC"` (relative counts), `"LogNormalize"` without the "Log".
+
+## sctransform
+
+- `SCTransform()` implements a new normalisation strategy that replaces the commands `NormalizeData()`, `ScaleData()`, and `FindVariableFeatures()`.
+
+This is an advanced topic that will be demonstrated and discussed later in the course.
+
+---
+
+# Log-normal and normal distributions
+
+```{r, include=TRUE, echo=FALSE, fig.align='center'}
+knitr::include_graphics("img/log_normal_and_normal_distributions.png")
+```
+
+- Many downstream methods work better with or require normal distributions.
+
+- Limits the impact of outliers on visualisations.
+
+---
+
+# Log-normalised feature data
+
+.pull-left[
+## Counts
+
+```{r, include=TRUE, echo=FALSE, fig.align='center'}
+ggplot(FetchData(seurat_object, vars = "LYZ", slot = "counts"), aes(LYZ)) +
+    geom_histogram(fill = "grey", color = "black", bins = 100) +
+    coord_cartesian(ylim = c(0, 500)) +
+    cowplot::theme_cowplot()
+```
+]
+
+.pull-right[
+## Log-normalised
+
+```{r, include=TRUE, echo=FALSE, fig.align='center'}
+ggplot(FetchData(seurat_object, vars = "LYZ", slot = "data"), aes(LYZ)) +
+    geom_histogram(fill = "grey", color = "black", bins = 100) +
+    coord_cartesian(ylim = c(0, 500)) +
+    cowplot::theme_cowplot()
+```
+]
+
+---
+
+# Exercise
+
+## Normalisation
+
+- Normalise the RNA assay of the Seurat object (after quality control) using the `"LogNormalize"` method.
+
+## Bonus
+
+- Visualise the distribution of raw counts and normalised data for a feature of your choice.
+
+---
+
+# Seurat workflow - Variable features and scaling
+
+```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='500px', out.width='400px'}
+## Source: Kevin Rue-Albrecht (Illustrator)
+knitr::include_graphics("img/overview-analysis-variable-scaling.png")
+```
+
+---
+
+# Identifying variable features
+
+Motivations:
+
+- Variability = information.
+
+- Driving force for dimensionality reduction and clustering.
+
+.pull-left[
+```{r, include=TRUE, echo=FALSE, fig.align='center', fig.height=4}
+ggplot(FetchData(seurat_object, vars = "RPL22", slot = "data"), aes(RPL22)) +
+    geom_histogram(fill = "grey", color = "black", bins = 100) +
+    coord_cartesian(ylim = c(0, 500)) +
+    cowplot::theme_cowplot()
+```
+]
+
+.pull-right[
+```{r, include=TRUE, echo=FALSE, fig.align='center', fig.height=4}
+ggplot(FetchData(seurat_object, vars = "LYZ", slot = "data"), aes(LYZ)) +
+    geom_histogram(fill = "grey", color = "black", bins = 100) +
+    coord_cartesian(ylim = c(0, 500)) +
+    cowplot::theme_cowplot()
+```
+]
+
+---
+
+# Identifying variable features in Seurat
+
+- `FindVariableFeatures()` identifies features that show the highest amount of variability relative to their mean expression.
+
+- `VariableFeaturePlot()` produces a "mean-variance" scatter plot that is good for diagnostics.
+
+.pull-left[
+```{r, include=TRUE, echo=FALSE, fig.align='center', fig.height=4}
+ggplot(HVFInfo(seurat_object), aes(mean, variance)) +
+  geom_point() +
+  scale_x_log10() +
+  cowplot::theme_cowplot()
+```
+]
+
+.pull-right[
+```{r, include=TRUE, echo=FALSE, fig.align='center', fig.height=4, warning=FALSE}
+VariableFeaturePlot(seurat_object)
+```
+]
+
+Heteroscedasticity: feature with higher mean expression naturally have room for larger variance.
+
+---
+
+# Scaling data
+
+Many methods for downstream analysis work better when features are brought back to a comparable range of values.
+
+- Features naturally present different dynamic ranges.
+
+- Biologically important features do not necessarily vary by a large absolute amount.
+
+`ScaleData()` scales and centers features.
+
+- Cell metadata and quality metrics can be regressed out to remove unwanted sources of variation (e.g. batch effects and technical artifacts).
+
+---
+
+# Exercise
+
+## Variable features and scaling
+
+- Identify variable features in the normalised RNA assay of the Seurat object.
+  Use the `"vst"` method and select the 2,000 most variable features.
+  What does this subsetting do, and what are our motivations for doing it?
+
+- What is the function to display the name of variable features in a Seurat object (first ten)?
+  How can you control which assay the variable features are pull from?
+
+- Use the function `VariableFeaturePlot()` to visualise the scatter plot of standardised variance against average expression.
+  How would you use this plot?
+
+- Scale the normalised RNA assay of the Seurat object, regressing the library size and the fraction of UMI counts assigned to mitochondrial features.
+
+---
+
+# Seurat workflow - Dimensionality reduction
+
+```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='500px', out.width='400px'}
+## Source: Kevin Rue-Albrecht (Illustrator)
+knitr::include_graphics("img/overview-analysis-dimensionality.png")
+```
+
+---
+
+# Dimensionality reduction
+
+By nature, omics data sets survey a large number of features (e.g., tens of thousands of known genes in the human genome).
+
+- High dimensionality is prohibitively costly in time to generate and visualise all (pairs of) features.
+
+- Dimensionality reduction techniques identify/compute a smaller number of dimensions that summarise major axes of variation in the data.
+
+  + e.g.,
+    [PCA](https://doi.org/10.1080/14786440109462720),
+    [t-SNE](http://jmlr.org/papers/v9/vandermaaten08a.html),
+    [UMAP](https://doi.org/10.21105/joss.00861),
+    [ivis](https://doi.org/10.21105/joss.01596),
+    etc.
+
+.pull-left[
+```{r, include=TRUE, echo=FALSE, fig.align='center', fig.height=5}
+Seurat::DoHeatmap(
+    object = seurat_object,
+    features = head(VariableFeatures(seurat_object), 100)
+)
+```
+]
+
+.pull-right[
+```{r, include=TRUE, echo=FALSE, fig.align='center', fig.height=5}
+Idents(seurat_object) <- "orig.ident"
+DimPlot(seurat_object, reduction = "umap")
+```
+]
+
+---
+
+# Dimensionality reduction in Seurat
+
+- `RunPCA()` runs a principal component analysis and stores the output inside the Seurat object itself.
+
+- `PCAPlot()` displays a scatter plot of two principal components.
+
+- `DimPlot()` is a versatile function used to plot any dimensionality reduction result available in the object, e.g.
+
+```{r, include=TRUE, eval=FALSE}
+DimPlot(..., reduction = "pca", ...)
+```
+
+- Other specialised functions are available, e.g. `TSNEPlot()`, `UMAPPlot()`.
+
+- `Reductions()` returns the names of the available dimensionality reduction results.
+
+- `ElbowPlot()` describes the amount of variance explained by the top principal components.
+
+---
+
+# Exercise
+
+## Dimensionality reduction
+
+- Run a principal component analysis on the Seurat object.
+  Which features are used by the method in the default settings?
+  How could you change this?
+  How do you read the message output of the function `RunPCA()`?
+
+- List the names of dimensionality reduction results available in the Seurat object.
+
+- Use `PCAPlot()` or `DimPlot()` to produce a scatterplot of the first and second PCA components.
+
+- Extract the first and second PCA components from the Seurat object as a `data.frame`.
+
+## Bonus
+
+- Make a scatterplot of the first and second PCA components yourself using `r BiocStyle::CRANpkg("ggplot2")`.
+
+- Run the UMAP technique on the first 20 principal components stored in the Seurat object and visualise the result as a scatterplot.
+
+---
+
+# Seurat workflow - Clustering
+
+```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='500px', out.width='400px'}
+## Source: Kevin Rue-Albrecht (Illustrator)
+knitr::include_graphics("img/overview-analysis-clustering.png")
+```
+
+---
+
+# Clustering
+
+Although we process individual cells, patterns only emerge when we identify and consider groups of related cells.
+
+- e.g., cell types, sub-types, activation states.
+- even continuous trajectories measured as pseudotime often rely on known stages and bottlenecks.
+
+.pull-left[
+```{r, include=TRUE, echo=FALSE, fig.align='center', fig.height=5}
+Idents(seurat_object) <- "orig.ident"
+UMAPPlot(seurat_object)
+```
+]
+
+.pull-right[
+```{r, include=TRUE, echo=FALSE, fig.align='center', fig.height=5}
+Idents(seurat_object) <- "RNA_snn_res.0.3"
+UMAPPlot(seurat_object, label = TRUE, label.size = 8)
+```
+]
+
+.center[
+There is no "correct" clustering.
+
+Clustering should be seen as a tool used to interpret data at different resolutions.
+]
+
+---
+
+# Clustering in Seurat
+
+By nature, clustering requires algorithms to compare cells to one another.
+Increasingly large data sets are prohibitively costly in time and memory to compute the distance between every pair of data points.
+
+- `FindNeighbors()` identifies the $k$ nearest neighbours for each data point.
+  Subsequent steps will only consider those nearest neighbours, saving time and memory.
+
+- `FindClusters()` identifies clusters using an algorithm that processes a graph of shared nearest neighbours (SNN).
+
+- `DimPlot(..., label = TRUE, ...)` adds active identities as labels at the average coordinate of each group of cells.
+
+## Accessing results
+
+- `Graphs()` returns the names of available graphs in the Seurat object.
+
+- Cluster labels are stored as cell metadata.
+
+- The latest run `FindClusters()` overwrites the metadata column `seurat_clusters`, in addition to storing labels in its own column of metadata.
+
+---
+
+# Exercise
+
+## Clustering
+
+- First, visualise the amount of variance explained the top principal components (number of your choice).
+  How many principal components would you use for downstream analyses?
+
+- Then, compute the graph of nearest neighbours using the function `FindNeighbors()`.
+  Which principal components are used by default?
+  Instead, specify the number of components that you have chosen.
+
+- What are the names of the nearest neighbour graphs that are now stored in the Seurat object?
+
+- Finally, compute cluster labels.
+  What is the default setting for the `resolution` argument?
+  Instead, set it to `0.5`.
+  Do you expect more or fewer clusters following that change?
+  What other parameters would you also try to experiment with?
+
+- Visualise the cluster labels on the UMAP scatter plot.
+  How would you describe the agreement between the UMAP layout and the clustering results?
+
+---
+
+# Seurat workflow - Cluster markers
+
+```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='500px', out.width='400px'}
+## Source: Kevin Rue-Albrecht (Illustrator)
+knitr::include_graphics("img/overview-analysis-markers.png")
+```
+
+---
+
+# Identify cluster markers
+
+The interpretability of clusters relies on the ability to identify features acting as markers (positive or negative) that distinguish clusters from each other.
+
+- The quality of markers depends on the quality of clustering, which in turns depends on every choice made in earlier steps of the analysis.
+
+- Clustering, marker identification, and downstream analyses often form an iterative process to achieve sensible and interpretable results.
+
+.pull-left[
+```{r, include=TRUE, echo=FALSE, fig.align='center', fig.height=5}
+ggplot(FetchData(seurat_object, vars = c("UMAP_1", "UMAP_2", "RNA_snn_res.0.3")), aes(UMAP_1, UMAP_2, color = RNA_snn_res.0.3)) +
+    geom_point(size = 0.2) +
+    cowplot::theme_cowplot()
+```
+]
+
+.pull-right[
+```{r, include=TRUE, echo=FALSE, fig.align='center', fig.height=5}
+ggplot(FetchData(seurat_object, vars = c("UMAP_1", "UMAP_2", "CD3E")), aes(UMAP_1, UMAP_2, color = CD3E)) +
+    geom_point(size = 0.2) +
+    cowplot::theme_cowplot()
+```
+]
+
+---
+
+# Heat map of cluster markers
+
+```{r, include=TRUE, echo=FALSE, fig.align='center', fig.height=7, fig.width=10}
+Idents(seurat_object) <- "RNA_snn_res.0.3"
+markers_top10_clusters <- seurat_markers_all %>%
+    group_by(cluster) %>%
+    top_n(n = 10, wt = avg_log2FC)
+DoHeatmap(
+    seurat_object,
+    features = markers_top10_clusters$gene
+)
+```
+
+---
+
+# Identifying cluster markers in Seurat
+
+- `FindAllMarkers()` tests features for differential expression between each cell identity and all other cell identities.
+
+- `FindMarkers()` performs a single comparison between two sets of cells.
+
+  + If only one group of cells is given, it is implied that the second group comprises every other cell in the data set.
+
+- `FindConservedMarkers()` takes an additional grouping variable from the cell metadata (e.g., batch),
+  performs differential expression for each cluster within each level of the grouping variable, 
+  and identifies markers that are robust for each cell identity across the groups.
+
+- `FeaturePlot()` is similar to `DimPlot()` but specialises in coloring data points with feature data (rather than cell metadata).
+
+- `DoHeatmap()` conveniently summarises the top markers for each cluster in a single view.
+
+---
+
+# Exercise
+
+## Identify cluster markers
+
+- Identify positive markers for all clusters,
+  filtering markers that are detected in at least 25% of the cluster,
+  and with a log fold-change greater than `0.25`.
+  How do you control the set of clusters that are used?
+
+- How do you read the contents of the object `seurat_markers_all`?
+  How do you know which features are the markers of each cluster?
+
+- Filter and display the top 10 markers for cluster 3.
+
+- Visualise the expression of the top 4 marker for cluster 3 on a UMAP layout.
+
+- Visualise the expression of those same 4 marker as a violin plot.
+
+- Use `DoHeatmap()` to visualise the top 10 (positive) markers for each cluster.
+  Hint: you may want to use the function `dplyr::group_by()`.
+
+---
+
 # Further reading
 
-- TODO
+- [Seurat - Guided Clustering Tutorial](https://satijalab.org/seurat/articles/pbmc3k_tutorial.html)
+
+and many more tutorials in the [Seurat documentation website](https://satijalab.org/seurat/index.html).
+
+---
+
+# Advanced
+
+## Feature barcoding
+
+.pull-left[
+```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='200px'}
+## Source: http://en.biomarker.com.cn/platforms/10x-genomics
+knitr::include_graphics("img/feature-barcoding.png")
+```
+]
+
+.pull-right[
+- Poly(dT)VN captures RNA molecules.
+
+- Additional capture sequences for other targets.
+
+- Targets must be barcoded with a complementary oligonucleotide.
+]
 
 ---
 
