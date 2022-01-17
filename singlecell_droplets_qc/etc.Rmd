@@ -1,126 +1,9 @@
----
-title: 'Empty droplets, doublets and ambient RNA in single-cell droplet data'
-subtitle: 'Single-cell Genomics in <i class="fab fa-r-project"></i>'
-author: "Kevin Rue-Albrecht"
-institute: "Oxford Biomedical Data Science Training Programme"
-date: "2021-06-23 (updated: `r Sys.Date()`)"
-output:
-  xaringan::moon_reader:
-    css: [default, metropolis, rladies-fonts, "my-theme.css"]
-    lib_dir: libs
-    nature:
-      highlightStyle: github
-      highlightLines: true
-      countIncrementalSlides: false
-# uncomment this line to produce HTML and PDF in RStudio:
-knit: pagedown::chrome_print
----
-
-layout: true
-
-<div class="my-header"><img src="img/ox_brand1_pos.gif" alt="Oxford University Logo" align="right" height="90%"></div>
-
-<div class="my-footer"><span>
-Kevin Rue-Albrecht
-&emsp;&emsp;&emsp;
-Empty droplets, doublets and ambient RNA in single-cell droplet data
-</span></div> 
-
-```{r setup, include = FALSE}
-stopifnot(requireNamespace("htmltools"))
-htmltools::tagList(rmarkdown::html_dependency_font_awesome())
-knitr::opts_chunk$set(
-  message = FALSE, warning = FALSE, error = FALSE, include = FALSE
-)
-options(width = 90)
-stopifnot(require(base))
-```
-
-```{r, load_refs, include=FALSE, cache=FALSE}
-options(htmltools.dir.version = FALSE)
-library(RefManageR)
-BibOptions(
-  max.names = 3,
-  check.entries = FALSE,
-  bib.style = "authoryear",
-  cite.style = "authoryear",
-  style = "markdown",
-  hyperlink = "to.doc",
-  dashed = TRUE)
-bib <- ReadBib("bibliography.bib")
-```
-
----
-
-# Lesson goals and objectives
-
-## Learning goals
-
-- Understand the origin of empty droplets, doublets, and ambient signal in single-cell data.
-
-- Describe methods and metrics for identifying artefacts.
-
-## Learning objectives
-
-- Import single-cell data from files into the R session.
-
-- Apply methods to identify empty droplets.
-
-- Apply methods to identify doublets.
-
-- Apply methods to remove ambient noise from single-cell data.
-
----
-
-# Prerequisites
-
-<br/>
-
-.x-large-list[
-- A clone of the shared GitHub repository for this course.
-
-- A working installation of [R](https://www.r-project.org/) (4.0.3).
-
-- A working installation of [git](https://git-scm.com/).
-
-- A working installation of [RStudio](https://rstudio.com/).
-]
-
----
-
-# Set up
-
-- Pull the `master` branch of the shared repository.
-
-> We have added some files to get you started.
-
-- In the daily sub-directory, make a copy of the `template` sub-directory with your HPC username.
-
-> e.g. `cp -R template albrecht`
-
-The resulting file structure should look like the following:
-
-```
-  OBDS_Training_May_2021/
-  |_ 7_r_single_cell/
-    |_ 3_scrnaseq_droplets_qc/
-      |_ template
-        |_ ... (files)
-      |_ albrecht (copied from 'template')
-        |_ ... (files)
-        |_ scrnaseq_droplets_qc.Rproj
-```
-
-- Launch the RStudio project `scrnaseq_droplets_qc.Rproj` in your sub-directory.
-
----
-
 # The origin of empty droplets
 
 .pull-left[
 ```{r, include=TRUE, echo=FALSE, out.height='500px', out.width='300px'}
 # Source: https://cores.research.asu.edu/sites/default/files/inline-images/10x-barcoded%20gel%20beads.png
-knitr::include_graphics("img/10x-barcoded gel beads.png")
+knitr::include_graphics("img/10x-barcoded-gel-beads.png")
 ```
 ]
 
@@ -203,11 +86,11 @@ A table including the probability that each cell is an empty droplet.
 
 ---
 
-# Exercises
+# Exercise
 
 ## Empty droplets
 
-- Import the raw Cell Ranger matrix for 1,000 cells into R; use `r BiocStyle::Biocpkg("DropletUtils")`.
+- Import the raw matrix into <i class="fab fa-r-project"></i>; use `r BiocStyle::Biocpkg("DropletUtils")`.
 
 - Remove droplets without any count at all.
 
@@ -222,7 +105,7 @@ This will massively speed up downstream steps, while removing unquestionable emp
 - Draw plots comparing empty droplets and other droplets
   (e.g., library size, mitochondrial content, PCA).
 
-- Import the filtered Cell Ranger matrix for 1,000 cells and compare their set of filtered cells.
+- Import the filtered matrix for the same cells and compare their set of filtered cells to yours.
 
 - Remove empty droplets from the data sets.
 
@@ -233,7 +116,7 @@ This will massively speed up downstream steps, while removing unquestionable emp
 .pull-left[
 ```{r, include=TRUE, echo=FALSE, out.height='500px', out.width='300px'}
 # Source: https://cores.research.asu.edu/sites/default/files/inline-images/10x-barcoded%20gel%20beads.png
-knitr::include_graphics("img/10x-barcoded gel beads.png")
+knitr::include_graphics("img/10x-barcoded-gel-beads.png")
 ```
 ]
 
@@ -272,7 +155,8 @@ knitr::include_graphics("img/10x-barcoded gel beads.png")
 
 .pull-right[
 ```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='450px'}
-knitr::include_graphics("https://marlin-prod.literatumonline.com/cms/attachment/11ab5a3c-8f8a-4e8d-a333-7e9feedb846a/fx1_lrg.jpg")
+## Source: https://www.sciencedirect.com/science/article/pii/S2405471219300730
+knitr::include_graphics("img/doubletfinder-fig1.jpeg")
 ```
 ]
 
@@ -293,7 +177,7 @@ knitr::include_graphics("https://marlin-prod.literatumonline.com/cms/attachment/
 
   + Normalise, scale, variable features, dimensionality reduction.
 
-- Sweep combiantions of parameters pN and pK. identify optimal pK parameter
+- Sweep combinations of parameters pN and pK. identify optimal pK parameter
 
 - Estimate proportion of homotypic doublets
 
@@ -302,7 +186,8 @@ knitr::include_graphics("https://marlin-prod.literatumonline.com/cms/attachment/
 
 .pull-right[
 ```{r, include=TRUE, echo=FALSE, fig.align='center'}
-knitr::include_graphics("https://marlin-prod.literatumonline.com/cms/attachment/5dd42233-d6f7-43fd-99bf-b3f00e5dccaf/fx2_lrg.jpg")
+## Source: https://www.sciencedirect.com/science/article/pii/S2405471219300730
+knitr::include_graphics("img/doubletfinder-fig2.jpeg")
 ```
 ]
 
@@ -371,18 +256,18 @@ See `?scDblFinder::scDblFinder()` for more details.
 
 ---
 
-# Exercises
+# Exercise
 
 ## Doublets
 
-- Continue using the data set after excluding empty droplets.
+Continue using the data set after you excluded empty droplets.
 
 - Run `scDblFinder::scDblFinder()`.
 
 - Draw plots comparing doublets and other droplets.
   (e.g., library size, mitochondrial content, PCA)
 
-- Remove doublets from the data sets.
+- Remove doublets from the data set.
 
 ## Bonus point
 
@@ -404,6 +289,8 @@ knitr::include_graphics("img/ambient_rna_origin.png")
 ]
 
 .pull-right[
+- Cells damaged during library preparation can release their cytoplasmic contents (e.g., RNA transcripts) into the ambient medium.
+
 - In droplet-based microfluidic devices, ambient RNA can be incorporated into droplets along with oligonucleotide-barcoded beads and cells.
 
 - Both native mRNA from the cell and contaminating ambient RNA will be barcoded and counted within a droplet.
@@ -434,7 +321,7 @@ knitr::include_graphics("img/decontx_Fig1_HTML.png")
 - Function `celda::decontX()`
 
 - **Only
-the expression profile of “real” cells after cell calling are required to run DecontX.**
+the expression profile of "real" cells after cell calling (i.e., removing empty droplets and doublets) are required to run DecontX.**
 
 - **Empty cell droplet information (low expression cell barcodes before cell calling) are
 not needed.**
@@ -478,22 +365,24 @@ See `?celda::decontX()` for more information.
 
 ---
 
-# Exercises
+# Exercise
 
 ## Ambient RNA
 
-- Run `celda::decontX()`.
+- Run `celda::decontX()` (continue using the data after excluding empty droplets and doublets).
 
 - Visualize the UMAP layout created by `decontX`; use `plotDimReduceCluster()`.
 
 - Visualize the percentage of contamination estimated by `decontX` in each cell.
   Use the `plotDecontXContamination()` function.
 
-**Note:** Does any cluster display higher (estimated) levels of ambient RNA?
+.center[
+**Does any cluster display higher (estimated) levels of ambient RNA?**
+]
 
 - Visualize the log-normalised expression of marker genes on a UMAP layout faceted by gene; use `plotDimReduceFeature()`.
 
-**Note:** Use either markers genes expected from literature or computationally identified for this data set.
+**Note:** For instance, use _CD3D_, _CD3E_, _GNLY_, _LYZ_, _S100A8_, _S100A9_, _CD79A_, _CD79B_, and _MS4A1_.
 
 - Visualise the percentage of cells with detectable expression of marker genes before and after decontamination as a bar plot; use `plotDecontXMarkerPercentage()`.
 
