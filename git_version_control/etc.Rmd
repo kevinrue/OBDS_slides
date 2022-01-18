@@ -163,7 +163,7 @@ $ git checkout -b kevin
 
 First make sure that you have checked out a branch other than `master`.
 
-In the repository sub-directory `week2/day1_version_control_using_git`, create a file called `<username>.md`, replacing `<username>` by your own cluster user name (i.e. Bash command `whoami`).
+In the repository sub-directory `week2day1-git`, create a file called `<username>.md`, replacing `<username>` by your own cluster user name (i.e. Bash command `whoami`).
 
 > I included an example `kevinrue.md`.
 
@@ -199,7 +199,7 @@ Your branch is up to date with 'origin/master'.
 
 Untracked files:
   (use "git add <file>..." to include in what will be committed)
-	week2/day1_version_control_using_git/kevinrue.md
+	week2day1-git/kevinrue.md
 ```
 
 The "Untracked files" section reports files that are new and not track by <i class="fab fa-git"></i> yet.
@@ -222,7 +222,7 @@ $ git status
 On branch kevin
 Changes to be committed:
   (use "git restore --staged <file>..." to unstage)
-	new file:   week2/day1_version_control_using_git/kevinrue.md
+	new file:   week2day1-git/kevinrue.md
 ```
 
 .center[
@@ -261,7 +261,7 @@ $ git commit -m "Added a file for kevin rue"
 ```
 [kevin 41121a3] Added a file for kevin rue
  1 file changed, 1 insertion(+)
- create mode 100644 week2/day1_version_control_using_git/kevinrue.md
+ create mode 100644 week2day1-git/kevinrue.md
 ```
 
 .center[
