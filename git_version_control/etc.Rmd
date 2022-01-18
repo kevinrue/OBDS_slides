@@ -183,7 +183,7 @@ You can also make a copy the example file and edit that copy, instead of creatin
 
 We have just made changes to files in the repository.
 However, we have not told <i class="fab fa-git"></i> to record those changes yet.
-In other words, we have edited the files, but we haven't committed those changes.
+In other words, we have edited the files on disk, but we haven't committed those changes in the repository.
 
 > Remember that changes are separate from the files themselves!
 
