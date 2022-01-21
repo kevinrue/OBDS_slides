@@ -59,6 +59,16 @@ More concrete and measurable outputs.
 
 ---
 
+# Setup
+
+- Connect to the University VPN.
+
+- Open a terminal application on your computer.
+
+- Connect to the CCB cluster over SSH.
+
+---
+
 ```{r child='opening.Rmd'}
 ```
 
