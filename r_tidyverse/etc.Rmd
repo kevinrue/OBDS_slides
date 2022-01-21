@@ -826,14 +826,14 @@ We provide you with an Excel file that contains gene expression data for the nin
 
 > ```
 > cp \
->   /project/obds/$USER/projects/object_oriented_programming_ggplot2/ggplot2-kevinrue.Rmd \
->   /project/obds/$USER/git/week2day2-ggplot2/
+>   /project/obds/$USER/projects/tidyverse/tidyverse-kevinrue.Rmd \
+>   /project/obds/$USER/git/week2day5-tidyverse/
 > ```
 
 ]
 
 - Create a new branch in the Git repository.
-  Use the date and your username in the branch name to make it unique, e.g. `git checkout -b week2day2-kevinrue`.
+  Use the date and your username in the branch name to make it unique, e.g. `git checkout -b week2day5-kevinrue`.
 
 - Commit, push, open a pull request, get it approved, and merge it.
 
