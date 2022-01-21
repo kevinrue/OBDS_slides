@@ -1,26 +1,3 @@
-# Set up
-
-- Checkout and pull the main branch of the shared repository.
-
-> We have added some files to get you started.
-
-- Create a new branch in the Git repository. Use your username and the date to make it unique.
-
-- Make a copy of the file `template.Rmd` for this lesson. Use your username to make it unique.
-
-> e.g. `cp template.Rmd template_kevinrue.Rmd`
-
-- Open your copy of the notebook in RStudio.
-
-- Follow along, running and writing code from the notebook as mentioned during the lesson.
-
-## Note
-
-At the end of the day, you will have a chance to commit and push your own notebook to GitHub.
-_Do not_ work in the template solution notebook, to avoid Git conflicts.
-
----
-
 # <i class="fab fa-r-project"></i> is built for statistics
 
 - <i class="fab fa-r-project"></i> includes a number of common statistical distributions:
@@ -1300,6 +1277,30 @@ Start by importing the Gene Ontology table and converting it to a list.
 - [Bioconductor Case Studies](https://www.bioconductor.org/help/publications/books/bioconductor-case-studies/)
 
 - [Introduction to Econometrics with R](https://www.econometrics-with-r.org/6-6-exercises-4.html)
+
+---
+
+# Git wrap-up
+
+- Copy your notebook for this lesson in the Git repository, e.g.
+
+.small-code[
+
+> ```
+> cp \
+>   /project/obds/$USER/projects/statistics/statistics-kevinrue.Rmd \
+>   /project/obds/$USER/git/week3day1-statistics/
+> ```
+]
+
+- Create a new branch in the Git repository.
+  Use the date and your username in the branch name to make it unique, e.g. `git checkout -b week3day1-kevinrue`.
+
+- Commit, push, open a pull request, get it approved, and merge it.
+
+- Delete your merged branch on GitHub.
+
+- Check out the main branch locally, pull, and delete your merged branch locally.
 
 ---
 
