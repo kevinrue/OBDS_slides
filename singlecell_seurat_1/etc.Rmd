@@ -1,20 +1,3 @@
-# Setup
-
-- Checkout and pull the main branch of the shared repository.
-
-- Create a new branch in the Git repository. Use your username and the date to make it unique.
-- Make a copy of the file `template.Rmd` for this lesson. Use your username to make it unique.
-
-> e.g. `cp template.Rmd template_kevinrue.Rmd`
-
-- Open your copy of the notebook in RStudio.
-
-- Download and uncompress the "Feature / cell matrix (filtered)" file for the 10x Genomics example data set [5k Peripheral blood mononuclear cells (PBMCs) from a healthy donor (Next GEM)](https://www.10xgenomics.com/resources/datasets/5-k-peripheral-blood-mononuclear-cells-pbm-cs-from-a-healthy-donor-next-gem-3-1-standard-3-0-2).
-
-- Follow along, running and writing code from the notebook as mentioned during the lesson.
-
----
-
 # Overview
 
 ```{r, include=TRUE, echo=FALSE}
@@ -841,6 +824,31 @@ knitr::include_graphics("img/feature-barcoding.png")
 
 - Targets must be barcoded with a complementary oligonucleotide.
 ]
+
+---
+
+# Git wrap-up
+
+- Copy your notebook for this lesson in the Git repository, e.g.
+
+.small-code[
+
+> ```
+> cp \
+>   /project/obds/$USER/projects/seurat_1/seurat_1-kevinrue.Rmd \
+>   /project/obds/$USER/git/week4day1-seurat_1/
+> ```
+]
+
+- Create a new branch in the Git repository.
+  Use the date and your username in the branch name to make it unique, e.g. `git checkout -b week2day2-kevinrue`.
+
+- Commit, push, open a pull request, get it approved, and merge it.
+
+- Delete your merged branch on GitHub.
+
+- Check out the main branch locally, pull, and delete your merged branch locally.
+
 
 ---
 
