@@ -1149,7 +1149,7 @@ Do you agree that 3 is the optimal number of clusters for this data set?
 ]
 
 - Create a new branch in the Git repository.
-  Use the date and your username in the branch name to make it unique, e.g. `git checkout -b week2day2-kevinrue`.
+  Use the date and your username in the branch name to make it unique, e.g. `git checkout -b week3day2-kevinrue`.
 
 - Commit, push, open a pull request, get it approved, and merge it.
 
