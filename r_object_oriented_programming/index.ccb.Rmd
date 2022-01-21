@@ -33,22 +33,37 @@ knit: pagedown::chrome_print
 
 - Checkout and pull the main branch of the shared repository.
 
-> We have added some files to get you started.
+- Create and launch a new RStudio project in `/project/obds/$USER/projects/object_oriented_programming_ggplot2`.
 
-- Create a new branch in the Git repository. Use your username and the date to make it unique.
+- Make a copy of the file `template.Rmd` for this lesson from the Git repository to your project.
+  Use your username to make it unique, e.g
 
-- Make a copy of the file `solution.Rmd` for this lesson. Use your username to make it unique.
+.small-code[
 
-> e.g. `cp solution.Rmd solution_kevinrue.Rmd`
+> ```
+> cp \
+>   /project/obds/$USER/git/week2day2-object_oriented_programming/template.Rmd \
+>   /project/obds/$USER/projects/object_oriented_programming_ggplot2/object_oriented_programming-kevinrue.Rmd
+> ```
 
-- Open your copy of the notebook in RStudio.
+]
+
+- Similarly, make a copy of the file `template.Rmd` for the `ggplot2` lesson from the Git repository to your project.
+  Use your username to make it unique, e.g
+
+.small-code[
+
+> ```
+> cp \
+>   /project/obds/$USER/git/week2day2-ggplot2/template.Rmd \
+>   /project/obds/$USER/projects/object_oriented_programming_ggplot2/ggplot2-kevinrue.Rmd
+> ```
+
+]
+
+- Open your copy of the notebook for the object-oriented programming lesson in RStudio.
 
 - Follow along, running code from the notebook as mentioned during the lesson.
-
-## Note
-
-At the end of the day, you will have a chance to commit and push your own notebook to GitHub.
-_Do not_ work in the template solution notebook, to avoid Git conflicts.
 
 ---
 
