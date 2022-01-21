@@ -59,7 +59,7 @@ More concrete and measurable outputs.
 
 ---
 
-# Setup
+# Set up
 
 - Connect to the University VPN.
 
