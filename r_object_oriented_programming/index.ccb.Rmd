@@ -36,7 +36,7 @@ knit: pagedown::chrome_print
 - Create and launch a new RStudio project in `/project/obds/$USER/projects/object_oriented_programming_ggplot2`.
 
 - Make a copy of the file `template.Rmd` for this lesson from the Git repository to your project.
-  Use your username in the filename to make it unique, e.g
+  Use your username in the filename to make it unique, e.g.
 
 .small-code[
 
@@ -49,7 +49,7 @@ knit: pagedown::chrome_print
 ]
 
 - Similarly, make a copy of the file `template.Rmd` for the `ggplot2` lesson from the Git repository to your project.
-  Use your username in the filename to make it unique, e.g
+  Use your username in the filename to make it unique, e.g.
 
 .small-code[
 
