@@ -841,7 +841,7 @@ knitr::include_graphics("img/feature-barcoding.png")
 ]
 
 - Create a new branch in the Git repository.
-  Use the date and your username in the branch name to make it unique, e.g. `git checkout -b week2day2-kevinrue`.
+  Use the date and your username in the branch name to make it unique, e.g. `git checkout -b week4day1-kevinrue`.
 
 - Commit, push, open a pull request, get it approved, and merge it.
 
