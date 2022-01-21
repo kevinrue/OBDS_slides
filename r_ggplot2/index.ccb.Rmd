@@ -29,5 +29,13 @@ knit: pagedown::chrome_print
 
 ---
 
-```{r, child='setup_and_exercises.Rmd'}
+# Set up
+
+- Open your copy of the notebook for this lesson in RStudio.
+
+- Follow along, running code from the notebook as mentioned during the lesson.
+
+---
+
+```{r, child='etc.Rmd'}
 ```
