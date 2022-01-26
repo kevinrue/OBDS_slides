@@ -115,26 +115,6 @@ Note: Individually described in next few slides
 
 ---
 
-# Inheritance
-
-.pull-left[
-```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='300px', out.width='700px'}
-knitr::include_graphics("img/class-animal-inheritance.svg")
-```
-]
-
-.pull-right[
-```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='300px', out.width='250px'}
-knitr::include_graphics("img/class-bird-attributes-methods.svg")
-```
-]
-
-- Child classes inherit all the attributes and methods of their parent class(es).
-
-- Child class can add their own new attributes and methods.
-
----
-
 # Encapsulation
 
 - Objects can keep their data private.
@@ -155,6 +135,26 @@ knitr::include_graphics("img/oop-encapsulation.png")
 knitr::include_graphics("img/class-animal-attributes-methods.svg")
 ```
 ]
+
+---
+
+# Inheritance
+
+.pull-left[
+```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='300px', out.width='700px'}
+knitr::include_graphics("img/class-animal-inheritance.svg")
+```
+]
+
+.pull-right[
+```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='300px', out.width='250px'}
+knitr::include_graphics("img/class-bird-attributes-methods.svg")
+```
+]
+
+- Child classes inherit all the attributes and methods of their parent class(es).
+
+- Child class can add their own new attributes and methods.
 
 ---
 
