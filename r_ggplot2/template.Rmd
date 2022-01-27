@@ -1,0 +1,323 @@
+---
+title: "Example code for ggplot2"
+author: "Kevin Rue-Albrecht"
+date: "09/06/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(ggrepel)
+library(cowplot)
+library(patchwork)
+library(gridExtra)
+```
+
+# Exercise
+
+## Specify the dataset.
+
+Use `library(ggplot2)` to load the package.
+
+```{r}
+library(ggplot2)
+```
+
+What does `ggplot(diamonds)` do?
+
+```{r}
+ggplot(diamonds)
+```
+
+## Add the aesthetics.
+
+What does `ggplot(diamonds, aes(x = carat, y = price))` do?
+
+```{r}
+ggplot(diamonds, aes(x = carat, y = price))
+```
+
+## Add geometric objects
+
+- Add data points showing `carat` on the x-axis and `price` on the y-axis.
+
+```{r}
+ggplot(diamonds, aes(x = carat, y = price))
+  
+```
+
+- Color data points by `cut`.
+  Re-use and extend the code chunk above.
+
+```{r}
+
+  
+```
+
+- Add a smoothed mean trendline to the plot above.
+
+```{r}
+
+
+
+```
+
+- Save the latest plot as `obds_diamonds`.
+
+```{r}
+
+
+
+```
+
+
+# Exercise
+
+## Predict the difference between these two plots
+
+### Plot 1
+
+```{r, include=TRUE}
+ggplot(diamonds, aes(x = carat, y = price, colour = cut)) +
+  geom_point() +
+  geom_smooth()
+```
+
+### Plot 2
+
+```{r, include=TRUE}
+ggplot(diamonds, aes(x = carat, y = price)) +
+  geom_point(aes(colour = cut)) +
+  geom_smooth()
+```
+
+# Exercise
+
+## Time series
+
+Using the built-in `ChickWeight` data set:
+
+- Create a scatter plot of weight (y-axis) over time (x-axis).
+
+```{r}
+ggplot(   )
+
+```
+
+- Color by diet.
+
+```{r}
+
+
+```
+
+- Add a linear mean trend line for each diet.
+
+```{r}
+
+
+
+```
+
+- Which diet leads to the highest mean increase in weight?
+
+> 
+
+- Facet a ribbon of sub-plots, one per diet.
+
+```{r}
+
+
+
+
+```
+
+- Save the last plot as `obds_chickweight`.
+
+```{r}
+
+
+
+
+```
+
+# Exercise
+
+## Bar plot
+
+- Load and display the `ggplot2::msleep` data set.
+
+```{r}
+
+
+```
+
+- Draw a bar plot of number of observations by taxonomic order.
+
+```{r}
+ggplot(   )
+
+```
+
+- Change the angle and font size of the x-axis tick labels.
+
+> You will probably want to justify the text labels as right-aligned.
+
+```{r}
+
+
+
+
+
+```
+
+- Change the label and font size of the axes.
+
+```{r}
+
+
+
+
+
+
+
+```
+
+- Fill each bar with colors, proportionally to the count of each genus.
+
+> You may need to iteratively resize the labels of the ticks and axes.
+
+```{r}
+
+
+
+
+
+
+
+```
+
+- Reduce the legend key size.
+  (Recommendation: use `unit(2, "mm")`).
+
+```{r}
+
+
+
+
+
+
+
+
+```
+
+- Force the legend to be display in 3 columns.
+ (Recommendation: use `guide_legend(...)`).
+
+```{r}
+
+
+
+
+
+
+
+
+
+
+```
+
+- Add a contour of thin black lines to the bars.
+
+```{r}
+
+
+
+
+
+
+
+
+
+
+```
+
+- Save the last plot as `obds_msleep`.
+
+```{r}
+
+
+
+
+
+
+
+
+
+
+```
+
+# Exercise
+
+## Plotting grid
+
+- Collate the plots that we saved through the day, as a single plot.
+
+  + Plots: `obds_diamonds`, `obds_chickweight`, `obds_msleep`.
+  
+  + Methods: `cowplot::plot_grid()`, `patchwork`, `gridExtra::grid.arrange()`.
+
+Using `cowplot`.
+
+```{r}
+library(cowplot)
+first_row <- cowplot::plot_grid(
+  
+  
+)
+second_row <- cowplot::plot_grid(
+  
+)
+super_plot <- cowplot::plot_grid(
+  
+  
+)
+```
+
+- Save the new plot in a PDF file.
+
+> You will likely need a few attempts to fine-tune the width and height of the output file.
+
+```{r}
+ggsave("final_plot.pdf", super_plot, width = 12, height = 12)
+```
+
+Using `patchwork`.
+
+```{r, fig.height=12, fig.width=12}
+library(patchwork)
+
+```
+
+```{r, fig.height=12, fig.width=12}
+library(gridExtra)
+
+
+
+
+
+```
+
+# Exercise
+
+## Pair programming
+
+- Explore the data set `ggplot2::mpg` and generate the most informative plot that you can!
+
+```{r}
+
+
+
+
+```
