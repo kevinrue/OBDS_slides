@@ -54,7 +54,5 @@ knit: pagedown::chrome_print
 
 ---
 
----
-
 ```{r, child='etc.Rmd'}
 ```
