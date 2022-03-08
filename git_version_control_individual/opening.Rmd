@@ -1,0 +1,162 @@
+# What is version control and why should I use it?
+
+.pull-left[
+```{r}
+knitr::include_graphics("img/phd101212s.gif")
+# Source: http://www.phdcomics.com/comics/archive/phd101212s.gif
+```
+]
+
+.pull-right[
+- Try various ideas.
+
+- Track additions and deletions to a base document.
+
+- Undo and re-apply changes.
+
+- Integrate contributions from multiple authors.
+
+- Backup important work.
+
+- Manage and resolve conflicting changes.
+
+- Go back to any version at any time.
+
+**What do _you_ expect from a tool to track changes?**
+]
+
+---
+
+# Track changes
+
+## Microsoft Word
+
+```{r, out.height='350px', out.width='500px'}
+# Source: https://medium.com/jumpto365/sharepoint-version-history-isnt-track-changes-fae1b71754ea
+knitr::include_graphics("img/microsoft-word-track-changes.png")
+```
+
+Other examples:
+Google Docs [version history](https://support.google.com/docs/answer/190843?hl=en),
+LibreOffice [Recording and Displaying Changes](https://help.libreoffice.org/Common/Recording_and_Displaying_Changes).
+
+.center[
+**In your opinion, what are pros/cons of track changes in this way?**
+]
+
+---
+
+# Track changes using version control
+
+## Example on a single file
+
+```{r, fig.align='center', out.height='200px'}
+# Source: https://swcarpentry.github.io/git-novice/01-basics/index.html
+knitr::include_graphics("img/carpentries-play-changes.svg")
+```
+
+#### Process
+
+- Initialise the base version of the document.
+- Make changes to the document.
+- Take snapshots of the document at key moments
+- Annotate those snapshot with a description of the changes.
+
+#### Result
+
+- You can examine the history of changes and restore any snapshot of the document.
+
+---
+
+# A history of changes implies versions of files
+
+```{r, fig.align='center', out.height='400px'}
+# Source: Kevin Rue-Albrecht (Adobe Illustrator)
+knitr::include_graphics("img/git-workflow-overview.svg")
+```
+
+---
+
+# Tracking simultaneous changes to multiple files 
+
+```{r, fig.align='center', out.height='250px', out.width='800px'}
+# In-house illustration made using Adobe Illustrator
+knitr::include_graphics("img/commit-multiple-files.svg")
+```
+
+#### Process
+
+- Add each file to the next set of changes (i.e., _staging area_).
+- Then, add this set of changes to the repository (i.e., _commit_).
+
+#### Result
+
+- That set of changes is recorded as a single unit in the repository.
+- Undoing or playing back these changes applies all the changes simultaneously.
+- It is _not_ possible to undo or play back these changes in one file independently from the other files.
+
+---
+
+# Collaborate with remote repositories
+
+.pull-left[
+```{r, fig.align='center', , out.height='300px'}
+# Source: https://www.atlassian.com/git/tutorials/setting-up-a-repository/git-clone
+knitr::include_graphics("img/atlassian-clone.svg")
+```
+]
+
+.pull-right[
+## Git Clones
+
+- Each contributor has a copy (i.e., _clone_) of the repository on their own computer.
+
+- Commits are first made locally.
+
+- Commits can then be _pushed_ and _pulled_ from one clone to another.
+
+- Remote repositories must be accessible through a public URL to interact with them.
+]
+
+## Note
+
+- Clones do not communicate automatically with each other; they are not always synchronised.
+
+- Contributors generally interact with a "central" repository online (e.g., GitHub); not directly with each other's clone.
+
+---
+
+# (Avoid) Conflicts between remote repositories
+
+```{r, fig.align='center', , out.height='500px'}
+# Source: Kevin Rue-Albrecht (Adobe Illustrator)
+knitr::include_graphics("img/clones-conflict.svg")
+```
+
+---
+
+# Summary
+
+- A _repository_ is a directory on a computer in which files are tracked.
+
+- Files in a repository are tracked: changes are detected and recorded.
+
+- Users decide when changes are recorded.
+
+  + Each record of changes is called a _commit_.
+
+- The complete history of _commits_ makes up the history of a _repository_.
+
+- A _repository_ can be _cloned_ and synchronised across different computers (i.e. _remotes_).
+
+---
+
+# The Long History of Version Control Systems
+
+## A brief summary
+
+Tools like [RCS](https://git.savannah.gnu.org/cgit/rcs.git), [CVS](https://savannah.nongnu.org/projects/cvs), or [Subversion](https://subversion.apache.org/) have been around since the early 1980s and are used by many large companies.
+
+However, many of these are now considered legacy systems (i.e., _outdated_) due to various limitations in their capabilities.
+
+More modern systems, such as [Git](https://git-scm.com/) and [Mercurial](https://www.mercurial-scm.org/), are _distributed_, meaning that they do not need a centralized server to host the repository.

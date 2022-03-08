@@ -1,0 +1,684 @@
+# The `.git` subdirectory
+
+Change directory to your new local clone of the repository, and list its contents.
+
+```{bash, eval=FALSE, echo=TRUE}
+$ cd OBDS_May_2022
+$ ls -a
+```
+
+```
+.  ..  .git  README.md
+```
+
+Git uses the `.git` sub-directory to store all the information about the project history.
+You can have a brief look for yourself if you wish.
+Make sure that you do not alter or remove anything in that sub-directory.
+
+```{bash, eval=FALSE, echo=TRUE}
+$ ls -a .git/
+```
+
+#### Result
+
+- Deleting the `.git` sub-directory is effectively discarding the _history_ of changes made to the repository.
+- However, deleting the `.git` sub-directory does not affect the _current state_ of the other sub-directories and files that make up your project (e.g., `README.md`).
+
+.center[
+**Changes are stored separately from the files themselves.**
+]
+
+---
+
+# Ignore files
+
+One or more special files named `.gitignore` can be placed in your project.
+
+Each line in those file specifies a file name or pattern that <i class="fab fa-git"></i> will ignore (i.e., not track) in the future.
+
+- Files that are already tracked will continue to be tracked even after they are added to `.gitignore`, unless they are explicitly removed from the repository using `git rm` (use the `--cached` option to only remove the file from the index, but keep the file itself).
+
+.pull-left[
+## .gitignore
+```
+ .DS_Store
+ data/
+ *fastq.gz
+ *sam
+ *bam
+```
+
+**Can you tell which files will be tracked when this `.gitignore` exists in the project root directory?**
+]
+
+.pull-right[
+```
+my-project/
+|_ .gitignore
+|_ data_raw/
+| |_ sample1.1.fastq
+| |_ sample1.2.fastq
+| |_ sample2.1.fastq.gz
+| |_ sample2.2.fastq.gz
+|_ data/
+| |_ sample1.bam
+| |_ sample2.bam
+|_ scripts/
+  |_ fastq_to_bam.sh
+```
+]
+
+---
+
+# Status of a repository
+
+The `git status` sub-command can be used to check whether the repository is up-to-date.
+
+```{bash, eval=FALSE, echo=TRUE}
+$ git status
+```
+
+```
+On branch master
+Your branch is up to date with 'origin/master'.
+
+nothing to commit, working tree clean
+```
+
+---
+
+# Exercise
+
+## Make changes
+
+- Create a file named `.gitignore` in your repository.
+
+```bash
+touch .gitignore
+```
+
+- Optionally, add a line to that file, e.g.
+
+```
+# This file list file patterns to ignore from version control
+```
+
+- Run `git status` again.
+
+.center[
+**What does the command return this time? How do you interpret it?**
+]
+
+---
+
+# Track new files
+
+The `git add` sub-command can be used to add new sets of changes to the _staging area_.
+
+- The _staging area_ is used to prepare the set of changes recorded in the next _commit_.
+- The command adds filenames to the staging area, but only the changes in those files will be recorded.
+- In this case, we add a new file to the staging area, so the whole contents of the new file constitute the changes (relative to no file).
+
+```{bash, eval=FALSE, echo=TRUE}
+$ git add .gitignore
+$ git status
+```
+
+```
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	new file:   .gitignore
+```
+
+.center[
+**What changed in `git status` after running `git add`?**
+]
+
+---
+
+# The staging area
+
+We just ran `git add`, which added a set of changes to the _staging area_.
+
+Then, we ran `git status`, as it is always a good idea to inspect the state of the repository to ensure everything is as expected before taking any further action.
+
+The `git commit` sub-command can be used to add changes currently in the _staging area_ in the next _commit_ of the _repository_.
+
+- The contents of the _staging area_ are added to a new _commit_ in the repository.
+- The _staging area_ itself is cleared, ready for the next set of changes to process.
+
+```{r, fig.align='center', out.height='200px', out.width='800px'}
+# Source: https://swcarpentry.github.io/git-novice/04-changes/index.html
+knitr::include_graphics("img/carpentries-git-staging-area.svg")
+```
+
+---
+
+# Record a set of changes 
+
+The `git commit` sub-command can be used to record the changes that are currently in the _staging area_ in the next _commit_ of the _repository_.
+
+- The `-m` option can be used to specify the message used to annotate the _commit_ that will contain this set of changes. 
+
+```{bash, eval=FALSE, echo=TRUE}
+$ git commit -m "Added empty .gitignore file"
+```
+
+```
+[main 81acf15] Added empty .gitignore file
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 .gitignore
+```
+
+.center[
+**What information do you recognise in the message displayed as a result of the `git commit` command?**
+]
+
+---
+
+# Push commits to a remote
+
+The `git push` sub-command can be used to send local changes to a remote repository.
+
+- The local repository must have configured the address of the remote repository.
+- When you create a repository as a _clone_ of a remote repository,
+  this is done automatically (the remote `origin` is recorded during initialisation).
+
+Before we push, the `git remote` command can be used to inspect, add, and remove remote repositories from the local repository configuration.
+
+```{bash, eval=FALSE, echo=TRUE}
+$ git remote -v
+```
+
+```
+origin	git@github.com:kevinrue/OBDS_May_2022.git (fetch)
+origin	git@github.com:kevinrue/OBDS_May_2022.git (push)
+```
+
+When everything is in place, you can tell <i class="fab fa-git"></i> to push new commits from the local clone to a remote.
+When calling `git push` without any other argument,
+the default is to push from the current branch to the corresponding branch on the remote named `origin`.
+
+```{bash, eval=FALSE, echo=TRUE}
+$ git push
+```
+
+---
+
+# Exercise
+
+## Push commits to a remote
+
+- Run `git push`.
+
+.center[
+**How do you read the output message? (example below)**
+]
+
+```
+$ git push
+Enumerating objects: 3, done.
+Counting objects: 100% (3/3), done.
+Delta compression using up to 40 threads
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (2/2), 289 bytes | 96.00 KiB/s, done.
+Total 2 (delta 0), reused 0 (delta 0), pack-reused 0
+To github.com:kevinrue/OBDS_May_2022.git
+   81acf15..9e2b638  main -> main
+```
+
+---
+
+# The repository history
+
+## On <i class="fab fa-github"></i> GitHub
+
+```{r, fig.align='center', out.height='325px', out.width='800px'}
+# Screenshot (Kevin Rue-Albrecht)
+knitr::include_graphics("img/github-network-graph.png")
+```
+
+.center[
+**How do you read this graph?**
+]
+
+---
+
+# View a commit
+
+## On <i class="fab fa-github"></i> GitHub
+
+```{r, fig.align='center', out.height='250px', out.width='800px'}
+# Screenshot (Kevin Rue-Albrecht)
+knitr::include_graphics("img/github-commit-view.png")
+```
+
+.center[
+**How do you read this page?**
+]
+
+---
+
+# The repository history
+
+The `git log` sub-command can be used to display the history of commits in the repository.
+
+- The `--all` option forces <i class="fab fa-git"></i> to display the repository history across all the branches.
+  + By default, <i class="fab fa-git"></i> only displays the history of the branch currently checked out.
+- The `--graph` option adds a visual representation of branches in the repository, and their connections to each other.
+- The `--oneline` (i.e., "one line") forces <i class="fab fa-git"></i> to summarise each commit as a single line.
+  + This limits the information displayed, but helps with the visualisation.
+
+.small-code[
+```{bash, eval=FALSE, echo=TRUE}
+$ git log --all --graph --oneline
+* 81acf15 (HEAD -> main, origin/main, origin/HEAD) Added empty .gitignore file
+* 4df0fa7 Initial commit
+```
+]
+
+.center[
+**How do you read this commit history?**
+]
+
+- Compare with `git log` without any argument.
+
+---
+
+# View past commits
+
+The `git show` sub-command can be used to examine individual past commits.
+
+```{bash, eval=FALSE, echo=TRUE}
+$ git show 81acf15
+commit 81acf150152602ef2e64dca30b5b2796d4e131a0 (HEAD -> main, origin/main, origin/HEAD)
+Author: Kevin Rue-Albrecht <kevinrue@users.noreply.github.com>
+Date:   Thu Mar 3 16:22:03 2022 +0000
+
+    Added empty .gitignore file
+
+diff --git a/.gitignore b/.gitignore
+new file mode 100644
+index 0000000..e69de29
+```
+
+.center[
+**How do you read this output history? What changes were recorded?**
+]
+
+---
+
+# View differences between commits
+
+The `git diff` sub-command can be used to compare two states of the repository.
+
+- It is possible to compare all the changes between a reference and a target commits using the syntax `git diff reference_commit target_commit`
+  + The order of commit identifiers control the changes that are shown as "added" or "removed".
+- It is also possible to compare the current state of files in the repository - including uncommitted changes - to any commit of the repository.
+  + This is often used to examine the changes that you have made since the most recent commit.
+
+.pull-left[
+.small-code[
+```{bash, eval=FALSE, echo=TRUE}
+$ git diff 4df0fa7 81acf15
+diff --git a/.gitignore b/.gitignore
+new file mode 100644
+index 0000000..e69de29
+```
+]
+]
+
+.pull-right[
+```{r, fig.align='center', out.height='200px', out.width='500px'}
+# Source: Kevin Rue-Albrecht (Adobe Illustrator)
+knitr::include_graphics("img/git-diff.svg")
+```
+]
+
+---
+
+# Edit files on <i class="fab fa-github"></i> GitHub
+
+Files can be created and edited directly on <i class="fab fa-github"></i> GitHub,
+though only one file can be edited at a time in this way.
+Saving the changes creates a new commit on <i class="fab fa-github"></i> GitHub.
+
+## Exercise
+
+On <i class="fab fa-github"></i> GitHub, navigate to the file `README.md`,
+and click the pencil above the file on the right.
+
+```{r, fig.align='center', out.height='300px', out.width='600px'}
+# Source: Screenshot (Kevin Rue-Albrecht)
+knitr::include_graphics("img/github-readme-view.png")
+```
+
+---
+
+# Editing a file on <i class="fab fa-github"></i> GitHub
+
+```{r, fig.align='center', out.height='500px', out.width='600px'}
+# Source: Screenshot (Kevin Rue-Albrecht)
+knitr::include_graphics("img/github-readme-edit.png")
+```
+
+.center[
+**Click the green button `Commit changes` when you are ready.**
+]
+
+---
+
+# Pull changes from a remote repository
+
+Having just made changes to the files on <i class="fab fa-github"></i> GitHub:
+
+- This does not (cannot!) automatically update the files in your clone(s) on clusters and personal computers.
+
+- The changes need to be _pulled_ from <i class="fab fa-github"></i> GitHub to the clone.
+
+## Exercise
+
+- Compare the history of the repository on <i class="fab fa-github"></i> GitHub
+  and your clone of of the repository.
+
+```{r, fig.align='center', out.height='250px', out.width='600px'}
+# Screenshot (Kevin Rue-Albrecht)
+knitr::include_graphics("img/github-network-graph2.png")
+```
+
+---
+
+# Exercise
+
+## Pull changes from a remote repository
+
+In a Terminal, set the working directory inside your clone of the repository, and run `git pull`.
+
+.center[
+**How do you read the message output? (example below)**
+]
+
+```
+$ git pull
+remote: Enumerating objects: 5, done.
+remote: Counting objects: 100% (5/5), done.
+remote: Compressing objects: 100% (3/3), done.
+remote: Total 3 (delta 0), reused 0 (delta 0), pack-reused 0
+Unpacking objects: 100% (3/3), 718 bytes | 17.00 KiB/s, done.
+From github.com:kevinrue/OBDS_May_2022
+   81acf15..73f7a57  main       -> origin/main
+Updating 81acf15..73f7a57
+Fast-forward
+ README.md | 3 +++
+ 1 file changed, 3 insertions(+)
+```
+
+Have a look at `git status` and `git log`, and compare with the history of the repository on <i class="fab fa-github"></i> GitHub.
+
+---
+
+# Summary so far
+
+- You have _initialised_ a repository (with a `README.md` file) on <i class="fab fa-github"></i> GitHub.
+
+- You have made a _clone_ of the repository on the teaching cluster.
+
+- You have _committed_ changes to files on the teaching cluster.
+
+- You have _pushed_ those commits from the teaching cluster to <i class="fab fa-github"></i> GitHub.
+
+- You have _committed_ changes to files on <i class="fab fa-github"></i> GitHub.
+
+- You have _pulled_ those changes from <i class="fab fa-github"></i> GitHub to the teaching cluster.
+
+```{r, fig.align='center', out.height='250px', out.width='600px'}
+# Screenshot (Kevin Rue-Albrecht)
+knitr::include_graphics("img/summary-workflow-pull-push.svg")
+```
+
+---
+
+# What to track?
+
+.center[
+**Can you identify the reasoning underlying each of the following pieces of advice?**
+]
+
+.pull-left[
+- Track:
+
+  + source code (e.g., scripts).
+  
+  + README file(s)
+  
+  + LICENSE file, if any
+  
+- Optionally track:
+
+  + `.gitignore` file(s)
+  
+  + Configuration file(s)
+
+- Do not track output files.
+]
+
+.pull-right[
+- Do not track very large files (e.g., data).
+
+  + Use [git-lfs](https://git-lfs.github.com/) if you must.
+
+  + Host elsewhere
+  (e.g.,
+  [figshare](https://figshare.com/),
+  [zenodo](https://zenodo.org/)).
+  
+  + Download data at runtime.
+
+- Do not track confidential information
+
+  + e.g., login, passwords
+]
+
+---
+
+# Revert changes
+
+The `git revert` sub-command can be used to undo everything that was done in a particular commit, without the need to edit any of the files manually.
+
+```{r, fig.align='center', out.height='400px', out.width='700px'}
+# In-house illustration made using Adobe Illustrator
+knitr::include_graphics("img/git-revert.svg")
+```
+
+---
+
+# Branches of history
+
+.pull-left[
+```{r, fig.align='center', out.height='300px'}
+# Source: https://swcarpentry.github.io/git-novice/01-basics/index.html
+knitr::include_graphics("img/carpentries-versions.svg")
+```
+]
+
+.pull-right[
+So far, your repository has followed a linear timeline.
+
+What if:
+
+- You want to write (and test) two mutually exclusive changes to your code,
+  and track those changes until you decide one to keep and one to discard.
+
+- You do not want to commit draft code to the main branch of your repository.
+]
+
+Then:
+
+- You can initiate new _branches_ in the history of your repository.
+
+- Changes upstream of the branching point are shared; downstream changes are specific to each branch.
+
+---
+
+# Merging branches of history
+
+.pull-left[
+```{r, fig.align='center', out.height='300px'}
+# Source: https://swcarpentry.github.io/git-novice/01-basics/index.html
+knitr::include_graphics("img/carpentries-merge.svg")
+```
+]
+
+.pull-right[
+Creating branches will result in your work being spread in mutually exclusive versions of your files, e.g.
+
+- The main branch contains the code from your latest lab meeting.
+- Another branch contains updates that fix a bug.
+- Another branch includes code that generates a new figure.
+]
+
+To generate a new version of your code that contains the code from your latest lab meeting,
+**and** the bug fix, **and** the new figure, you need to _merge_ branches together.
+
+Merging two branches creates a new _commit_ in the repository history.
+Downstream of the merging point, the files contain the changes made in both upstream branches.
+
+---
+
+# Branching and merging
+
+```{r, fig.align='center', out.height='300px'}
+# Source: Kevin Rue-Albrecht (Adobe Illustrator)
+knitr::include_graphics("img/branch-and-merge.svg")
+```
+
+- Branching allows you to work on different things independently from each other.
+
+- Merging combines the changes made on a branch to those made on another branch.
+
+  + Typically, "feature" branches are merged to the main branch.
+
+- Branches can contain any number of commits before being merged.
+
+- Branches do not have to be merged; they can be abandoned and deleted (great for experimenting).
+
+---
+
+# Create a branch
+
+The `git branch` sub-command can be used to inspect and create branches in a repository.
+
+- This does not automatically synchronise remote clones of the repository.
+
+  + You will need to _push_ those branches to the remote clones.
+  
+- You can only create branches with named that are not already used (locally).
+
+  + You will need to delete branches if you want to re-use their names.
+  
+- The branching point is the latest commit on the current branch.
+
+The `git checkout` sub-command is used to switch between branches.
+
+Frequently, `git checkout -b name_of_new_branch` is used to simultaneously
+create **and** switch to that new branch.
+
+```{r, fig.align='center', out.height='150px'}
+# Source: Kevin Rue-Albrecht (Adobe Illustrator)
+knitr::include_graphics("img/git-branch.svg")
+```
+
+---
+
+# Merging a branch
+
+The `git merge` sub-command can be used to merge two branches.
+
+Most frequently, "feature" branches are merge to the main branch.
+
+```
+git checkout main     # checkout the "receiving" branch
+git merge new_branch  # merge the "feature" branch to the current branch
+```
+
+This creates a new commit.
+From that point, files contain the changes made in the two parent branches.
+
+```{r, fig.align='center', out.height='150px'}
+# Source: Kevin Rue-Albrecht (Adobe Illustrator)
+knitr::include_graphics("img/git-merge.svg")
+```
+
+---
+
+# Deleting a branch
+
+Once merged, branches should be "deleted".
+
+- Except the main branch!
+
+- If the branch was merged, only the name  of the branch is deleted, not the commits.
+
+  + The commits are part of the history of the other branch.
+    Thus, commits are kept as long as one branch in the repository contains them.
+
+- If the branch was not merged, the commits on that branch are lost.
+
+```{r, fig.align='center', out.height='150px'}
+# Source: Kevin Rue-Albrecht (Adobe Illustrator)
+knitr::include_graphics("img/git-branch-delete.svg")
+```
+
+.center[
+
+**What is the difference with the previous illustration?**
+]
+
+The name of the branch can then be re-used to create a new branch with that name.
+
+---
+
+# Further reading
+
+## Novice
+
+- Software Carpentry: <https://swcarpentry.github.io/git-novice/>
+
+## Advanced
+
+- <i class="fab fa-git"></i> glossary: <https://git-scm.com/docs/gitglossary>
+- Oh s**t <i class="fab fa-git"></i>: <https://ohshitgit.com/>
+
+---
+
+# Credits
+
+```{r, out.height='300px'}
+knitr::include_graphics("img/TheCarpentries.svg")
+# Source: https://carpentries.org/
+```
+
+.center[
+Version Control with Git
+
+<https://swcarpentry.github.io/git-novice/>
+]
+
+---
+
+# References
+
+```{r refs, results="asis"}
+PrintBibliography(bib)
+```
+
+???
+
+Extras:
+
+- Install `git`
+- `git init` (as opposed to `git clone`)
+- `git merge` vs `git rebase`
