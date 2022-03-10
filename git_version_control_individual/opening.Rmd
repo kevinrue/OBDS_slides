@@ -59,12 +59,12 @@ knitr::include_graphics("img/carpentries-play-changes.svg")
 
 - Initialise the base version of the document.
 - Make changes to the document.
-- Take snapshots of the document at key moments
+- Take snapshots of the document at key moments.
 - Annotate those snapshot with a description of the changes.
 
 #### Result
 
-- You can examine the history of changes and restore any snapshot of the document.
+- You can browse the history of changes and restore any snapshot of the document.
 
 ---
 
@@ -86,12 +86,12 @@ knitr::include_graphics("img/commit-multiple-files.svg")
 
 #### Process
 
-- Add each file to the next set of changes (i.e., _staging area_).
-- Then, add this set of changes to the repository (i.e., _commit_).
+- Add each file to the next **set of changes** (i.e., _staging area_).
+- Then, add this **set of changes** to the repository (i.e., _commit_).
 
 #### Result
 
-- That set of changes is recorded as a single unit in the repository.
+- That **set of changes** is recorded as a single unit in the repository.
 - Undoing or playing back these changes applies all the changes simultaneously.
 - It is _not_ possible to undo or play back these changes in one file independently from the other files.
 
@@ -111,7 +111,7 @@ knitr::include_graphics("img/atlassian-clone.svg")
 
 - Each contributor has a copy (i.e., _clone_) of the repository on their own computer.
 
-- Commits are first made locally.
+- Commits are first made in one clone.
 
 - Commits can then be _pushed_ and _pulled_ from one clone to another.
 
@@ -130,7 +130,7 @@ knitr::include_graphics("img/atlassian-clone.svg")
 
 ```{r, fig.align='center', , out.height='500px'}
 # Source: Kevin Rue-Albrecht (Adobe Illustrator)
-knitr::include_graphics("img/clones-conflict.svg")
+knitr::include_graphics("img/git-clones-conflict.svg")
 ```
 
 ---
@@ -141,7 +141,7 @@ knitr::include_graphics("img/clones-conflict.svg")
 
 - Files in a repository are tracked: changes are detected and recorded.
 
-- Users decide when changes are recorded.
+- Users decide which files are tracked and when changes are recorded.
 
   + Each record of changes is called a _commit_.
 
