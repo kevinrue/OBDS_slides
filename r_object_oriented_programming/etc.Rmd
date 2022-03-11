@@ -4,23 +4,44 @@ We often see programming as applying functions to variables in our workspace.
 This is but one type of programming paradigm.
 
 .pull-left[
-```{r, include=TRUE, echo=FALSE, fig.align='center'}
-## Source: http://www.hexainclude.com/procedure-oriented-programming-language/
-knitr::include_graphics("img/functional-programming.png")
+```{r, include=TRUE, fig.align='center'}
+## Source: Kevin Rue-Albrecht (Adobe Illustrator)
+knitr::include_graphics("img/functional-programming.svg")
 ```
 ]
 
 .pull-right[
-- Divide and conquer
+- Divide and conquer.
 
-- Readable
+- Reuse code.
 
-- Sustainable
+- Readable?
 
-- Easier to debug
+- Sustainable?
 
-- Reuse code
+- Easier to debug?
 ]
+
+However:
+
+- New tasks, new types of inputs, new combinations of inputs and arguments, ...
+
+  + Complexity grows.
+
+- New functions require new function names.
+
+---
+
+# Object-oriented programming
+
+```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='400px'}
+## Source: Kevin Rue-Albrecht (Adobe Illustrator)
+knitr::include_graphics("img/object-oriented-programming.svg")
+```
+
+- Data are stored in _objects_ that undergo successive transformations.
+- Different _classes_ of objects are designed to contain different data types.
+- Functions specialised in the handling of certain classes are called _methods_.
 
 ---
 
@@ -38,19 +59,21 @@ knitr::include_graphics("img/functional-programming.png")
 
 .pull-left[
 ```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='300px', out.width='700px'}
+## Source: Kevin Rue-Albrecht (Adobe Illustrator)
 knitr::include_graphics("img/class-animal-inheritance.svg")
 ```
 ]
 
 .pull-right[
 ```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='300px', out.width='250px'}
+## Source: Kevin Rue-Albrecht (Adobe Illustrator)
 knitr::include_graphics("img/class-animal-attributes-methods.svg")
 ```
 ]
 
 ---
 
-# Analogy
+# Objects are instances of a class
 
 - A _class_ is the generic description of an object
   
@@ -70,14 +93,6 @@ knitr::include_graphics("img/class-object-relationship.jpeg")
 # Object Oriented Programming (OOP)
 
 .pull-left[
-## Why Object Oriented Programming?
-
-- Better code reusability.
-- Better security mechanisms.
-- More flexibility and scalability.
-]
-
-.pull-right[
 ## In procedural programming:
 
 - Decompose the problem into sub-problems.
@@ -91,15 +106,27 @@ knitr::include_graphics("img/class-object-relationship.jpeg")
 - Objects can communicate and interact with each other.
 ]
 
+.pull-right[
+## Why Object Oriented Programming?
+
+- Better code reusability.
+- Better security mechanisms.
+- More flexibility and scalability.
+
+.center[
+**Do you have any other thought?**
+]
+]
+
 ---
 
-# The four pillars of object oriented programming
+# The four pillars of object-oriented programming
 
-The OOP paradigm follows four principles.
+The four guiding principles of object-oriented programming.
 
 ```{r, include=TRUE, echo=FALSE, fig.align='center'}
-## Source: https://medium.com/swlh/the-four-pillars-of-object-oriented-programming-8ce8a26b32eb
-knitr::include_graphics("img/oop-four-pillars.png")
+## Source: Kevin Rue-Albrecht (Adobe Illustrator)
+knitr::include_graphics("img/oop-four-pillars.svg")
 ```
 
 ???
@@ -117,31 +144,41 @@ Note: Individually described in next few slides
 
 # Encapsulation
 
-- Objects can keep their data private.
+- Attributes and methods are bundled together in objects.
 
-- The contents of an object can only be accessed by public methods.
+- Users interact with objects through their public methods.
 
-- Improves security.
+- In turn, public methods perform the requested action using private attributes and methods.
 
 .pull-left[
 ```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='200px'}
-## Source: http://www.personal.psu.edu/users/a/g/ags5311/blogs/ExtendedText.html
-knitr::include_graphics("img/oop-encapsulation.png")
+## Source: Kevin Rue-Albrecht (Adobe Illustrator)
+knitr::include_graphics("img/oop-encapsulation.svg")
 ```
 ]
 
 .pull-right[
 ```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='300px', out.width='250px'}
+## Source: Kevin Rue-Albrecht (Adobe Illustrator)
 knitr::include_graphics("img/class-animal-attributes-methods.svg")
 ```
+]
+
+.center[
+**What are advantages of bundling attributes and methods together?**
 ]
 
 ---
 
 # Inheritance
 
+- Child classes inherit all the attributes and methods of their parent class(es).
+
+- Child class can add their own new attributes and methods.
+
 .pull-left[
 ```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='300px', out.width='700px'}
+## Source: Kevin Rue-Albrecht (Adobe Illustrator)
 knitr::include_graphics("img/class-animal-inheritance.svg")
 ```
 ]
@@ -152,23 +189,33 @@ knitr::include_graphics("img/class-bird-attributes-methods.svg")
 ```
 ]
 
-- Child classes inherit all the attributes and methods of their parent class(es).
+.center[
+**How much time do you think is saved when _developing_ new classes by inheritance?**
+]
 
-- Child class can add their own new attributes and methods.
+.center[
+**How much time do you think is saved when _learning_ classes developed by inheritance?**
+]
 
 ---
 
 # Abstraction
 
-- Expose only high level methods.
+- Expose only high-level methods.
 
-- Keep implementation details internal.
+- Keep details of low-level implementation internal.
 
-- Internal implementation can be changed without affecting other objects.
+- As a result, the private methods and attributes can be changed without affecting users.
+
+- Do not overwhelm users with more information than they need to be aware of.
 
 ```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='300px', out.width='500px'}
 knitr::include_graphics("img/class-abstraction.svg")
 ```
+
+.center[
+**How much do think users should know about the details of the internal implementation?**
+]
 
 ---
 
@@ -194,11 +241,13 @@ knitr::include_graphics("img/class-polymorphism.svg")
 
 - <i class="fab fa-r-project"></i> has no less than _three_ implementations of OOP:
 
-  + S3, the original class system in base <i class="fab fa-r-project"></i>.
+  + *S3*, the original class system in base <i class="fab fa-r-project"></i>.
   
-  + S4, implemented in the `r BiocStyle::CRANpkg("methods")` package.
+  + *S4*, implemented in the `r BiocStyle::CRANpkg("methods")` package,
+    and popular in the [Bioconductor](https://bioconductor.org/) project.
   
-  + R6, implemented in the `r BiocStyle::CRANpkg("R6")` package.
+  + *R6*, implemented in the `r BiocStyle::CRANpkg("R6")` package,
+    and popular in the [tidyverse](https://www.tidyverse.org/) project.
 
 In this lesson, we focus on S3, to understand classes of objects that we frequently come across in base <i class="fab fa-r-project"></i>.
 
@@ -210,7 +259,7 @@ Everything is an object in <i class="fab fa-r-project"></i>.
 For example, character vectors are objects.
 
 .pull-left[
-```{r, include=TRUE}
+```{r, echo=TRUE, include=TRUE}
 character_object <- "A"
 character_object
 str(character_object)
@@ -220,7 +269,7 @@ attributes(character_object)
 ]
 
 .pull-right[
-```{r, include=TRUE}
+```{r, echo=TRUE, include=TRUE}
 character_object2 <- c("A", "B", "C")
 character_object2
 str(character_object2)
@@ -234,7 +283,7 @@ attributes(character_object2)
 # Factors are objects, too
 
 .pull-left[
-```{r, include=TRUE}
+```{r, echo=TRUE, include=TRUE}
 factor_object <- factor(c("A", "B", "C"))
 factor_object
 str(factor_object)
@@ -243,7 +292,7 @@ class(factor_object)
 ]
 
 .pull-right[
-```{r, include=TRUE}
+```{r, echo=TRUE, include=TRUE}
 attributes(factor_object)
 attr(factor_object, "levels")
 attr(factor_object, "class")
@@ -255,7 +304,7 @@ attr(factor_object, "class")
 # Data frames are objects
 
 .pull-left[
-```{r, include=TRUE}
+```{r, echo=TRUE, include=TRUE}
 dataframe_object <- data.frame(
   numbers = c(1, 2, 3),
   strings = c("A", "B", "C")
@@ -266,7 +315,7 @@ class(dataframe_object)
 ]
 
 .pull-right[
-```{r, include=TRUE}
+```{r, echo=TRUE, include=TRUE}
 str(dataframe_object)
 attributes(dataframe_object)
 ```
@@ -277,7 +326,7 @@ attributes(dataframe_object)
 # And matrices are objects
 
 .pull-left[
-```{r, include=TRUE}
+```{r, echo=TRUE, include=TRUE}
 matrix_object <- matrix(
   data = c(1, 2, 3, 4, 5, 6, 7, 8),
   nrow = 2
@@ -287,7 +336,7 @@ matrix_object
 ]
 
 .pull-right[
-```{r, include=TRUE}
+```{r, echo=TRUE, include=TRUE}
 class(matrix_object)
 str(matrix_object)
 attributes(matrix_object)
@@ -297,7 +346,7 @@ attr(matrix_object, "dim")
 
 ---
 
-# S3 method dispatch
+# S3 method dispatch is polymorphism in base <i class="fab fa-r-project"></i>
 
 Methods are ordinary functions that use a special naming convention: `generic.class`:
 
@@ -306,7 +355,7 @@ Methods are ordinary functions that use a special naming convention: `generic.cl
 options(width = 60)
 ```
 
-```{r, include=TRUE}
+```{r, echo=TRUE, include=TRUE}
 methods("print") %>% head(14)
 ```
 
@@ -314,7 +363,7 @@ methods("print") %>% head(14)
 ]
 
 .pull-right[
-```{r, include=TRUE}
+```{r, echo=TRUE, include=TRUE}
 print.factor(factor_object)
 print.factor(character_object)
 print.default(character_object)
