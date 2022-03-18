@@ -27,14 +27,14 @@ knitr::include_graphics("img/plots-plots-everywhere.jpg")
 
 # Plotting in base <i class="fab fa-r-project"></i>
 
+```{r, include=TRUE}
+head(iris$Sepal.Length)
+```
+
 ```{r, include=TRUE, fig.align='center', fig.height=4, fig.width=8}
 hist(x = iris$Sepal.Length, breaks = 25, xlab = "Sepal Length",
   main = "Histogram of sepal lengths", col = "grey90", border = "red",
   xlim = c(4, 8), cex.lab = 1.5, cex.axis = 1.5, cex.main = 2)
-```
-
-```{r, include=TRUE}
-head(iris$Sepal.Length)
 ```
 
 ---
@@ -125,9 +125,9 @@ diamonds
 
 # Exercise
 
-## Specify the dataset.
-
 Use `library(ggplot2)` to load the package.
+
+## Specify the dataset.
 
 What does `ggplot(diamonds)` do?
 
@@ -143,7 +143,7 @@ What does `ggplot(diamonds, aes(x = carat, y = price))` do?
 
 - Add a smoothed mean trend line.
 
-- Save the last plot as an object called `obds_diamonds`.
+- Assign that last plot to an object called `obds_diamonds`.
 
 ---
 
@@ -302,7 +302,7 @@ the diet that leads to the highest mean increase in weight.
 
 - Facet a ribbon of sub-plots, one per diet.
 
-- Save the last plot as an object called `obds_chickweight`.
+- Assign that last plot to an object called `obds_chickweight`.
 
 ---
 
@@ -311,37 +311,50 @@ the diet that leads to the highest mean increase in weight.
 ## Bar plot
 
 - Load the `ggplot2::msleep` data set.
-
-- Draw a bar plot of number of observations by taxonomic order.
-
-- Change the angle and font size of the x-axis tick labels.
-  Justify the text labels as right-aligned.
-
-- Change the label and font size of the axes.
-
+- Draw a bar plot of number of observations (i.e., rows) for each taxonomic order
+  (i.e, one plot and one bar per taxonomic order).
+- Change the angle and font size of the text for the x-axis ticks (not the axis titles).
+  Justify the text of those x-axis ticks as right-aligned.
+- Change the value and font size of the title for both x and y axes.
 - Fill each bar with colors, proportionally to the count of each genus.
 
-> From this point onwards, you may need to iteratively resize the labels of the ticks and axes.
+From this point onwards, you may need to iteratively resize the text of the ticks and axes for readability.
 
 - Reduce the legend key size.
   (Recommendation: use `unit(2, "mm")`).
-
 - Force the legend to be display in 3 columns.
   (Recommendation: use `guide_legend(...)`).
-
 - Add a contour of thin black lines to the bars.
+- Assign that last plot to an object called `obds_msleep`.
 
-- Save the last plot as an object called `obds_msleep`.
+---
+
+# Plot grids - Combine plots
+
+```{r, include=TRUE}
+plot1 <- base_plot + theme_classic() + labs(title = "Theme classic")
+plot2 <- base_plot + theme_dark() + labs(title = "Theme dark")
+```
+
+.pull-left[
+```{r, include=TRUE, fig.height=4, fig.width=5, fig.align='center'}
+plot1
+```
+]
+
+.pull-right[
+```{r, include=TRUE, fig.height=4, fig.width=5, fig.align='center'}
+plot2
+```
+]
 
 ---
 
 # Plot grids - cowplot
 
 ```{r, include=TRUE, fig.height=5, fig.width=12, fig.align='center'}
-plot1 <- base_plot + theme_classic() + labs(title = "Theme classic")
-plot2 <- base_plot + theme_dark() + labs(title = "Theme dark")
 library(cowplot)
-plot_grid(plot1, plot2, labels = c("A", "B"), ncol = 2, nrow = 1)
+cowplot::plot_grid(plot1, plot2, labels = c("A", "B"), ncol = 2, nrow = 1)
 ```
 
 ---
@@ -355,27 +368,36 @@ plot1 + plot2
 
 ---
 
-# Plot grids - gridExtra
-
-```{r, include=TRUE, fig.height=5, fig.width=12, fig.align='center'}
-library(gridExtra)
-grid.arrange(plot1, plot2, ncol = 2, nrow = 1)
-```
-
----
-
-# Plot grids - gridExtra
+# Plot grids - patchwork
 
 ```{r, include=TRUE, fig.height=6, fig.width=5, fig.align='center'}
-library(gridExtra)
+library(patchwork)
 plot1 / plot2
 ```
 
 ---
 
-# Save a plot to file
+# Plot grids - patchwork
 
-The `ggsave()` function can be used to save a plot to a file.
+```{r, include=TRUE, fig.height=6, fig.width=10, fig.align='center'}
+library(patchwork)
+(plot1 + plot2) / (plot2 + plot1)
+```
+
+---
+
+# Plot grids - gridExtra
+
+```{r, include=TRUE, fig.height=5, fig.width=12, fig.align='center'}
+library(gridExtra)
+gridExtra::grid.arrange(plot1, plot2, ncol = 2, nrow = 1)
+```
+
+---
+
+# Export a plot to file
+
+The `ggsave()` function can be used to export a plot to a file.
 
 ```{r, include=TRUE, eval=FALSE}
 ggsave(
@@ -399,15 +421,15 @@ ggsave(
 
 ## Plotting grid
 
-- Collate the plots that we saved through the day, as a single plot.
+- Collate the plots that we assigend to objects through the day, as a single plot.
 
   + Plots: `obds_diamonds`, `obds_chickweight`, `obds_msleep`.
   
   + Methods: `cowplot::plot_grid()`, `patchwork`, `gridExtra::grid.arrange()`.
 
-- Save the new plot in a PDF file, and open it in a PDF viewer (e.g. Adobe Acrobat Reader DC).
+- Export the new plot in a PDF file, and open it in a PDF viewer (e.g. Adobe Acrobat Reader DC).
 
-> You will likely need a few attempts to fine-tune the width and height of the output file.
+You will likely need a few attempts to fine-tune the width and height of the output file.
 
 ---
 
@@ -427,7 +449,7 @@ ggsave(
 
 - Other packages provide tools for **arranging plots in a grid** (e.g., `r BiocStyle::CRANpkg("cowplot")`, `r BiocStyle::CRANpkg("patchwork")`, `r BiocStyle::CRANpkg("gridExtra")`).
 
-- The function `ggsave()` can be used to **save a plot to a range of file formats** (e.g. PDF, PNG).
+- The function `ggsave()` can be used to **export a plot to a range of file formats** (e.g. PDF, PNG).
 
 - A [ggplot2 cheatsheet](https://www.rstudio.com/resources/cheatsheets/) is available from the RStudio website.
 
@@ -457,43 +479,6 @@ ggplot(mpg, aes(cty, hwy, color = year)) +
 ## gridExtra
 
 - Arranging multiple grobs on a page:  <https://cran.r-project.org/web/packages/gridExtra/vignettes/arrangeGrob.html>
-
----
-
-# Git wrap-up
-
-- Copy your notebook for this lesson in the Git repository, e.g.
-
-.small-code[
-
-> ```
-> cp \
->   /project/obds/$USER/projects/object_oriented_programming_ggplot2/ggplot2-kevinrue.Rmd \
->   /project/obds/$USER/git/week2day4-ggplot2/
-> ```
-
-]
-
-- Similarly, copy your notebook for the object-oriented programming lesson in the Git repository, e.g.
-
-.small-code[
-
-> ```
-> cp \
->   /project/obds/$USER/projects/object_oriented_programming_ggplot2/object_oriented_programming-kevinrue.Rmd \
->   /project/obds/$USER/git/week2day4-object_oriented_programming/
-> ```
-
-]
-
-- Create a new branch in the Git repository.
-  Use the date and your username in the branch name to make it unique, e.g. `git checkout -b week2day4-kevinrue`.
-
-- Commit, push, open a pull request, get it approved, and merge it.
-
-- Delete your merged branch on GitHub.
-
-- Check out the main branch locally, pull, and delete your merged branch locally.
 
 ---
 
