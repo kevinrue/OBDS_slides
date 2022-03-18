@@ -202,14 +202,14 @@ The `r BiocStyle::CRANpkg("readr")` package is mostly known for its functions to
 
 ## Read and write files
 
-- Read data from the file `iris.csv` using `readr`.
+- Read data from the file `iris.csv`.
   Assign the data imported from the file to an object called `iris_raw`.
 
 .center[
 **What do you learn about the data from the messages displayed in the R console while the contents of the file are parsed and imported into your R session?**
 ]
 
-- Display the value of `iris_raw`.
+- Print the value of `iris_raw`.
 
 .center[
 **What is the class of the data? What are the dimensions of the dataset? What is the type of data stored in each column?**
@@ -221,7 +221,7 @@ The `r BiocStyle::CRANpkg("readr")` package is mostly known for its functions to
 **What function do you use? What options are available for that function?**
 ]
 
-- Inspect the file itself.
+- Inspect the `iris.tsv` file.
   You can use `file.edit()` to open the file in the RStudio editor.
 
 .center[
@@ -352,13 +352,11 @@ Columns are treated sequentially, a single call to `mutate()` can create columns
 .small-code[
 ```{r, include=TRUE}
 iris %>% mutate(
-  ID = rep(1:50, times = 3),
+  ID = seq(1, nrow(iris)),
   Flower.ID = paste0(Species, ID)
-) %>% group_by(Species) %>% slice_head(n = 3)
+  ) %>% slice_head(n = 6)
 ```
 ]
-
-Notice how `group_by()` is used here to display the first three flower for each species.
 
 ---
 
@@ -517,10 +515,32 @@ tibble_joined
 
 # Combine two tables using shared information
 
+.pull-left[
+## tibble_1
+
+.small-code[
+```{r, include=TRUE, echo=FALSE}
+tibble_1
+```
+]
+]
+
+.pull-right[
+## tibble_2
+
+.small-code[
+```{r, include=TRUE, echo=FALSE}
+tibble_2
+```
+]
+]
+
+.small-code[
 ```{r, include=TRUE}
 tibble_joined <- left_join(tibble_1, tibble_2, by = "ID")
 tibble_joined
 ```
+]
 
 ---
 
@@ -530,18 +550,15 @@ tibble_joined
 
 ### Exercise 1
 
-- Using `iris_raw`, for each species of iris, compute the following summary statistics for the `Sepal.Length`: mean, median, minimum, maximum.
+- Using `iris_raw`, for each species of iris, compute the following summary statistics for the `sepal_length`: mean, median, minimum, maximum.
 
 ### Exercise 2
 
-- For each species of iris, compute the mean of every column that starts with `"Sepal."`.
-  **Hint:** use the `dplyr::across()` and `tidyselect::starts_with()` functions.
-
-- Filter the latest table (summarised) to retain only species of iris with an average sepal length less than `6`.
-
-- Sort the latest table (after filtering) by descending `Sepal.Length`.
-
-- From the latest table (sorted), extract the `Sepal.Length` column as a numeric vector.
+- For each species of iris, compute the mean of every column that is numeric.
+  **Hint:** use the functions `dplyr::across()`, `tidyselect::where()`, and `base::is.numeric()`.
+- Filter the table above to retain only species of iris with an average sepal length less than `6`.
+- Sort the table above by descending `sepal_length`.
+- From the table above, extract the `sepal_length` column as a numeric vector.
   Make it a named numeric vector, where each value is named with the corresponding species.
 
 ---
@@ -554,16 +571,17 @@ tibble_joined
 
 Let's make the silly assumption that iris sepals are rectangular in shape.
 
-- Using `iris_raw`, compute a new column named `Sepal.Area`, which is the product of `Sepal.Length` and `Sepal.Width`.
+- Using `iris_raw`, compute a new column named `sepal_area`, which is the product of `sepal_length` and `sepal_width`.
 
-- Subset the result to the columns named `Species` and `Sepal.Area`.
+- Subset the result to the columns named `species` and `sepal_area`.
 
-- Subset the result to display the top 5 observations by `Sepal.Area`.
+- Subset the result to display the top 5 observations by `sepal_area`.
 
 ## Bonus point
 
-- Use `r BiocStyle::CRANpkg("ggplot2")` to make a histogram of `Sepal.Area` colored by species.
-  You might also want to facet the plot by species.
+- Make a histogram of `sepal_area` colored by species.
+
+You might also want to facet the plot by species.
   
 ---
 
@@ -600,7 +618,7 @@ Reshape the `iris_raw` dataset in a tidy format where one observation is represe
 
 - the value
 
-**Hint:** you want to pivot all the columns that start with `"Sepal"` or `"Petal"`.
+**Hint:** you want to pivot all the columns that start are numeric.
 ]
 
 .pull-right[
@@ -679,7 +697,7 @@ The `r BiocStyle::CRANpkg("stringr")` package is known for its many functions to
 
 - `str_length`: query the length of a string.
 
-- `str_to_lower` / `str_to_lower`: convert case of a string.
+- `str_to_lower` / `str_to_upper`: convert case of a string.
 
 ---
 
@@ -713,7 +731,7 @@ iris_species %>% unique()
 The `str_c()` function joins two or more strings, and the `str_trim()` function removes whitespaces for either end of a string.
 
 ```{r, include=TRUE}
-words <- c("I ", " Am ", "legend")
+words <- c("A ", " few ", "words")
 ```
 
 Remove whitespaces.
@@ -781,7 +799,7 @@ We provide you with an Excel file that contains gene expression data for the nin
 > - N: spread of cancer to nearby lymph nodes
 > - M: metastasis (spread of cancer to other parts of the body)
 
-- Convert the relevant columns to the factor type.
+- Convert the four columns above to the factor type.
 
 - Combine sample information with gene expression data.
   Assign the output to `exprs_sampleinfo`.
@@ -815,31 +833,6 @@ We provide you with an Excel file that contains gene expression data for the nin
 - [R for Data Science](https://r4ds.had.co.nz/)
 
 - [RStudio Cheat Sheets](https://www.rstudio.com/resources/cheatsheets/)
-
----
-
-# Git wrap-up
-
-- Copy your notebook for this lesson in the Git repository, e.g.
-
-.small-code[
-
-> ```
-> cp \
->   /project/obds/$USER/projects/tidyverse/tidyverse-kevinrue.Rmd \
->   /project/obds/$USER/git/week2day5-tidyverse/
-> ```
-
-]
-
-- Create a new branch in the Git repository.
-  Use the date and your username in the branch name to make it unique, e.g. `git checkout -b week2day5-kevinrue`.
-
-- Commit, push, open a pull request, get it approved, and merge it.
-
-- Delete your merged branch on GitHub.
-
-- Check out the main branch locally, pull, and delete your merged branch locally.
 
 ---
 

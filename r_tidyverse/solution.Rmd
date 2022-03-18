@@ -51,7 +51,7 @@ iris %>%
 
 ## Read and write files
 
-- Read data from the file `iris.csv` using `readr`.
+- Read data from the file `iris.csv`.
   Assign the data imported from the file to an object called `iris_raw`.
 
 ```{r}
@@ -60,12 +60,13 @@ iris_raw <- read_csv("data/iris.csv")
 
 **What do you learn about the data from the messages displayed in the R console while the contents of the file are parsed and imported into your R session?**
 
-Number of rows and columns in the data set.
-Delimiter used to parse the file.
-Name and type of individual columns.
-Hints about some functions and options that can be used.
+> Answer:
+> - Number of rows and columns in the data set.
+> - Delimiter used to parse the file.
+> - Name and type of individual columns.
+> - Hints about some functions and options that can be used.
 
-- Display the value of `iris_raw`.
+- Print the value of `iris_raw`.
 
 ```{r}
 iris_raw
@@ -73,9 +74,10 @@ iris_raw
 
 **What is the class of the data? What are the dimensions of the dataset? What is the type of data stored in each column?**
 
-Data are loaded as a `tibble`.
-Data set is 150 rows and 5 columns.
-Column types are: double, double, double, double, character.
+> Answer:
+> - Data are loaded as a `tibble`.
+> - Data set is 150 rows and 5 columns.
+> - Column types are: double, double, double, double, character.
 
 - Write the dataset to a file named `iris.tsv`, separating fields with the tabulation character.
 
@@ -85,10 +87,11 @@ write_tsv(iris_raw[, 1:4], "iris.tsv")
 
 **What function do you use? What options are available for that function?**
 
-`write.tsv()` is the ideal choice here.
-Options can be found on the man page, using `?write.tsv`.
+> Answer:
+> - `write.tsv()` is the ideal choice here.
+> - Options can be found on the man page, using `?write.tsv`.
 
-- Inspect the file itself.
+- Inspect the `iris.tsv` file.
   You can use `file.edit()` to open the file in the RStudio editor.
 
 ```{r, eval=FALSE}
@@ -97,8 +100,9 @@ file.edit("iris.tsv")
 
 **Are you satisfied with the contents and appearance of the file?**
 
-The file is as expected.
-Not the nicest to read, due to column names wider than values.
+> Answer:
+> - The file is as expected.
+> - Not the nicest to read, due to column names wider than values.
 
 # Demo
 
@@ -139,11 +143,10 @@ iris %>%
 ```{r}
 iris %>%
     mutate(
-        ID = rep(1:50, times = 3),
+        ID = seq(1, nrow(iris)),
         Flower.ID = paste0(Species, ID)
         ) %>%
-    group_by(Species) %>%
-    slice_head(n = 3)
+    slice_head(n = 6)
 ```
 
 # Demo
@@ -227,6 +230,8 @@ tibble_2 <- tibble(
 tibble_2
 ```
 
+**How would you describe how to join these two tibbles?**
+
 ```{r}
 tibble_joined <- left_join(tibble_1, tibble_2, by = "ID")
 tibble_joined
@@ -238,62 +243,62 @@ tibble_joined
 
 ### Exercise 1
 
-- Using `iris_raw`, for each species of iris, compute the following summary statistics for the `Sepal.Length`: mean, median, minimum, maximum.
+- Using `iris_raw`, for each species of iris, compute the following summary statistics for the `sepal_length`: mean, median, minimum, maximum.
 
 ```{r}
 iris_raw %>% 
-    group_by(Species) %>% 
+    group_by(species) %>% 
     summarise(
-        min = min(Sepal.Length),
-        mean = mean(Sepal.Length),
-        median = median(Sepal.Length),
-        max = max(Sepal.Length)
+        min = min(sepal_length),
+        mean = mean(sepal_length),
+        median = median(sepal_length),
+        max = max(sepal_length)
     )
 ```
 
 ### Exercise 2
 
-- For each species of iris, compute the mean of every column that starts with `"Sepal."`.
-  **Hint:** use the `dplyr::across()` and `tidyselect::starts_with()` functions.
+- For each species of iris, compute the mean of every column that is numeric.
+  **Hint:** use the functions `dplyr::across()`, `tidyselect::where()`, and `base::is.numeric()`.
 
 ```{r}
 iris_raw %>% 
-    group_by(Species) %>% 
-    summarise(across(where(is.double), mean))
+    group_by(species) %>% 
+    summarise(across(where(is.numeric), mean))
 ```
 
-- Filter the latest table (summarised) to retain only species of iris with an average sepal length less than `6`.
-
-```{r}
-# Copy the code chunk above and extend with more pipes
-iris_raw %>% 
-    group_by(Species) %>% 
-    summarise(across(tidyselect::starts_with("Sepal."), mean)) %>% 
-    filter(Sepal.Length < 6)
-```
-
-- Sort the latest table (after filtering) by descending `Sepal.Length`.
+- Filter the table above to retain only species of iris with an average sepal length less than `6`.
 
 ```{r}
 # Copy the code chunk above and extend with more pipes
 iris_raw %>% 
-    group_by(Species) %>% 
-    summarise(across(tidyselect::starts_with("Sepal."), mean)) %>% 
-    filter(Sepal.Length < 6) %>% 
-    arrange(desc(Sepal.Length))
+    group_by(species) %>% 
+    summarise(across(tidyselect::starts_with("sepal_"), mean)) %>% 
+    filter(sepal_length < 6)
 ```
 
-- From the latest table (sorted), extract the `Sepal.Length` column as a numeric vector.
+- Sort the table above by descending `sepal_length`.
+
+```{r}
+# Copy the code chunk above and extend with more pipes
+iris_raw %>% 
+    group_by(species) %>% 
+    summarise(across(tidyselect::starts_with("sepal_"), mean)) %>% 
+    filter(sepal_length < 6) %>% 
+    arrange(desc(sepal_length))
+```
+
+- From the table above, extract the `sepal_length` column as a numeric vector.
   Make it a named numeric vector, where each value is named with the corresponding species.
 
 ```{r}
 # Copy the code chunk above and extend with more pipes
 iris_raw %>% 
-    group_by(Species) %>% 
-    summarise(across(tidyselect::starts_with("Sepal."), mean)) %>% 
-    filter(Sepal.Length < 6) %>% 
-    arrange(desc(Sepal.Length)) %>% 
-    pull(Sepal.Length, name = Species)
+    group_by(species) %>% 
+    summarise(across(tidyselect::starts_with("sepal_"), mean)) %>% 
+    filter(sepal_length < 6) %>% 
+    arrange(desc(sepal_length)) %>% 
+    pull(sepal_length, name = species)
 ```
 
 # Exercise
@@ -304,57 +309,58 @@ iris_raw %>%
 
 Let's make the silly assumption that iris sepals are rectangular in shape.
 
-- Using `iris_raw`, compute a new column named `Sepal.Area`, which is the product of `Sepal.Length` and `Sepal.Width`.
+- Using `iris_raw`, compute a new column named `sepal_area`, which is the product of `sepal_length` and `sepal_width`.
 
 ```{r}
 iris_raw %>% 
     mutate(
-        Sepal.Area = Sepal.Length * Sepal.Width
+        sepal_area = sepal_length * sepal_width
     )
 ```
 
-- Subset the result to the columns named `Species` and `Sepal.Area`.
+- Subset the result to the columns named `species` and `sepal_area`.
 
 ```{r}
 # Copy the code chunk above and extend with more pipes
 iris_raw %>% 
     mutate(
-        Sepal.Area = Sepal.Length * Sepal.Width
+        sepal_area = sepal_length * sepal_width
     ) %>% 
-    select(Species, Sepal.Area)
+    select(species, sepal_area)
 ```
 
-- Subset the result to display the top 5 observations by `Sepal.Area`.
+- Subset the result to display the top 5 observations by `sepal_area`.
 
 ```{r}
 # Copy the code chunk above and extend with more pipes
 iris_raw %>% 
     mutate(
-        Sepal.Area = Sepal.Length * Sepal.Width
+        sepal_area = sepal_length * sepal_width
     ) %>% 
-    select(Species, Sepal.Area) %>% 
-    slice_max(Sepal.Area, n = 5)
+    select(species, sepal_area) %>% 
+    slice_max(sepal_area, n = 5)
 ```
 
 ## Bonus point
 
-- Use `r BiocStyle::CRANpkg("ggplot2")` to make a histogram of `Sepal.Area` colored by species.
-  You might also want to facet the plot by species.
+- Make a histogram of `sepal_area` colored by species.
+
+You might also want to facet the plot by species.
 
 ```{r}
 # Copy the code chunk above and extend with more pipes
 iris_for_ggplot <- iris_raw %>% 
     mutate(
-        Sepal.Area = Sepal.Length * Sepal.Width
+        sepal_area = sepal_length * sepal_width
     ) %>% 
-    select(Species, Sepal.Area)
+    select(species, sepal_area)
 iris_for_ggplot
 ```
 
 ```{r}
-ggplot(iris_for_ggplot, aes(Sepal.Area, fill = Species)) +
+ggplot(iris_for_ggplot, aes(sepal_area, fill = species)) +
     geom_histogram() +
-    facet_wrap(~Species, ncol = 1)
+    facet_wrap(~species, ncol = 1)
 ```
 
 # Exercise
@@ -369,17 +375,19 @@ Reshape the `iris_raw` dataset in a tidy format where one observation is represe
 
 - the value
 
-**Hint:** you want to pivot all the columns that start with `"Sepal"` or `"Petal"`.
+**Hint:** you want to pivot all the columns that start are numeric.
 
 ```{r}
 iris_long <- iris_raw %>% 
-  pivot_longer(c(starts_with("Sepal"), starts_with("Petal")), names_to = "variable")
+  pivot_longer(where(is.numeric), names_to = "variable")
 iris_long
 ```
 
 **What information have we lost in the process? What could we do to remedy the issue?**
 
-The identity of each observation is lost; e.g., we cannot tell which value of `Sepal.Length` is associated with which value of `Sepal.Width`.
+> Answer:
+> The identity of each observation is lost;
+> e.g., we cannot tell which value of `sepal_length` is associated with which value of `sepal_width`.
 
 ```{r}
 # Copy the code chunk above and refine to address the issue
@@ -399,7 +407,7 @@ iris_long2
 
 ```{r}
 iris_long2 %>% 
-      pivot_wider(id_cols = c(specimen, Species, variable), names_from = variable, values_from = value) %>% 
+      pivot_wider(id_cols = c(specimen, species, variable), names_from = variable, values_from = value) %>% 
   select(-specimen)
 ```
 
@@ -451,7 +459,7 @@ iris_species %>%
 ## Join multiple strings and remove whitespaces
 
 ```{r}
-words <- c("I ", " Am ", "legend")
+words <- c("A ", " few ", "words")
 words
 ```
 
@@ -528,7 +536,7 @@ sample_info
 > - N: spread of cancer to nearby lymph nodes
 > - M: metastasis (spread of cancer to other parts of the body)
 
-- Convert the relevant columns to the factor type.
+- Convert the four columns above to the factor type.
 
 ```{r}
 sample_info <- sample_info %>%

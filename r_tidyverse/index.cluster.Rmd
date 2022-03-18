@@ -1,9 +1,9 @@
 ---
-title: 'Introduction to `r BiocStyle::CRANpkg("ggplot2")`'
+title: 'The tidyverse'
 subtitle: '<i class="fab fa-r-project"></i>'
 author: "Kevin Rue-Albrecht"
 institute: "Oxford Biomedical Data Science Training Programme"
-date: "2022-05-12 (updated: `r Sys.Date()`)"
+date: "2022-05-13 (updated: `r Sys.Date()`)"
 output:
   xaringan::moon_reader:
     css: [default, metropolis, rladies-fonts, "my-theme.css"]
@@ -16,7 +16,7 @@ output:
 knit: pagedown::chrome_print
 ---
 
-```{r, child='goals_and_objectives.Rmd'}
+```{r, child='setup_and_goals.Rmd'}
 ```
 
 ---
@@ -33,7 +33,7 @@ knit: pagedown::chrome_print
 
 - Launch RStudio Server on the teaching cluster.
 
-- Start a new RStudio project called `ggplot2`.
+- Start a new RStudio project called `object_oriented_programming`.
 
 - Make a copy of the template notebook for this lesson in your <i class="fab fa-git"></i> repository.
 
