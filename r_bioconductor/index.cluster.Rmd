@@ -3,7 +3,7 @@ title: 'Introduction to Bioconductor'
 subtitle: '<i class="fab fa-r-project"></i> for genomics data science'
 author: "Kevin Rue-Albrecht"
 institute: "Oxford Biomedical Data Science Training Programme"
-date: "2021-10-13 (updated: `r Sys.Date()`)"
+date: "2022-05-18 (updated: `r Sys.Date()`)"
 output:
   xaringan::moon_reader:
     css: [default, metropolis, rladies-fonts, "my-theme.css"]
@@ -23,11 +23,13 @@ knit: pagedown::chrome_print
 
 # Prerequisites
 
-- An account on the CCB cluster.
+- An account on the teaching cluster.
 
-- A clone of the shared GitHub repository for this course.
+- A [<i class="fab fa-github"></i> GitHub](https://github.com/) repository for this course.
 
 ## Lessons
+
+- Introduction to base <i class="fab fa-r-project"></i>.
 
 - Introduction to `r BiocStyle::CRANpkg("ggplot2")`.
 
@@ -35,26 +37,15 @@ knit: pagedown::chrome_print
 
 # Set up
 
-- Checkout and pull the main branch of the shared repository.
+- Launch RStudio Server on the teaching cluster.
 
-- Create and launch a new RStudio project in `/project/obds/$USER/projects/bioconductor`.
+- Start a new RStudio project called `dimensionality_and_clustering`.
 
-- Make a copy of the file `template.Rmd` for this lesson from the Git repository to your project.
-  Use your username in the filename to make it unique, e.g
+- Make a copy of the template notebook for this lesson in your <i class="fab fa-git"></i> repository.
 
-.small-code[
+- Make symbolic link from the RStudio project to the template notebook.
 
-> ```
-> cp \
->   /project/obds/$USER/git/week3day3-bioconductor/template.Rmd \
->   /project/obds/$USER/projects/bioconductor/bioconductor-kevinrue.Rmd
-> ```
-
-]
-
-- Open your copy of the notebook for this lesson in RStudio.
-
-- Follow along, running code from the notebook as mentioned during the lesson.
+- Open the notebook and follow along, editing and running the code as needed.
 
 ---
 
