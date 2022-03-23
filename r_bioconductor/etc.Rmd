@@ -16,14 +16,14 @@ knitr::include_graphics("img/biocmanager-update.png")
 
 - Load the `r BiocStyle::Biocpkg("Biostrings")` package.
 
-- The `r BiocStyle::Biocpkg("Biostrings")` package provides the object `DNA_ALPHABET`.
+- The package provides the object `DNA_ALPHABET`.
   Print the object in the console and use the help page to explain the contents of the object.
 
-- The `r BiocStyle::Biocpkg("Biostrings")` package provides the function `IlluminaQuality()`.
+- The package provides the function `IlluminaQuality()`.
   Run some code from the "Examples" section of the help page, and describe what the function does.
 
 - Access the package vignette(s).
-  How many vignette does the `r BiocStyle::Biocpkg("Biostrings")` package include?
+  How many vignette does the package include?
 
 - Import sequences in the file `TruSeq3-PE-2.fa`.
   What is the class of the object?
@@ -68,7 +68,7 @@ An E-box (enhancer box) is a DNA response element found in some eukaryotes that 
 
 The E-box motif is `"CANNTG"`.
 
-- Extract the sequence of chromosome Y.
+- Extract the sequence of chromosome Y from the `genome` object above.
 
 - Find out the appropriate method in the `r BiocStyle::Biocpkg("Biostrings")` and count the number of E-box motifs present on chromosome Y.
 
@@ -96,8 +96,8 @@ Coordinates on a genomic scale.
 ## Ranges and operations
 
 ```{r, include=TRUE, echo=FALSE, out.width='800px'}
-## Source: https://www.bioconductor.org/help/course-materials/2015/SeattleApr2015/B_GenomicRanges.html
-knitr::include_graphics("img/genomic-ranges.png")
+## Source: https://carpentries-incubator.github.io/bioc-project/07-genomic-ranges/index.html
+knitr::include_graphics("img/genomic-ranges.svg")
 ```
 ]
 
@@ -300,7 +300,7 @@ knitr::include_graphics("img/biocviews-annotation.png")
 - Load the `r BiocStyle::Biocpkg("rtracklayer")` package.
 
 - Import the file in your <i class="fab fa-r-project"></i> session using the function `rtracklayer::import()`.
-  Assign the object to the variable name `gtf_data`.
+  Assign value to an object called `gtf_data`.
 
 - What are the metadata columns available in the object?
 
@@ -308,7 +308,7 @@ knitr::include_graphics("img/biocviews-annotation.png")
 
 - How many transcripts do the annotations describe for that gene?
 
-- Subset the annotations to exons, and split by transcript.
+- Subset the annotations to exons, and use the `split()` function to separate exons from different transcripts.
   What is the class of the object that is returned?
 
 ---
@@ -345,7 +345,7 @@ The `OrgDb` family of packages provide annotations that link several types of id
 
 - Load the package `r BiocStyle::Biocpkg("org.Hs.eg.db")`.
 
-Each `OrgDb` package contains an object of the same name.
+Each `OrgDb` package contains an object of the same name as the package.
 
 - What is the class of the object?
 - Use the `columns()` method to discover which sorts of annotations can be extracted
@@ -507,11 +507,50 @@ What do those functions do?
 ## Assembling a SummarizedExperiment object
 
 - Import the matrix in the file `counts.csv`.
+  Call it `assay_counts`.
 
 - Import the data frames in the files `sample_metadata.csv` and `gene_metadata.csv`.
-
-- Use the `SummarizedExperiment()` to combine those three objects into a single `SummarizedExperiment` object.
+  Call them `sample_metadata` and `gene_metadata`.
+  
+- Use the function `SummarizedExperiment()` to combine those three objects into a single `SummarizedExperiment` object.
   Call it `demo_se`.
+  
+  + Assign the matrix to an assay named `counts`.
+
+---
+
+# Inheritance and coercion
+
+The `as()` function can be used to convert an object between classes that are related through inheritance.
+This is called _coercing_ the object to another class.
+
+For instance:
+
+.pull-left[
+.small-code[
+```{r, include=TRUE}
+demo_dataframe <- data.frame(A = c(1, 2), B = c(3, 4))
+demo_dataframe
+```
+]
+]
+
+.pull-right[
+.small-code[
+```{r, include=TRUE}
+demo_DataFrame <- as(demo_dataframe, "DataFrame")
+demo_DataFrame
+```
+]
+]
+
+<br/>
+
+- If the new class is simpler, some information may be lost
+  (e.g., coercing to a parent class).
+
+- If the new class is more complex, new components may be filled with automatically computed or default values.
+  (e.g., coercing to child class).
 
 ---
 
@@ -524,15 +563,12 @@ What do those functions do?
 - Convert your earlier `demo_se` to a `DESeqDataSet` object, using the `as()` function.
   Call the object `demo_deseq`.
 
-> Solution: `demo_deseq <- as(demo_se, "DESeqDataSet")`.
-
 - What are the slots of information present in the `DESeqDataSet` object?
-
-> Use the function `slotNames()`.
+  Use the function `slotNames()`.
 
 - Which slots are new compared to the `SummarizedExperiment` object?
 
-- Which slots of the `DESeqDataSet` object can access using accessor functions (e.g. `assays()`) ?
+- Which components of the `DESeqDataSet` object can you access using accessor functions (e.g., `assays()`) ?
   Do all of those accessors work on the original `demo_se` object?
 
 ---
@@ -761,7 +797,7 @@ The function `options()` can be used to get or set global options of the current
 
 The function reports the URLs from which to install Bioconductor and CRAN packages.
 
-- In an `.Rprofile` file -- either in your home directory or in the root of your RStudio project -- add the following line and restart the <i class="fab fa-r-project"></i> session.
+- Set the `repos` option to the value of `BiocManager::repositories()`.
 
 ```{r, include=TRUE}
 options(repos = BiocManager::repositories())
