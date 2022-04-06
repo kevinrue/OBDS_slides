@@ -200,7 +200,7 @@ The package `r BiocStyle::Biocpkg("DropletUtils")` provides several utilities fo
 
 ## Utilities and quality control
 
-- `DropletUtils::barcodeRanks()` ccomputes barcode rank statistics and identify the knee and inflection points on the total count curve.
+- `DropletUtils::barcodeRanks()` computes barcode rank statistics and identify the knee and inflection points on the total count curve.
 - `DropletUtils::emptyDrops()` is designed to distinguish between empty droplets and cells by testing each barcode’s expression profile for significant deviation from the ambient profile.
 - `DropletUtils::swappedDrops()` removes the effects of barcode swapping.
   It takes a list of paths to individual samples and returns a list with an item called `cleaned`, itself a list of sparse matrices, after removing swapped molecules.
@@ -213,11 +213,11 @@ The package `r BiocStyle::Biocpkg("DropletUtils")` provides several utilities fo
 
 - Import the filtered matrix into R; use `r BiocStyle::Biocpkg("DropletUtils")`.
 
-**Note:** use the `samples` argument of the `DropletUtils::read10xCounts()` function to give a convenient name to each sample.
+**Note:** use the `samples=` argument of the `DropletUtils::read10xCounts()` function to give a convenient name to each sample.
   Check the difference without using the `samples` argument.
 
-- Print a summary representation of the object.
-  What can you tell about the contents of the object?
+- Print the object.
+  What can you tell about its contents?
 
 - What can you tell from the object metadata?
 
@@ -236,19 +236,19 @@ knitr::include_graphics("img/overview-analysis-qc-filter.png")
 
 # Computing metrics for quality control
 
-The package `r BiocStyle::Biocpkg("scater")` provides several utilities focused on the preprocessing and quality control of single-cell gene expression data.
+The package `r BiocStyle::Biocpkg("scuttle")` provides several utilities focused on the preprocessing and quality control of single-cell gene expression data.
 
 ## Quality-control
 
-- `scater::perCellQCMetrics()` and `scater::perFeatureQCMetrics()` compute a variety of quality control metrics for arbitrary sets of cells and features in the dataset (e.g., mitochondrial genes, individual samples), and returns them as columns of a `DataFrame`.
+- `scuttle::perCellQCMetrics()` and `scuttle::perFeatureQCMetrics()` compute a variety of quality control metrics for arbitrary sets of cells and features in the dataset (e.g., mitochondrial genes, individual samples), and returns them as columns of a `DataFrame`.
 
-- `scater::addPerCellQC()` and `scater::addPerFeatureQC()` compute the same metrics, but adds them to the `SingleCellExperiment` object as `colData` and `rowData`, respectively.
+- `scuttle::addPerCellQC()` and `scuttle::addPerFeatureQC()` compute the same metrics, but adds them to the `SingleCellExperiment` object as `colData` and `rowData`, respectively.
 
 ## Visualisation
 
 - `scater::plotScater()` and other functions `scater::plot...()` can help you visualise different aspects of the data set.
 
-... but you can also use `r BiocStyle::CRANpkg("ggplot2")` to visualise information stored as `DataFrame` in the `colData()` and `rowData()` (Note: you will first need to convert from `DataFrame` to `data.frame`).
+... but you can also use `r BiocStyle::CRANpkg("ggplot2")` to visualise information stored as `DataFrame` in the `colData()` and `rowData()` (Note: you will first need to convert from `DataFrame` to `data.frame` or `tibble`).
 
 ---
 
@@ -256,21 +256,19 @@ The package `r BiocStyle::Biocpkg("scater")` provides several utilities focused 
 
 ## Quality control
 
-- Compute and visualise quality control metrics; use `r BiocStyle::Biocpkg("scater")`.
+- Compute and visualise quality control metrics (library size, genes detected, mitochondrial fraction); use `r BiocStyle::Biocpkg("scuttle")` and/or `r BiocStyle::Biocpkg("scater")`.
 
-**Note:** identify mitochondrial genes and pass those to the `subsets` argument of the `scater::addPerCellQC()` function.
+  + Identify mitochondrial genes and pass those to the `subsets` argument of the `scuttle::addPerCellQC()` function.
 
-**Note:** what is the return value?
-  where are the quality metrics stored?
-  what is the difference with `scater::perCellQCMetrics()`?
+  + What is the return value?
+    Where are the quality metrics stored?
+    What is the difference with `scuttle::perCellQCMetrics()`?
 
-- Visualise quality metrics; use `r BiocStyle::CRANpkg("ggplot2")`.
+- Visualise library size, genes detected and mitochondrial fraction as three violin plots; use `r BiocStyle::CRANpkg("ggplot2")`.
 
-- Would you remove any cell?
+- Filter cells, keeping those with more than 4,500 UMI, less than 15% mitochondrial UMI, and more than 1,500 genes detected. 
 
-**Note:** we have imported a matrix prefiltered by [Cell Ranger](https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/what-is-cell-ranger) using a certain set of criteria (which ones?); what other criteria can you think of, which may be useful for filterering cells?
-
-- Similarly, use `scater::perFeatureQCMetrics()` or `scater::addPerFeatureQC()` to compute per-feature quality metrics, and visualise those metrics.
+- Similarly, use `scuttle::perFeatureQCMetrics()` or `scuttle::addPerFeatureQC()` to compute per-feature quality metrics, and visualise those metrics.
 
 ---
 
@@ -285,16 +283,18 @@ knitr::include_graphics("img/overview-analysis-normalise.png")
 
 # Normalisation strategies 
 
-The packages `r BiocStyle::Biocpkg("scater")` and `r BiocStyle::Biocpkg("scran")` host methods for the most common and popular normalisation strategies.
+The packages `r BiocStyle::Biocpkg("scuttle")` and `r BiocStyle::Biocpkg("scran")` host methods for the most common and popular normalisation strategies.
 
-## scater
+## scuttle
 
-- `scater::logNormCounts()` computes log-transformed normalized expression values.
+- `scuttle::logNormCounts()` computes log-transformed normalized expression values.
   This includes the computation of size factors using `scater::librarySizeFactors()`.
 
 ## scran
 
 - `scran::computeSumFactors()` implements the deconvolution strategy from (Lun et al., 2016).
+
+  + This function is now superseded by `scuttle::computePooledFactors`.
 
 `r NoCite(bib, "lun2016workflow")`
 
@@ -330,8 +330,9 @@ knitr::include_graphics("img/scran-fig3.png")
 ## Normalisation
 
 - Convert the counts into normalized expression values to eliminate cell-specific biases (e.g., in capture efficiency); use `r BiocStyle::Biocpkg("scater")`.
+  Display the names of the assays available after that step.
 
-**Note:** use `scater::logNormCounts()` to compute log-normalised counts.
+**Note:** use `scuttle::logNormCounts()` to compute log-normalised counts.
   What is the return value?
   Where can you find the normalised counts?
 
@@ -340,7 +341,7 @@ knitr::include_graphics("img/scran-fig3.png")
 **Note:** how can you tell whether the normalisation was effective?
   Compare with https://osca.bioconductor.org/feature-selection.html#quantifying-per-gene-variation
 
-- When would you rather use `scater::computeSumFactors()` instead?
+- When would you rather use `scuttle::computePooledFactors` instead?
 
 ---
 
@@ -374,14 +375,14 @@ Select features for downstream analyses, e.g. highly variable genes; use `r Bioc
 
 - Visualise the relation between the mean expression of each gene and the total / biological / technical variance of each gene.
 
-**Note:** How do you interpret those different values?
+How do you interpret those different values?
 
-- Use `scran::getTopHVGs()` to identify highly variable genes.
+- Use `scran::getTopHVGs()` to identify highly variable genes (e.g., top 10%).
 
-**Note:** what is the output?
-  How many genes do you identify?
-  Where are those genes located in the mean-variance plot?
-  What happens to this plot if you set more stringent thresholds to define highly variable genes?
+What is the output?
+How many genes do you identify?
+Where are those genes located in the mean-variance plot?
+What happens to this plot if you set more stringent thresholds to define highly variable genes?
 
 ---
 
@@ -396,15 +397,27 @@ knitr::include_graphics("img/overview-analysis-dimensionality.png")
 
 # Dimensionality reduction
 
-The package `r BiocStyle::Biocpkg("scater")` provides wrappers for several common dimensionality reduction methods.
+The packages `r BiocStyle::Biocpkg("scater")` and `r BiocStyle::Biocpkg("BiocSingular")` provide several common dimensionality reduction methods.
 
 Those include:
 
-- `scater::runPCA()`
+.pull-left[
+- `scater::runPCA()` / `BiocSingular::runPCA()`
 
 - `scater::runTSNE()`
 
 - `scater::runUMAP()`
+]
+
+.pull-right[
+- `BiocSingular::runSVD()`
+
+- `BiocSingular::runExactSVD()`
+
+- `BiocSingular::runIrlbaSVD()`
+
+- `BiocSingular::runRandomSVD()`
+]
 
 ## Important notes
 
@@ -418,20 +431,24 @@ Those include:
 
 ## Dimensionality reduction
 
-- Apply PCA to compact the data and further reduce noise; use `r BiocStyle::Biocpkg("scater")`.
+- Apply PCA; use `r BiocStyle::Biocpkg("scater")` or `r BiocStyle::Biocpkg("BiocSingular")`.
+  Set a seed to control reproducibility.
+  List the names of dimensionality reduction results available.
 
 **Note:** only give the set of highly variable genes to the `scater::runPCA()` function, to save time, memory, and to focus on biologically informative genes in the data set.
 
-- Apply UMAP on the output of the PCA.
+- Apply UMAP and t-SNE successively on the output of the PCA.
+  List the names of dimensionality reduction results available each time.
 
-**Note:** UMAP and t-SNE are typically given the output of PCA as their own input, to further reduce the dimensionality for ease of visualisation.
-
-- Visualise the layout of cells produced by each of those dimensionality reduction methods.
+- Visualise the scatterplot of cells produced by each of those dimensionality reduction methods.
   Considering coloring points with quality control metrics.
 
 ## Bonus point
 
-- use `scran::denoisePCA()` to remove principal components that correspond to technical noise, and compare downstream t-SNE or UMAP with those obtained before de-noising.
+- Use `scran::denoisePCA()` to remove principal components that correspond to technical noise, and compare downstream t-SNE or UMAP with those obtained before de-noising.
+  Name the output `sce_denoise`.
+  How many components remain after denoising?
+  Visualise a UMAP of the denoised PCA and compare.
 
 ---
 
@@ -446,7 +463,8 @@ knitr::include_graphics("img/overview-analysis-clustering.png")
 
 # Clustering
 
-The package `r BiocStyle::Biocpkg("scran")` provides several methods for clustering single-cell data.
+The packages `r BiocStyle::Biocpkg("scran")` and `r BiocStyle::Biocpkg("BiocNeighbors")` provides several methods for clustering single-cell data.
+The CRAN package `r BiocStyle::CRANpkg("igraph")` provides powerful methods for graph-based clustering.
 
 - `scran::quickCluster()` clusters similar cells using either log-expression values or ranks.
 - `scran::buildSNNGraph()` builds a shared nearest-neighbour graph using cells as nodes.
@@ -458,7 +476,7 @@ The package `r BiocStyle::Biocpkg("scran")` provides several methods for cluster
 ## Example
 
 ```{r, include=TRUE, eval=FALSE}
-g <- buildSNNGraph(sce, use.dimred = 'PCA')
+g <- scran::buildSNNGraph(sce, use.dimred = 'PCA')
 colData(sce)[["cluster_louvain"]] <- factor(igraph::cluster_louvain(g)$membership)
 ```
 
@@ -468,11 +486,12 @@ colData(sce)[["cluster_louvain"]] <- factor(igraph::cluster_louvain(g)$membershi
 
 ## Clustering
 
-- Cluster cells; use `r BiocStyle::Biocpkg("scran")`.
+Cluster cells using `scran`.
 
 - Start with `scran::getClusteredPCs()` to cluster cells after using varying number of PCs, and pick the number of PCs using a heuristic based on the number of clusters.
 
-- Use `scran::buildSNNGraph()` and `igraph::cluster_louvain()` with the "ideal" number of PCs.
+- Use `scran::buildSNNGraph()` and `igraph::cluster_louvain()` with that "ideal" number of PCs.
+  Assign the cluster label to a cell metadata column named `"label"`.
 
 - Visualise the assigned cluster on your preferred dimensionality reduction layout.
 
@@ -482,7 +501,6 @@ colData(sce)[["cluster_louvain"]] <- factor(igraph::cluster_louvain(g)$membershi
 ## Bonus point
 
 - Test different numbers of principal components and compare results.
-
 - Try `scran::quickCluster()`; identify key parameters and compare results.
 
 ---
@@ -514,12 +532,14 @@ The package `r BiocStyle::Biocpkg("scran")` provides several methods for identif
 ## Cluster markers
 
 - Use `scran::findMarkers()` to identify markers for each cluster.
+  Display the metadata of markers for the first cluster.
 
 - Visualise the expression of selected markers:
 
-  + as a dot plot, optionally with a violin layer.
+  + As a dot plot, optionally with a violin layer.
   
-  + on a dimensionality reduction layout.
+  + On a dimensionality reduction layout.
+    Compare with the cluster labels.
 
 ---
 
@@ -593,10 +613,11 @@ shiny::runApp(app, port=1234)
 - Preconfigure the application to start with a subset of panels, e.g.
 
 ```{r, eval=FALSE, include=TRUE}
-iSEE::iSEE(sce, initial = list(
+initial_panel_list <- list(
   ReducedDimensionPlot(PanelWidth=4L),
   RowDataTable(PanelWidth=8L)
-))
+)
+iSEE::iSEE(sce, initial = initial_panel_list)
 ```
 
 ---
@@ -609,8 +630,11 @@ iSEE::iSEE(sce, initial = list(
 
 ## scran
 
-- `scran::bootstrapCluster()` generates bootstrap replicates and reclusters on them to determine the stability of clusters with respect to sampling noise.
 - `scran::cyclone()` implements the cell cycle classification step of the prediction method described by Scialdone et al. (2015).
+
+## bluster
+
+- `bluster::bootstrapStability()` generates bootstrap replicates and reclusters on them to determine the stability of clusters with respect to sampling noise.
 
 ---
 
@@ -619,31 +643,6 @@ iSEE::iSEE(sce, initial = list(
 - [Introduction to R / Bioconductor (2016)](https://bioconductor.org/help/course-materials/2016/BiocIntro-May/B1_Bioconductor_Intro.html) by Martin Morgan (Bioconductor Core Team)
 
 - [HarvardX Biomedical Data Science Open Online Training](http://rafalab.github.io/pages/harvardx.html)
-
----
-
-# Git wrap-up
-
-- Copy your notebook for this lesson in the Git repository, e.g.
-
-.small-code[
-
-> ```
-> cp \
->   /project/obds/$USER/projects/bioconductor_singlecell/bioconductor_singlecell-kevinrue.Rmd \
->   /project/obds/$USER/git/week4day3-bioconductor_singlecell/
-> ```
-
-]
-
-- Create a new branch in the Git repository.
-  Use the date and your username in the branch name to make it unique, e.g. `git checkout -b week4day3-kevinrue`.
-
-- Commit, push, open a pull request, get it approved, and merge it.
-
-- Delete your merged branch on GitHub.
-
-- Check out the main branch locally, pull, and delete your merged branch locally.
 
 ---
 
