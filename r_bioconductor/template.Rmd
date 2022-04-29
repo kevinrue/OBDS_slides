@@ -302,19 +302,13 @@ mcols(demo_DataFrame)
 
 ## rtracklayer
 
-- Download the GTF file for human gene sets from <https://www.ensembl.org/info/data/ftp/index.html>
-
-```{r}
-
-```
-
 - Load the `rtracklayer` package.
 
 ```{r}
 library(rtracklayer)
 ```
 
-- Import the file in your R session using the function `rtracklayer::import()`.
+- Import the file `Homo_sapiens.GRCh38.104.gtf.gz` using the function `rtracklayer::import()`.
   Assign value to an object called `gtf_data`.
 
 ```{r}

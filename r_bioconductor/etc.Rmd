@@ -295,11 +295,9 @@ knitr::include_graphics("img/biocviews-annotation.png")
 
 ## rtracklayer
 
-- Download the GTF file for human gene sets from <https://www.ensembl.org/info/data/ftp/index.html>
-
 - Load the `r BiocStyle::Biocpkg("rtracklayer")` package.
 
-- Import the file in your <i class="fab fa-r-project"></i> session using the function `rtracklayer::import()`.
+- Import the file `Homo_sapiens.GRCh38.104.gtf.gz` using the function `rtracklayer::import()`.
   Assign value to an object called `gtf_data`.
 
 - What are the metadata columns available in the object?
