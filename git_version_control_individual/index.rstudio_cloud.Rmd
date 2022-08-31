@@ -1,9 +1,9 @@
 ---
 title: 'Version control with <i class="fab fa-git"></i> and <i class="fab fa-github"></i> GitHub'
-subtitle: 'Using individual repositories on the teaching cluster'
+subtitle: 'Using individual repositories on RStudio Cloud'
 author: "Kevin Rue-Albrecht"
 institute: "Oxford Biomedical Data Science Training Programme"
-date: "2022-05-09 (updated: `r Sys.Date()`)"
+date: "2022-09-26 (updated: `r Sys.Date()`)"
 output:
   xaringan::moon_reader:
     css: [default, metropolis, rladies-fonts, "my-theme.css"]
@@ -55,17 +55,9 @@ More concrete and measurable outputs.
 
 - A [<i class="fab fa-github"></i> GitHub](https://github.com/) account.
 
-- An account on the teaching cluster.
+- Membership to the <i class="fab fa-github"></i> GitHub organisation [OBDS-Training](https://github.com/OBDS-Training).
 
----
-
-# Set up
-
-- Connect to the University VPN.
-
-- Open a terminal application on your computer.
-
-- Connect to the teaching cluster over SSH.
+- An [RStudio Cloud](https://rstudio.cloud/) account.
 
 ---
 
@@ -74,15 +66,42 @@ More concrete and measurable outputs.
 
 ---
 
+# RStudio Cloud projects
+
+```{r, fig.align='center', out.height='375px'}
+# Screenshot
+knitr::include_graphics("img/rstudio-cloud-projects.png")
+```
+
+---
+
+# Exercise
+
+## Setting up an RStudio Cloud project
+
+This RStudio Cloud project will be your workplace for the course.
+
+- Navigate to <https://rstudio.cloud/> and sign in.
+
+- Navigate to the Space `OBDS_September_2022`.
+
+- Create a new RStudio project
+
+  + "New Project" > "New RStudio Project".
+
+- Name the project with your own name (e.g., `Kevin Rue`).
+
+---
+
 # SSH key pairs
 
 ```{r, fig.align='center', out.height='400px', out.width='600px'}
-# Source: https://note.nguyenanhung.com/
+# Source: Adobe Illustrator
 knitr::include_graphics("img/ssh-key-pair.svg")
 ```
 
 .center[
-_We need to set an SSH key pair between the teaching cluster and <i class="fab fa-github"></i> GitHub._
+_We need to set an SSH key pair between RStudio Cloud and GitHub._
 ]
 
 ---
@@ -91,13 +110,13 @@ _We need to set an SSH key pair between the teaching cluster and <i class="fab f
 
 ## Setting up the SSH key pair
 
-This key pair will allow your clone of the repository to push and pull code through the <i class="fab fa-github"></i> GitHub API.
+This key pair will allow your RStudio Cloud project to push and pull code through the GitHub API.
 
-- In the Terminal application, logged in the teaching cluster, create an SSH key pair.
+- In your RStudio Cloud project, open the Terminal.
+
+- Create an SSH key pair.
 
   + `ssh-keygen -t rsa -b 4096`
-  
-  + Accept the default location for the key (leave field empty and press the Return key)
   
   + _Do_ set a passphrase to protect your key pair.
 
@@ -105,7 +124,7 @@ This key pair will allow your clone of the repository to push and pull code thro
 
   + `cat ~/.ssh/id_rsa.pub`
 
-- Add the public key to your <i class="fab fa-github"></i> GitHub account.
+- Add the public key to your GitHub account.
 
   + <https://github.com/settings/ssh/new>
 
@@ -116,6 +135,42 @@ _(See next slides to navigate to that page more naturally.)_
 ---
 
 ```{r child='ssh-keypair-screenshots.Rmd'}
+```
+
+---
+
+```{r child='github-pat-intro.Rmd'}
+```
+
+---
+
+# Exercise
+
+## Setting up a GitHub Personal Access Token
+
+The following slides illustrate how to navigate to the page below more naturally.
+
+- Navigate to <https://github.com/settings/tokens/new>.
+
+- Set note to "OBDS September 2022".
+
+- Leave expiration to 30 days. _Do not_ tick any of the boxes.
+
+- Generate the token and copy it.
+
+- Back in your RStudio Cloud project, create a file called `.Renviron` in your home directory:
+
+  + In the R console, type `file.edit("~/.Renviron")`.
+  
+- In that file, add the line `GITHUB_PAT="<paste token here>"`.
+
+- Restart the R sesion, and check that the environment variable is set.
+
+  + In the menu bar: "Session" > "Restart R", and in the R console: `Sys.getenv("GITHUB_PAT")`.
+
+---
+
+```{r child='github-pat-screenshots.Rmd'}
 ```
 
 ---
@@ -142,7 +197,7 @@ _(See next slides to navigate to that page more naturally.)_
 The `git clone` sub-command takes the address of a remote repository and creates a copy of that repository in a new local directory.
 
 ```{bash, eval=FALSE, echo=TRUE}
-$ git clone git@github.com:kevinrue/OBDS_May_2022.git
+$ git clone git@github.com:kevinrue/OBDS_Training_September_2022.git
 ```
 
 .pull-left[
@@ -153,17 +208,10 @@ knitr::include_graphics("img/git-clone-collaboration.svg")
 ]
 
 .pull-right[
-But first, create a `git` subdirectory in your personal OBDS directory and change directory.
-
-```{bash, eval=FALSE, echo=TRUE}
-mkdir /project/obds/$USER/git
-cd /project/obds/$USER/git
-```
-
-Now, clone the repository into that `git` subdirectory.
+Use the `ls` command to list the contents of the working directory.
 
 .center[
-**Why is a `git` subdirectory best practices?**
+**Do you need new files or directories?**
 ]
 ]
 
@@ -178,15 +226,15 @@ Now, clone the repository into that `git` subdirectory.
 
 - You have _initialised_ a repository (with a `README.md` file) on <i class="fab fa-github"></i> GitHub.
 
-- You have made a _clone_ of the repository on the teaching cluster.
+- You have made a _clone_ of the repository in your RStudio Cloud project.
 
-- You have _committed_ changes to files on the teaching cluster.
+- You have _committed_ changes to files in your RStudio Cloud project.
 
-- You have _pushed_ those commits from the teaching cluster to <i class="fab fa-github"></i> GitHub.
+- You have _pushed_ those commits from your RStudio Cloud project to <i class="fab fa-github"></i> GitHub.
 
 - You have _committed_ changes to files on <i class="fab fa-github"></i> GitHub.
 
-- You have _pulled_ those changes from <i class="fab fa-github"></i> GitHub to the teaching cluster.
+- You have _pulled_ those changes from <i class="fab fa-github"></i> GitHub to your RStudio Cloud project.
 
 .pull-left[
 ```{r, fig.align='center', out.height='250px', out.width='600px'}
