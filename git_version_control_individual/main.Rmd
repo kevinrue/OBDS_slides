@@ -1,6 +1,7 @@
 # The `.git` subdirectory
 
 Change directory to your new local clone of the repository, and list its contents.
+For instance:
 
 ```{bash, eval=FALSE, echo=TRUE}
 $ cd OBDS_May_2022
@@ -91,19 +92,20 @@ nothing to commit, working tree clean
 
 ## Make changes
 
-- Create a file named `.gitignore` in your repository.
+Create a file named `.gitignore` in your repository
+using the `nano` command line text editor in the Bash terminal:
 
 ```bash
-touch .gitignore
+nano .gitignore
 ```
 
-- Optionally, add a line to that file, e.g.
+Add a commented line to that file, starting with `#` (hashtag), e.g.
 
 ```
 # This file list file patterns to ignore from version control
 ```
 
-- Run `git status` again.
+Run `git status` again.
 
 .center[
 **What does the command return this time? How do you interpret it?**
@@ -187,11 +189,11 @@ The `git commit` sub-command can be used to record the changes that are currentl
 - The `-m` option can be used to specify the message used to annotate the _commit_ that will contain this set of changes. 
 
 ```{bash, eval=FALSE, echo=TRUE}
-$ git commit -m "Added empty .gitignore file"
+$ git commit -m "Added .gitignore file"
 ```
 
 ```
-[main 81acf15] Added empty .gitignore file
+[main 81acf15] Added .gitignore file
  1 file changed, 0 insertions(+), 0 deletions(-)
  create mode 100644 .gitignore
 ```
@@ -234,7 +236,7 @@ The `git push` sub-command can be used to send local changes to a remote reposit
 
 - The local repository must have configured the address of the remote repository.
 - When you create a repository as a _clone_ of a remote repository,
-  this is done automatically (the remote `origin` is recorded during initialisation).
+  this is done automatically (the remote `origin` is created during initialisation).
 
 Before we push, the `git remote` command can be used to inspect, add, and remove remote repositories from the local repository configuration.
 
@@ -452,7 +454,7 @@ knitr::include_graphics("img/github-network-graph2.png")
 
 ## Pull changes from a remote repository
 
-In a Terminal, set the working directory inside your clone of the repository, and run `git pull`.
+In the Bash Terminal, set the working directory inside your clone of the repository, and run `git pull`.
 
 .center[
 **How do you read the message output? (example below)**
