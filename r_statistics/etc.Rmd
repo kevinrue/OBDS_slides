@@ -1254,6 +1254,51 @@ p.adjust(p_values, method = "bonferroni")
 
 # Exercise
 
+.pull-left[
+## Statistical tests
+
+### Wilcoxon test
+
+- Run a Wilcoxon test to compare the vectors `1:10` and `5:14`.
+
+.center[
+**What is the p-value?**
+]
+
+### T-test
+
+- Import the data in the file `gene_exprs.csv`.
+
+- Run a t-test to compare the gene expression values between the two groups.
+
+.center[
+**What is the p-value?**
+]
+]
+
+.pull-right[
+```{r, include=TRUE, echo=FALSE, fig.height=3, fig.width=4, out.height="250px", fig.align='center'}
+df <- data.frame(
+    value = c(1:10, 5:14),
+    group = rep(c("x", "y"), each = 10)
+)
+ggplot(df, aes(group, value)) +
+    geom_point() +
+    coord_cartesian(ylim = c(0, 15))
+```
+
+```{r, include=TRUE, echo=FALSE, fig.height=4, fig.width=5, out.height="250px", fig.align='center'}
+df <- read.csv("data/gene_exprs.csv")
+ggplot(df, aes(group, gene_exprs)) +
+    geom_point()
+```
+
+]
+
+---
+
+# Exercise
+
 ## Testing & Multiple testing correction
 
 Given an Excel file that contains a matrix of log-normalised counts (`logcounts`) and experimental metadata (`cell_info`),
