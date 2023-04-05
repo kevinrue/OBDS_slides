@@ -3,24 +3,47 @@ title: 'Version control using <i class="fab fa-git"></i> and <i class="fab fa-gi
 subtitle: 'Using individual repositories on the teaching cluster'
 author: "Kevin Rue-Albrecht"
 institute: "Oxford Biomedical Data Science Training Programme"
-date: "2023-01-30 (updated: `r Sys.Date()`)"
-output:
-  xaringan::moon_reader:
-    css: [default, metropolis, rladies-fonts, "my-theme.css"]
-    lib_dir: libs
-    nature:
-      highlightStyle: github
-      countIncrementalSlides: false
-# uncomment this line to produce HTML and PDF in RStudio:
-knit: pagedown::chrome_print
+date: "2023-04-26 (updated: `r Sys.Date()`)"
+date-format: long
+format:
+  revealjs: 
+    slide-number: true
+    chalkboard: 
+      buttons: false
+    preview-links: auto
+    logo: img/ox_brand1_pos.gif
+    css: styles.css
+    fontsize: 1.5em
+    footer: Kevin Rue-Albrecht -- Version control using <i class="fab fa-git"></i> and <i class="fab fa-github"></i> GitHub
+# run the following line after knitting to convert HTML to PDF
+# renderthis::to_pdf("index.cluster.html")
 ---
 
-```{r child='layout.Rmd'}
+```{r setup, include = FALSE}
+stopifnot(requireNamespace("htmltools"))
+htmltools::tagList(rmarkdown::html_dependency_font_awesome())
+knitr::opts_chunk$set(
+  message = FALSE, warning = FALSE, error = FALSE, include = TRUE, echo = FALSE,
+  fig.align='center', out.height='500px'
+)
+options(width = 90)
+stopifnot(require(base))
 ```
 
----
+```{r, load_refs, include=FALSE, cache=FALSE}
+options(htmltools.dir.version = FALSE)
+library(RefManageR)
+BibOptions(
+  check.entries = FALSE,
+  bib.style = "authoryear",
+  cite.style = "authoryear",
+  style = "markdown",
+  hyperlink = "to.doc",
+  dashed = TRUE)
+bib <- ReadBib("bibliography.bib")
+```
 
-# Learning Goals & Objectives
+## Learning Goals & Objectives (CCB cluster)
 
 ### Learning goals
 
@@ -48,17 +71,13 @@ More concrete and measurable outputs.
 - _Pull_ updates from the <i class="fab fa-github"></i> GitHub clone to the clone of the repository on the teaching cluster.
 - Examine the _log_ of the shared repository, on <i class="fab fa-github"></i> GitHub and on the teaching cluster.
 
----
-
-# Prerequisites
+## Prerequisites
 
 - A [<i class="fab fa-github"></i> GitHub](https://github.com/) account.
 
 - An account on the teaching cluster.
 
----
-
-# Set up
+## Set up
 
 - Connect to the University VPN.
 
@@ -66,29 +85,23 @@ More concrete and measurable outputs.
 
 - Connect to the teaching cluster over SSH.
 
----
-
-```{r child='opening.Rmd'}
+```{r, child='opening.qmd'}
 ```
 
----
+## SSH key pairs
 
-# SSH key pairs
-
-```{r, fig.align='center', out.height='400px', out.width='600px'}
+```{r, fig.align='center', out.height='500px', out.width='600px'}
 # Source: https://note.nguyenanhung.com/
 knitr::include_graphics("img/ssh-key-pair.svg")
 ```
 
-.center[
+::: {style="text-align: center;"}
 _We need to set an SSH key pair between the teaching cluster and <i class="fab fa-github"></i> GitHub._
-]
+:::
 
----
+## Exercise
 
-# Exercise
-
-## Setting up the SSH key pair
+### Setting up the SSH key pair
 
 This key pair will allow your clone of the repository to push and pull code through the <i class="fab fa-github"></i> GitHub API.
 
@@ -108,50 +121,44 @@ This key pair will allow your clone of the repository to push and pull code thro
 
   + <https://github.com/settings/ssh/new>
 
-.center[
+::: {style="text-align: center;"}
 _(See next slides to navigate to that page more naturally.)_
-]
+:::
 
----
-
-```{r child='ssh-keypair-screenshots.Rmd'}
+```{r, child='ssh-keypair-screenshots.qmd'}
 ```
 
----
-
-```{r child='get-started.Rmd'}
+```{r, child='get-started.qmd'}
 ```
 
----
-
-```{r child='git-configure.Rmd'}
+```{r, child='git-configure.qmd'}
 ```
 
----
-
-```{r child='create-github-repository.Rmd'}
+```{r, child='create-github-repository.qmd'}
 ```
 
----
+## Exercise
 
-# Exercise
-
-## Clone the repository
+### Clone the repository
 
 The `git clone` sub-command takes the address of a remote repository and creates a copy of that repository in a new local directory.
 
 ```{bash, eval=FALSE, echo=TRUE}
-$ git clone git@github.com:kevinrue/OBDS_May_2022.git
+git clone git@github.com:kevinrue/OBDS_May_2022.git
 ```
 
-.pull-left[
+<br/>
+
+:::: {.columns}
+
+::: {.column width="50%"}
 ```{r, fig.align='center', out.height='300px'}
 # Source: Kevin Rue-Albrecht (Adobe Illustrator)
 knitr::include_graphics("img/git-clone-collaboration.svg")
 ```
-]
+:::
 
-.pull-right[
+::: {.column width="50%"}
 But first, create a `git` subdirectory in your personal OBDS directory and change directory.
 
 ```{bash, eval=FALSE, echo=TRUE}
@@ -161,19 +168,19 @@ cd /project/obds/$USER/git
 
 Now, clone the repository into that `git` subdirectory.
 
-.center[
+<br/>
+
+::: {style="text-align: center;"}
 **Why is a `git` subdirectory best practices?**
-]
-]
+:::
+:::
 
----
+::::
 
-```{r child='main.Rmd'}
+```{r, child='main.qmd'}
 ```
 
----
-
-# Summary so far
+## Summary so far
 
 - You have _initialised_ a repository (with a `README.md` file) on <i class="fab fa-github"></i> GitHub.
 
@@ -187,20 +194,24 @@ Now, clone the repository into that `git` subdirectory.
 
 - You have _pulled_ those changes from <i class="fab fa-github"></i> GitHub to the teaching cluster.
 
-.pull-left[
+<br/>
+
+:::: {.columns}
+
+::: {.column width="50%"}
 ```{r, fig.align='center', out.height='250px', out.width='600px'}
 # Screenshot (Kevin Rue-Albrecht)
 knitr::include_graphics("img/summary-workflow-pull-push.svg")
 ```
-]
+::::
 
-.pull-right[
+::: {.column width="50%"}
 Adding, committing, and pushing/pulling changes cover 99% of the <i class="fab fa-git"></i> commands you will use.
 
 However, you need to be aware of other <i class="fab fa-git"></i> commands to manage and undo mistakes.
-]
+:::
 
----
+::::
 
-```{r child='etc.Rmd'}
+```{r, child='etc.qmd'}
 ```

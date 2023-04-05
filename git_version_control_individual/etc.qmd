@@ -1,10 +1,14 @@
-# What to track?
+## What to track?
 
-.center[
+::: {style="text-align: center;"}
 **Can you identify the reasoning underlying each of the following pieces of advice?**
-]
+:::
 
-.pull-left[
+<br/>
+
+:::: {.columns}
+
+::: {.column width="50%"}
 - Track:
 
   + source code (e.g., scripts).
@@ -12,6 +16,8 @@
   + README file(s)
   
   + LICENSE file, if any
+
+<br/>
   
 - Optionally track:
 
@@ -19,10 +25,12 @@
   
   + Configuration file(s)
 
-- Do not track output files.
-]
+<br/>
 
-.pull-right[
+- Do not track output files.
+:::
+
+::: {.column width="50%"}
 - Do not track very large files (e.g., data).
 
   + Use [git-lfs](https://git-lfs.github.com/) if you must.
@@ -34,14 +42,16 @@
   
   + Download data at runtime.
 
+<br/>
+
 - Do not track confidential information
 
   + e.g., login, passwords
-]
+:::
 
----
+::::
 
-# Revert changes
+## Revert changes
 
 The `git revert` sub-command can be used to undo everything that was done in a particular commit, without the need to edit any of the files manually.
 
@@ -50,9 +60,7 @@ The `git revert` sub-command can be used to undo everything that was done in a p
 knitr::include_graphics("img/git-revert.svg")
 ```
 
----
-
-# Reset the commit history
+## Reset the commit history
 
 The `git reset` sub-command can be used to reset the history of the repository
 to an earlier commit, deleting every subsequent commit.
@@ -64,18 +72,18 @@ to an earlier commit, deleting every subsequent commit.
 knitr::include_graphics("img/git-reset.svg")
 ```
 
----
+## Branches of history
 
-# Branches of history
+:::: {.columns}
 
-.pull-left[
+::: {.column width="50%"}
 ```{r, fig.align='center', out.height='300px'}
 # Source: https://swcarpentry.github.io/git-novice/01-basics/index.html
 knitr::include_graphics("img/carpentries-versions.svg")
 ```
-]
+:::
 
-.pull-right[
+::: {.column width="50%"}
 So far, your repository has followed a linear timeline.
 
 What if:
@@ -84,7 +92,9 @@ What if:
   and track those changes until you decide one to keep and one to discard.
 - You need to backup work in progress while urgently fixing a bug.
 - You do not want to commit draft code to the main branch of your repository.
-]
+:::
+
+::::
 
 Then:
 
@@ -92,24 +102,26 @@ Then:
 
 - Changes upstream of the branching point are shared; downstream changes are specific to each branch.
 
----
+## Merging branches of history
 
-# Merging branches of history
+:::: {.columns}
 
-.pull-left[
+::: {.column width="50%"}
 ```{r, fig.align='center', out.height='300px'}
 # Source: https://swcarpentry.github.io/git-novice/01-basics/index.html
 knitr::include_graphics("img/carpentries-merge.svg")
 ```
-]
+:::
 
-.pull-right[
+::: {.column width="50%"}
 Creating branches will result in your work being spread in mutually exclusive versions of your files, e.g.
 
 - The main branch contains the code from your latest lab meeting.
 - Another branch includes code that generates a new figure.
 - Another branch contains updates that fix a bug.
-]
+:::
+
+::::
 
 To generate a new version of your code that contains the code from your latest lab meeting,
 **and** the bug fix, **and** the new figure, you need to _merge_ branches together.
@@ -117,9 +129,7 @@ To generate a new version of your code that contains the code from your latest l
 Merging two branches creates a new _commit_ in the repository history.
 Downstream of the merging point, the files contain the changes made in both upstream branches.
 
----
-
-# Branching and merging
+## Branching and merging
 
 ```{r, fig.align='center', out.height='300px'}
 # Source: Kevin Rue-Albrecht (Adobe Illustrator)
@@ -136,9 +146,7 @@ knitr::include_graphics("img/branch-and-merge.svg")
 
 - Branches do not have to be merged; they can be abandoned and deleted (great for experimenting).
 
----
-
-# Create a branch
+## Create a branch
 
 The `git branch` sub-command can be used to inspect and create branches in a repository.
 
@@ -162,11 +170,11 @@ create **and** switch to that new branch.
 knitr::include_graphics("img/git-branch.svg")
 ```
 
----
-
-# Merging a branch
+## Merging a branch
 
 The `git merge` sub-command can be used to merge two branches.
+
+<br/>
 
 Most frequently, "feature" branches are merged to the main branch.
 
@@ -174,6 +182,8 @@ Most frequently, "feature" branches are merged to the main branch.
 git checkout main     # checkout the "receiving" branch
 git merge new_branch  # merge the "feature" branch to the current branch
 ```
+
+<br/>
 
 This creates a new commit.
 From that point, files contain the changes made in the two parent branches.
@@ -185,9 +195,7 @@ From that point, files contain the changes made in the two parent branches.
 knitr::include_graphics("img/git-merge.svg")
 ```
 
----
-
-# Deleting a branch
+## Deleting a branch
 
 Once merged, branches should be "deleted".
 
@@ -210,54 +218,47 @@ git branch -D new_branch # force delete
 knitr::include_graphics("img/git-branch-delete.svg")
 ```
 
-.center[
-
+::: {style="text-align: center;"}
 **What is the difference with the previous illustration?**
-]
+:::
 
 The name of the branch can then be re-used to create a new branch with that name.
 
----
+## Further reading
 
-# Further reading
-
-## Novice
+### Novice
 
 - Software Carpentry: <https://swcarpentry.github.io/git-novice/>
 
-## Advanced
+### Advanced
 
 - <i class="fab fa-git"></i> glossary: <https://git-scm.com/docs/gitglossary>
 - Oh s**t <i class="fab fa-git"></i>: <https://ohshitgit.com/>
 
----
-
-# Credits
+## Credits
 
 ```{r, out.height='300px'}
 knitr::include_graphics("img/TheCarpentries.svg")
 # Source: https://carpentries.org/
 ```
 
-.center[
+::: {style="text-align: center;"}
 Version Control with Git
 
 <https://swcarpentry.github.io/git-novice/>
-]
+:::
 
----
-
-# References
+## References
 
 ```{r refs, results="asis"}
 NoCite(bib, "bryan2017versioncontrol")
 PrintBibliography(bib)
 ```
 
-???
-
+::: {.notes}
 Extras:
 
 - Install `git`
 - `git init` (as opposed to `git clone`)
 - `git merge` vs `git rebase`
+:::
