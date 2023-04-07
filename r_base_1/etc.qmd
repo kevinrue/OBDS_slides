@@ -1,0 +1,1290 @@
+## Session 1
+
+### Overview
+
+- What <i class="fab fa-r-project"></i> is.
+- What base <i class="fab fa-r-project"></i> is.
+- What <i class="fab fa-r-project"></i> packages are.
+- What RStudio and Posit are.
+
+## What <i class="fab fa-r-project"></i> is
+
+<i class="fab fa-r-project"></i>? is a freely available language and environment for statistical computing and graphics which provides a wide variety of statistical and graphical techniques: mathematical modelling, statistical tests, time series analysis, classification, clustering, etc.
+
+```{r}
+#| fig-align: center
+knitr::include_graphics("img/r-console.png")
+```
+
+## The inception of <i class="fab fa-r-project"></i>
+
+- Developed in 1995 by [Robert Gentleman](https://en.wikipedia.org/wiki/Robert_Gentleman_(statistician)) & [Ross Ihaka](https://en.wikipedia.org/wiki/Ross_Ihaka).
+- Based on *S* ([Wikipedia](https://en.wikipedia.org/wiki/S_(programming_language))).
+- Focused on user friendly data analysis, stats and visualization.
+
+## Why <i class="fab fa-r-project"></i> is used
+
+- 100% free.
+- Huge community of programmers who constantly develop and distribute new functionality.
+- Incredibly versatile. 
+- <i class="fab fa-r-project"></i> scripts are transparent, shareable, and reproducible.
+
+## Base <i class="fab fa-r-project"></i>
+
+- Base <i class="fab fa-r-project"></i> is made up of a small set of packagess maintained by [R Core](https://www.r-project.org/contributors.html).
+
+```{r}
+#| eval: true
+#| echo: false
+ip <- installed.packages(priority = "base")
+rownames(ip)
+```
+
+- <i class="fab fa-r-project"></i> itself does not have a graphical user interface (GUI).
+- RStudio is an [open-source](https://github.com/rstudio/rstudio) integrated development environments (IDE) developed by [Posit](https://posit.co/) (formerly known as RStudio).
+- <i class="fab fa-r-project"></i> and RStudio products have been around for several years.
+  However, they are constantly being updated with new features and bug-fixes;
+  take note of the version of <i class="fab fa-r-project"></i> and <i class="fab fa-r-project"></i> packages that you are using.
+
+## <i class="fab fa-r-project"></i> packages
+
+- <i class="fab fa-r-project"></i> packages are add-ons that encapsulate collections of functions written by members of the broader (you and me).
+- They add new functionality.
+- They can include code, data, and documentation.
+
+<i class="fab fa-r-project"></i> packages can be downloaded and installed from various repositories:
+
+- CRAN (<https://cran.r-project.org/>) -- General purpose
+- Bioconductor (<https://www.bioconductor.org/>) -- Bioinformatics
+- GitHub (<https://github.com/>) -- Not only <i class="fab fa-r-project"></i>
+
+## Installing packages
+
+- On the CCB server, packages are managed by the administrators.
+  Email <genmail@molbiol.ox.ac.uk> and ask for the package to be installed.
+- In a regular <i class="fab fa-r-project"></i> session, use the function `install.packages()`, e.g.
+
+```{r}
+#| eval: false
+#| echo: true
+install.packages("tidyverse")
+```
+
+- You can also install <i class="fab fa-r-project"></i> packages in a [Conda](https://docs.conda.io/en/latest/) environment.
+
+<br/>
+
+### Using packages
+
+Installed packages must be attached to the <i class="fab fa-r-project"></i> session to access their functionality.
+
+- Use the function `library()` to attach a package to the current <i class="fab fa-r-project"></i> session, e.g.
+
+```{r}
+#| eval: false
+#| echo: true
+library(tidyverse)
+```
+
+## RStudio
+
+RStudio is an integrated development environment for <i class="fab fa-r-project"></i>.
+It is available in two formats: [RStudio Desktop](https://posit.co/download/rstudio-desktop/) is a regular desktop application while [RStudio Server](https://posit.co/download/rstudio-server/) runs on a remote server and allows accessing RStudio using a web browser.
+
+```{r}
+#| fig-align: center
+#| out-width: 700px
+#| out-height: 500px
+knitr::include_graphics("img/rstudio.png")
+```
+
+## RStudio main panels
+
+The RStudio application is usually divided in four quadrants:
+
+1. Source editor
+2. <i class="fab fa-r-project"></i> Console
+3. Environment / History / Connections / ...
+4. Files / Plots / Packages / Help / ...
+
+## The RStudio Source Editor
+
+- The source editor allow you to open and edit files (not only <i class="fab fa-r-project"></i> scripts).
+- Individual lines of code can be evaluated in the <i class="fab fa-r-project"></i> console using the `Run` button or the keys `Control` + `Enter` (Windows) / `Command` + `Enter` (macOS).
+  - The cursor can be anywhere in the line of code to evaluate.
+- Multiple lines of code can be evaluated in the <i class="fab fa-r-project"></i> console by selecting them and using the same actions as above.
+  - The *entire* line must selected to evaluate it all.
+  - Selecting part of a line evaluates only the selected part.
+- An entire <i class="fab fa-r-project"></i> script can be evaluated using the `Source` button, or `Control` + `Shift` + `Enter` (Windows) / `Command` + `Shift` + `Enter` (macOS).
+
+## Commenting your code
+
+<br/>
+
+```{r}
+#| eval: false
+#| echo: true
+# read data from input file
+input_data <- read.csv("input_data.csv")
+
+print(input_data) # display input data
+```
+
+<br/>
+
+- The hash symbol `#` can be used to add comments in your code.
+- Anything on the line after the `#` will *not* be evaluated.
+  - Lines that start with `#` are entirely ignored.
+- On macOS, `#` is obtained using `Alt` + `3`.
+- You can select multiple lines of code and press `Control` + `Shift` + `C` (Windows) / `Command` + `Shift` + `C` (macOS) to comment them all in one action.
+
+## The RStudio <i class="fab fa-r-project"></i> console
+
+- In the <i class="fab fa-r-project"></i> console, the prompt `>` indicates that the console is awaiting the next command.
+- You can type code directly in the <i class="fab fa-r-project"></i> console and press `Enter` to evaluate it in the current environment.
+- If incomplete code was submitted, the prompt `+` indicates that the console is awaiting more code to complete the current command.
+- Press `Esc` to erase the code that you are currently typing in the <i class="fab fa-r-project"></i> console (the cursor must be in the <i class="fab fa-r-project"></i> console).
+
+## The RStudio Environment panel
+
+A number of additional panes appear in this panel, depending on your context.
+
+The most important panes are:
+
+- `Environment` details the objects that exist in your current <i class="fab fa-r-project"></i> session.
+  - You can clear your environment using the brush icon.
+- `History` lists the lines of code that were executed in this environment.
+
+Other context-dependent panes include:
+
+- `Git` facilitates work in <i class="fab fa-git"></i> repositories.
+- `Tutorial` facilitates access to tutorials.
+  - The `r BiocStyle::CRANpkg("learnr")` package must be installed for this pane to work.
+
+The `Connections` pane is a core pane gives access to a variety of other tools for working with databases in <i class="fab fa-r-project"></i>.
+
+## The RStudio Files/Plots/Packages/Help/Viewer panel
+
+Some additional panes appear in this panel, depending on your context.
+
+- The `Files` pane can be used to navigates the filesystem.
+- The `Plots` pane displays plots produced by evaluated code.
+- The `Packages` pane details packages installed in your <i class="fab fa-r-project"></i> library.
+- The `Help` pane displays help pages.
+- The `Viewer` pane displays more complex documents (e.g., vignettes).
+
+Other context-dependent panes include:
+
+- The `Presentation` pane displays presentations produced like this one.
+
+## Saving scripts in RStudio
+
+- New scripts are initially opened in tabs called `Untitled` in the source editor.
+- Scripts can be saved using `Control` + `S` (Windows) / `Command` + `S` (macOS).
+
+## Opening a session on RStudio Server
+
+- Navigate to <https://cbrglogin3.molbiol.ox.ac.uk/rstudio/>.
+- Log in using your username and password.
+
+```{r}
+#| fig-align: center
+#| out-width: 850px
+#| out-height: 500px
+knitr::include_graphics("img/rstudio-cbrg.png")
+```
+
+## RStudio projects
+
+RStudio projects divide your work into multiple environments, each with its own working working directory, workspace, history, and files.
+
+```{r}
+#| fig-align: center
+#| out-width: 850px
+#| out-height: 500px
+knitr::include_graphics("img/rstudio-project.png")
+```
+
+## Exercise
+
+### Create an RStudio project
+
+- Open the `New Project Wizard`.
+- Select `New Directory`.
+- Choose a parent directory in which to create the directory of your project (e.g., `r_week1`).
+- Type the name of the directory for your project (e.g., `base_r_1`).
+
+## Exercise
+
+### Getting started
+
+- Make sure you have opened the <i class="fab fa-r-project"></i> project that you ave just created.
+- Use the <i class="fab fa-r-project"></i> console as a simple calculator, e.g.
+
+```{r}
+#| echo: true
+#| eval: false
+100*56/4
+(4+12)/3
+4E2
+4e+2
+```
+
+- Open a new <i class="fab fa-r-project"></i> script, type some code, and evaluate it directly from the file.
+- Add some comments to your code.
+- Save your script.
+
+::: {style="text-align: center;"}
+**What are the advantages and limitations of using the <i class="fab fa-r-project"></i> console and the script panel?**
+:::
+
+- Look up the help page for `sd()`.
+
+::: {style="text-align: center;"}
+**What does this command do?**
+:::
+
+- Browse the `Packages` pane, look for the `r BiocStyle::Biocpkg("edgeR")` package and find the help page for the function `edgeR::decideTestsDGE()`.
+
+# Coffee break
+
+## Session 2
+
+<br/>
+
+### Overview
+
+- Basic data types.
+- Objects and functions.
+- Creating objects.
+- Creating vectors.
+- Indexing and subsetting.
+- Matrices, arrays, and lists.
+
+## Basic data types
+
+### Character
+
+Single or double quotation marks, e.g.
+
+`'a'`, `'hello'`, `'123'` or `"a"`, `"hello"`, `"123"`
+
+### Numeric
+
+`4`, `1.333`, `123`
+
+### Integer
+
+Integers suffixed with `L`, e.g.
+
+`1L` ,`5L`, `1234L`
+
+### Logical
+
+`TRUE`, `FALSE`
+
+### Complex
+
+`1 + 4i`
+
+## Operators
+
+An operator is a symbol that tells the compiler to perform specific mathematical or logical manipulations.
+
+- For numeric data types: `+` (add), `-` (subtract), `/` (divide), `*` (multiply).
+- For logical data types:
+  - `&` (and)
+  - `|` (or)
+  - `!` (not).
+- Relational operators:
+  - `>` (strictly greater than)
+  - `<` (strictly less than)
+  - `==` (equal to)
+  - `>=` (greater than)
+  - `<=` (lower than)
+  - `!=` (different from)
+
+## Objects and Functions
+
+Everything in <i class="fab fa-r-project"></i> is an object.
+
+<br/>
+
+- An *object* is a value; a number, a data set, a file name, or even a function.
+
+<br/>
+
+- A *function* is a procedure that typically takes one or more objects as inputs, computes something using those objects, and returns an object.
+
+<br/>
+
+Note:
+
+- Some functions do not require any argument.
+- Some functions do not return any argument.
+
+## Creating new objects
+
+New objects can be created using the *assignment* operator `<-`.
+The operator assign a *value* (on the right) to a *name* (on the left), e.g.
+
+```{r}
+#| echo: true
+#| eval: true
+x <- 100
+```
+
+The assignment operator can be typed using `Alt` + `-`.
+
+<br/>
+
+### Printing objects
+
+The value of objects can be displayed using the `print()` function, or simply typing their name, e.g.
+
+```{r}
+#| echo: true
+#| eval: true
+print(x)
+x
+```
+
+<br/>
+
+- Most of the time, the name of the object alone does the same thing as `print()`.
+- In some cases, the `print()` function offers additional options controlling the format in which the value is displayed (e.g., dates and times).
+
+## Scalars
+
+A *scalar* is an object that contains a single value of a basic data type (e.g., character, numeric), e.g.
+
+```{r}
+#| echo: true
+#| eval: true
+a <- 4
+a
+b <- "Kevin"
+b
+x <- TRUE
+x
+```
+
+## Vectors
+
+A *vector* is a collection of scalars stored as a single object, e.g.
+
+```{r}
+#| echo: true
+#| eval: true
+a <- c('a', 'b', 'c')
+a
+b <- c(1, 2, 3)
+b
+```
+
+<br/>
+
+Note:
+
+- The function `c()` stands for 'combine'.
+  Typically, it takes any number of scalars and combines them into a vector.
+- Vectors are ordered.
+- All the scalars in a single vector must be the same data type.
+  - If scalars of different data types are given, they will be coerced to the most general data type in the set: `logical` < `integer` < `numeric` < `character`, e.g.
+
+```{r}
+#| echo: true
+#| eval: true
+x <- c(TRUE, 1L, 1.2, "1")
+x
+```
+
+## Adding elements to a vector
+
+The function `c()` can also be used to add one or more elements to an existing vector, e.g.
+
+```{r}
+#| echo: true
+#| eval: true
+v <- c("A", "B", "C")
+v
+v <- c(v, "X", "Y", "Z")
+v
+```
+
+## More ways to create vectors
+
+`C(...)`
+
+```{r}
+#| echo: true
+#| eval: true
+c(1, 5, 9)
+```
+
+`from:to`
+
+```{r}
+#| echo: true
+#| eval: true
+1:5
+```
+
+`seq(from, to, by, length.out, ...)`
+
+```{r}
+#| echo: true
+#| eval: true
+seq(from = 1, to = 5, by = 2)
+seq(from = 0, to = 10, length.out = 6)
+```
+
+`rep(x, times, each, length.out)`
+
+```{r}
+#| echo: true
+#| eval: true
+rep(x = c(1, 2), times = 2)
+rep(x = c(1, 2), each = 2)
+rep(x = c(1, 2), times = 2, each = 2)
+```
+
+## Vectorised functions
+
+Most functions in <i class="fab fa-r-project"></i> are vectorised;
+computations are performed on each element separately, e.g.
+
+<br/>
+
+```{r}
+#| echo: true
+#| eval: true
+numbers <- 1:10
+numbers
+numbers * 4
+```
+
+## Named vectors
+
+<i class="fab fa-r-project"></i> objects can have attributes;
+additional information associated with the object but stored separately from the main data.
+
+Vectors can have an optional attribute called `names` which is intended to store a name for each element in the vector, e.g.
+
+:::: {.columns}
+
+::: {.column width="50%"}
+#### Without names
+
+```{r}
+#| echo: true
+#| eval: true
+profile <- c("Kevin", "Rue")
+profile
+attributes(profile)
+```
+:::
+
+::: {.column width="50%"}
+#### With names
+
+```{r}
+#| echo: true
+#| eval: true
+# With names
+profile <- c(first = "Kevin", last = "Rue")
+profile
+attributes(profile)
+```
+:::
+
+::::
+
+Names may also be set on an existing vector, e.g.
+
+```{r}
+#| echo: true
+#| eval: true
+# With names
+profile <- c("Kevin", "Rue")
+profile
+names(profile) <- c("first", "last")
+profile
+```
+
+## Indexing vectors
+
+The square brackets `[]` can be used to access values at specific positions in vectors, e.g.
+
+```{r}
+#| echo: true
+#| eval: true
+letters
+letters[14]
+```
+
+Multiple indices may be given to extract multiple values, e.g.
+
+```{r}
+#| echo: true
+#| eval: true
+letters[14:16]
+letters[c(1, 5, 12)]
+```
+
+## Replacing elements of a vector
+
+Indexing and assignment can be used together to replace values in a vector, e.g.
+
+```{r}
+#| echo: true
+#| eval: true
+letters
+letters[14] <- "..."
+letters
+```
+
+Multiple indices may be given to replace multiple values, e.g.
+
+```{r}
+#| echo: true
+#| eval: true
+letters[c(1, 5, 12)] <- "."
+letters
+```
+
+Indexing and operators can be combined to replace values conditionally, e.g.
+
+```{r}
+#| echo: true
+#| eval: true
+letters == "."
+letters[letters == "."] <- "..."
+letters
+```
+
+## Exercise
+
+### Vectors
+
+- Assign the values 1 to 200 to a vector named `a`.
+- Multiply each element of the vector by 123 and assign the result to a new object named `b`.
+- Print the value of the 44^th^ element of the vector `b`.
+- Assign the first fifteen elements of `b` and assign them to a new vector named `b_sub`.
+- Add the numbers `24108` and `24231` to the object `b_sub`.
+- Assign the values `'actb'`, `100`, `3.4` to a vector named `m`.
+- Print the second element of `m`. Is it what you would expect? Why?
+- Multiply the second element of `m` by `4`. What happens? Why?
+- Make a vector `c` that contains four *named* character scalars.
+- Display the names of the elements in `c`.
+
+## Matrices
+
+Matrices are rectangular objects that contain values of a single data type.
+They have rows and columns, indexed from position 1.
+
+The function `matrix()` creates a new matrix from a vector of data, e.g.
+
+```{r}
+opts <- options()
+options("width" = 150)
+```
+
+```{r}
+#| echo: true
+#| eval: true
+m <- matrix(data = 1:200, nrow = 10, ncol = 20, byrow = FALSE)
+m
+```
+
+```{r}
+opts <- options()
+options(opts)
+```
+
+Additional arguments control the number of rows and columns, and whether the values in the vector should be used to fill the matrix by row or by column.
+
+Technically, a matrix is nothing more than a 1-dimensional vector wrapped over multiple rows and columns (i.e., dimensions).
+The function `dim()` returns the number of rows and columns (in that order), e.g.
+
+```{r}
+#| echo: true
+#| eval: true
+dim(m)
+```
+
+## Combine matrices
+
+The functions `cbind()` and `rbind()` can be used to *bind* matrices and/or vectors together, into bigger matrices, e.g.
+
+:::: {.columns}
+
+::: {.column width="50%"}
+#### cbind
+
+```{r}
+#| echo: true
+#| eval: true
+x <- 1:5
+x
+y <- 6:10
+y
+z <- cbind(x, y)
+z
+z2 <- cbind(z, z)
+z2
+```
+:::
+
+::: {.column width="50%"}
+#### rbind
+
+```{r}
+#| echo: true
+#| eval: true
+x <- 1:5
+x
+y <- 6:10
+y
+z <- rbind(x, y)
+z
+z2 <- rbind(z, z)
+z2
+```
+:::
+
+::::
+
+## Matrices type
+
+Matrices can each only contain values of a single data type.
+
+As vectors, if multiple data types are given, all values will be coerced to the most general data type, e.g.
+
+
+```{r}
+#| echo: true
+#| eval: true
+matrix(
+    data = c(
+        1, 2, 3, 4, 5,
+        "a", "b", "c", "d", "e"
+    ),
+    ncol = 2
+)
+```
+
+## Setting column and row names
+
+The functions `colnames()` and `rownames()` can be used to get or replace row and column names, e.g.
+
+```{r}
+#| echo: true
+#| eval: true
+m <- matrix(data = 1:20, nrow = 4, ncol = 5, byrow = FALSE)
+m
+rownames(m)
+colnames(m)
+rownames(m) <- paste0("row_", 1:nrow(m))
+colnames(m) <- paste0("column_", 1:ncol(m))
+m
+rownames(m)
+colnames(m)
+```
+
+## Dimension names
+
+The function `dimnames()` can also be used to get of replace row and column names simultaneously, as a list of two character vectors, e.g.
+
+```{r}
+#| echo: true
+#| eval: true
+m <- matrix(data = 1:20, nrow = 4, ncol = 5, byrow = FALSE)
+m
+dimnames(m)
+dimnames(m) <- list(
+    paste0("row_", 1:nrow(m)),
+    paste0("column_", 1:ncol(m))
+)
+m
+dimnames(m)
+```
+
+## Frequently used functions on matrices
+
+:::: {.columns}
+
+::: {.column width="50%"}
+Dimensions
+
+- `nrow()` returns the number of rows in a matrix.
+- `ncol()` returns the number of columns in a matrix.
+- `dim()` returns the dimensions of a matrix (rows, columns).
+:::
+
+::: {.column width="50%"}
+Subset
+
+- `head()` returns the first rows of a matrix.
+- `tail()` returns the last rows of a matrix.
+:::
+
+::::
+
+Names
+
+- `rownames()` returns the names of the rows in a matrix.
+- `colnames()` returns the names of the rows in a matrix.
+- `dimnames()` returns the names of the dimensions in a matrix (rows, columns).
+
+Miscellaneous
+
+- `str()` displays the internal structure of a matrix.
+- `summary()` returns a summary of each column in a matrix.
+- `View()` opens a matrix in an interactive viewer.
+
+## Arrays
+
+Arrays can be seen as the generalisation of matrices to more than two dimensions (i.e. rows and columns).
+
+The function `dim()` returns the length of an array in each dimension, e.g.
+
+```{r}
+#| echo: true
+#| eval: true
+a <- array(data = 1:12, dim = c(2, 3, 2))
+a
+dim(a)
+```
+
+<br/>
+
+::: {style="text-align: center;"}
+**How do you interpret this code and output?**
+:::
+
+## Indexing arrays
+
+The square brackets `[]` can be used to access values at specific positions in an array, e.g.
+
+```{r}
+#| echo: true
+#| eval: true
+a <- array(data = 1:12, dim = c(2, 3, 2))
+a
+a[1, 3, 1]
+```
+
+Multiple indices can be given to access multiple values, e.g.
+
+```{r}
+#| echo: true
+#| eval: true
+a[1, 2:3, 1]
+a[, 2:3, 1]
+```
+
+## Lists
+
+Lists are the most flexible objects in <i class="fab fa-r-project"></i>;
+each element can be literally *anything*, e.g.
+
+```{r}
+#| echo: true
+#| eval: true
+l <- list(1:10, "Hello, world!", c(TRUE, FALSE), c(0.05, 0.01))
+l
+```
+
+<br/>
+
+The double square brackets `[[]]` can be used to access individual elements, e.g.
+
+```{r}
+#| echo: true
+#| eval: true
+l[[1]]
+l[[2]]
+l[[3]]
+l[[4]]
+```
+
+## Indexing lists
+
+The *double* square brackets `[[]]` can only extract a *single* element from a list.
+
+Meanwhile, the single square bracket `[]` returns a list of elements, given their respective indices, e.g.
+
+<br/>
+
+```{r}
+#| echo: true
+#| eval: true
+l <- list(1:10, "Hello, world!", c(TRUE, FALSE), c(0.05, 0.01))
+```
+
+<br/>
+
+```{r}
+#| echo: true
+#| eval: true
+l[1:2]
+```
+
+<br/>
+
+```{r}
+#| echo: true
+#| eval: true
+l[c(1, 3)]
+```
+
+## Exercise
+
+### Matrices and arrays
+
+- Assign a matrix that contains the integers 1 to 9 in three rows and three columns (filled by column) to an object named `m1`.
+- Extract the number `8` using indexing by row and column.
+- Assign a matrix that contains the integers 1 to 12 in three rows and four columns (filled by row) to an object named `m2`.
+- Add column and row names to the matrix `m2` (you choose the names).
+- Assign an array that contains the integers 1 to 24 along dimensions of lengths 4, 2 and 3 to an object named `a`.
+- Extract the number `15` using indexing by the three dimensions.
+- Extract the matrix in the last dimension of the array and assign to a new object named `last_matrix`.
+- Assign a list of five items of different data types to a list named `l`.
+- Extract the elements at position 3 and 5 of `l` as a single new list.
+
+## Exercise (bonus)
+
+### Indexing vectors
+
+Run the code below to initialise data for this exercise.
+
+```{r}
+#| echo: true
+#| eval: false
+movie <- c(
+    "Whatever Works", "It Follows", "Love and Mercy", "The Goonies", "Jiro Dreams of Sushi", "There Will be Blood", "Moon",
+    "Spice World", "Serenity", "Finding Vivian Maier")
+year <- c("2009", "2015", "2015", "1985", "2012", "2007", "2009", "1988", "2005", "2014")
+boxoffice <- c(35, 15, 15, 62, 3, 10, 321, 79, 39, 1.5)
+genre <- c("Comedy", "Horror", "Drama", "Adventure", "Drama", "SciFi", "Comedy", "Documentary", "SciFi", "Documentary")
+```
+
+<br/>
+
+You're up:
+
+- What is the name of the 10^th^ movie?
+- What are the genres of the first four movies?
+- In the movie names, 'Spice World' should be 'The Naked Gun’.
+  Correct the name.
+- What were the names of the movies made before the year 1990?
+- What were the names of the movies in the 'Comedy' genre?
+  - What were their combined total box office?
+- What is the name of the movie that made less than $50 million dollars *and* was a documentary?
+
+# Lunch break
+
+## Session 3
+
+<br/>
+
+### Overview
+
+- Data frames
+- Subsetting data frames
+- Factors
+- Reading data from a file
+- Writing data to a file
+
+## Data frames
+
+Data frames are two-dimensional structures that can contain different data types in each column.
+
+- Typically, rows represent *observations* and columns represent *variables*.
+- Column names cannot be empty.
+- Row names should be unique (if present).
+- Each column must be the same length.
+
+For instance:
+
+```{r}
+#| echo: true
+#| eval: true
+data.frame(
+    A = c(1L, 2L, 3L),
+    B = c("A", "B", "C"),
+    C = c(TRUE, FALSE, TRUE),
+    D = c(1.1, 2.2, 3.3)
+)
+```
+
+## Frequently used functions on data frames
+
+:::: {.columns}
+
+::: {.column width="50%"}
+Dimensions
+
+- `nrow()` returns the number of rows in a data frame.
+- `ncol()` returns the number of columns in a data frame.
+- `dim()` returns the dimensions of a data frame (rows, columns).
+:::
+
+::: {.column width="50%"}
+Subset
+
+- `head()` returns the first rows of a data frame.
+- `tail()` returns the last rows of a data frame.
+:::
+
+::::
+
+Names
+
+- `rownames()` returns the names of the rows in a data frame.
+- `colnames()` returns the names of the rows in a data frame.
+- `dimnames()` returns the names of the dimensions in a data frame (rows, columns).
+
+Miscellaneous
+
+- `str()` displays the internal structure of a data frame.
+- `summary()` returns a summary of each column in a data frame.
+- `View()` opens a data frame in an interactive viewer.
+
+## Indexing data frames
+
+```{r}
+#| echo: true
+#| eval: true
+df <- data.frame(
+    A = c(1L, 2L, 3L),
+    B = c("A", "B", "C"),
+    C = c(TRUE, FALSE, TRUE),
+    D = c(1.1, 2.2, 3.3)
+)
+```
+
+<br/>
+
+### Single column
+
+The dollar operator `$` conveniently auto-completes column names.
+
+```{r}
+#| echo: true
+#| eval: true
+df$A
+```
+
+The double square brackets `[[]]` returns the *contents* of a column, given its name as a character scalar or its position as an integer.
+
+```{r}
+#| echo: true
+#| eval: true
+df[["A"]]
+df[[1]]
+```
+
+## Indexing data frames (continued)
+
+### Multiple columns
+
+The single square brackets `[]` returns a new data frame that contains one or more columns, given their name as a character vector or their position as an integer vector. 
+
+```{r}
+#| echo: true
+#| eval: true
+df["A"]
+df[c("A", "B")]
+df[1:2]
+df[c(1, 3)]
+```
+
+## Indexing data frames (continued)
+
+As for matrices, single brackets can be used with a comma symbol '`,`' to index data frames by row and column, e.g.
+
+<br/>
+
+### Indexing by row
+
+```{r}
+#| echo: true
+#| eval: true
+df[1, ]
+df[1:2, ]
+```
+
+<br/>
+
+### Indexing by row and column
+
+```{r}
+#| echo: true
+#| eval: true
+df[c(2, 3), c("A", "B")]
+```
+
+## Subsetting data frames
+
+```{r}
+#| echo: true
+#| eval: true
+data("iris")
+summary(iris)
+colnames(iris)
+```
+
+<br/>
+
+Use indexing to subset the `iris` data frame for observations that meet specific criteria, e.g.
+
+```{r}
+#| echo: true
+#| eval: false
+iris[iris$Species == "setosa", ]
+iris[iris$Sepal.Length > 5, ]
+iris[iris["Sepal.Length"] > 5, ] # compare with line above
+iris[iris$Sepal.Length > 5 & iris$Petal.Length > 2, ] # multiple conditions
+
+iris[iris$Species %in% c("setosa", "versicolor"), ]
+iris[iris$Species == "setosa" | iris$Species == "versicolor", ] # compare with line above
+
+iris[grep("set|ver", iris$Species), ]
+grep("set|ver", iris$Species) #  inspect what happened in line above
+```
+
+## The `subset()` function
+
+```{r}
+#| echo: true
+#| eval: true
+subset(iris, Species %in% c("setosa", "versicolor") & Sepal.Length > 6.5)
+```
+
+## Adding and editing columns in data frames
+
+Add
+
+```{r}
+#| echo: true
+#| eval: true
+iris$new_sepal_length <- iris$Sepal.Length * 5
+head(iris)
+```
+
+Edit
+
+```{r}
+#| echo: true
+#| eval: true
+iris$new_sepal_length <- iris$new_sepal_length / 5
+head(iris)
+```
+
+Remove
+
+```{r}
+#| echo: true
+#| eval: true
+iris$new_sepal_length <- NULL
+head(iris)
+```
+
+## Warnings
+
+- Certains symbols (including space) are automatically replaced by the dot symbol `.`.
+- Duplicate column names are automatically de-duplicated using suffixes.
+
+```{r}
+#| echo: true
+#| eval: true
+df <- data.frame(
+    "column$1" = c(1, 2, 3),
+    "column 2" = c(4, 5, 6),
+    "column.2" = c(4, 5, 6)
+)
+df
+```
+
+- <i class="fab fa-r-project"></i> attempts to match partial column names if unambiguous, e.g.
+
+```{r}
+#| echo: true
+#| eval: true
+df <- data.frame(
+    A1 = c(1, 2, 3),
+    A2 = c("A", "B", "C"),
+    B1 = c(TRUE, FALSE, TRUE)
+)
+df
+df$A
+df$B
+```
+
+## Factors
+
+Factors are vectors that represent categorical data, where each value can only be one of a set of allowed values, called *levels*, e.g.
+
+```{r}
+#| echo: true
+#| eval: true
+factor(x = c("A", "B", "B", "A"), levels = c("A", "B"))
+```
+
+- Any value that is not a valid levels is automatically replaced by `NA` (not available), e.g.
+
+```{r}
+#| echo: true
+#| eval: true
+factor(x = c("A", "B", "C", "A"), levels = c("A", "B"))
+```
+
+Levels can be ordered to reflect relative values, e.g.
+
+```{r}
+#| echo: true
+#| eval: true
+factor(x = c("high", "low", "high", "low"), levels = c("low", "high"), ordered = TRUE)
+```
+
+Furthermore:
+
+- Even when unordered, the first level is used as *reference* in statistical analyses (e.g., linear models).
+- As vectors, factors can be stored as columns in data frames.
+
+## Factor levels
+
+```{r}
+#| echo: true
+#| eval: true
+f <- factor(x = c("high", "low", "high", "low"), levels = c("low", "high"), ordered = TRUE)
+f
+```
+
+The function `levels()` can be used to access and edit the levels of a factor, e.g.
+
+```{r}
+#| echo: true
+#| eval: true
+f1 <- f # make a working copy
+levels(f1)
+levels(f1) <- c("low", "medium", "high")
+levels(f1)
+f1
+```
+
+::: {style="text-align: center;"}
+**Can you spot the issue above, though?**
+:::
+
+In this case, it is safer to create a new factor with appropriate levels:
+
+```{r}
+#| echo: true
+#| eval: true
+f2 <- f
+factor(f2, levels = c("low", "medium", "high"))
+```
+
+## Reading data from files
+
+Several base <i class="fab fa-r-project"></i> functions can read data from text files in various formats (e.g., CSV, TSV), e.g.
+
+```{r}
+#| echo: true
+#| eval: false
+read.table(file, header = FALSE, sep = "", ...)
+read.csv(file, header = TRUE, sep = ",", ...)
+read.delim(file, header = TRUE, sep = "\t", ...)
+```
+
+In particular:
+
+- The argument `sep=` can be used to specify a field delimiter.
+- Those functions return data read from the input file as a `data.frame` object that must be assigned to a name in the current environment before it can be used, e.g.
+
+```{r}
+#| echo: true
+#| eval: false
+raw_data <- read.csv("data.csv")
+```
+
+## Writing data to files
+
+Similarly, several functions are designed to write the contents of `data.frame` objects to text file in various formats, e.g.
+
+```{r}
+#| echo: true
+#| eval: false
+write.table(x, file = "", append = FALSE, quote = TRUE, sep = " ", ...)
+write.csv(...)
+```
+
+The string `"\t"` can be used to use the tabulation character as a field delimiter, e.g.
+
+```{r}
+#| echo: true
+#| eval: false
+x <- data.frame(
+    A = c(1, 2, 3),
+    B = C("A", "B", "C")
+)
+write.table(x, file = "results.tsv", sep = "\t")
+```
+
+## Exercise
+
+### Data frames
+
+- Assign data from the file `coding_gene_region.bed` to an object named `gene_data`.
+- Display the dimensions of the data frame and the type of data in each column.
+- Set column names to: `chr`, `start`, `end`, `name`, `score`, and `strand`.
+- Prove that you have (re)named the columns.
+- Display the value at row 30, column 3.
+- Assign the column named `start` to a new object named `start_position`.
+- Calculate the length of each gene and assign that value to a new column named `length`.
+- Prove that you have added the new column.
+- Assign rows where the gene length is between 100kb and 200kb to a new object named `filtered_gene_data`.
+- Export `filtered_gene_data` to a file named `filtered_gene_regions.tsv`, using tabulation as a field delimiter.
+  Include column names but not row names.
+
+## Exercise (bonus)
+
+### Scalars and vectors
+
+- Create a vector with values `1` to `10` in three ways: once using `c()`, once using `start:end`, and once using `seq()`.
+- Create a vector with values `2.1`, `4.1`, `6.1`, `8.1` in two ways, once using `c()` and once using `seq()`.
+- Create a vector with values `0`, `5`, `10`, `15` in three ways: using `c()`, `seq()` with the `by=` argument, and `seq()` with the `length.out=` argument.
+- Create a vector with values `101`, `102`, `103`, `200`, `205`, `210`, `1000`, `1100`, `1200` using a combination of the functions `c()` and `seq()`.
+- Create a vector that repeats the integers from `1` to `5`, ten times.
+  That is: `1`, `2`, `3`, `4`, `5`, `1`, `2`, `3`, `4`, `5`, ....
+  The length of the vector should be `50`.
+- Now, create the same vector as before, but this time repeat `1`, ten times, then `2`, ten times, and so on.
+  That is: `1`, `1`, ..., 2, 2, ..., 5, 5.
+  The length of the vector should also be `50`.
+
+## Exercise (bonus)
+
+### Data frames
+
+Run the code below to initialise data for this exercise.
+
+```{r}
+#| echo: true
+#| eval: true
+vector1 <- 1:10 
+vector2 <- letters[1:10] 
+vector3 <- rnorm(10, sd = 10) 
+df <- data.frame(vector1, vector2, vector3)
+```
+
+You're up:
+
+- Look up the help page for the function `rnorm()`.
+  What does it do?
+- Print the last two columns of `df`, once by integer position, once by column name.
+- Print the values in the column `vector2` where the value in the column `vector3` is positive.
+- Look up the help page for the function `paste()`.
+  Create a vector that, for each row, combines the values across all the columns of `df` separated by a underscore.
