@@ -1,19 +1,102 @@
 @Manual{R,
-title = {R: A Language and Environment for Statistical Computing},
-author = {{R Core Team}},
-organization = {R Foundation for Statistical Computing},
-address = {Vienna, Austria},
-year = {2022},
-url = {https://www.R-project.org/},
+  title = {R: A Language and Environment for Statistical Computing},
+  author = {{R Core Team}},
+  organization = {R Foundation for Statistical Computing},
+  address = {Vienna, Austria},
+  year = {2022},
+  url = {https://www.R-project.org/},
 }
 
 @Article{deseq2_package,
+  title = {Moderated estimation of fold change and dispersion for RNA-seq data with DESeq2},
+  author = {Michael I. Love and Wolfgang Huber and Simon Anders},
+  year = {2014},
+  journal = {Genome Biology},
+  doi = {10.1186/s13059-014-0550-8},
+  volume = {15},
+  issue = {12},
+  pages = {550},
+}
+
+@Article{edger_package,
+  title = {edgeR: a Bioconductor package for differential expression analysis of digital gene expression data},
+  author = {Mark D Robinson and Davis J McCarthy and Gordon K Smyth},
+  journal = {Bioinformatics},
+  volume = {26},
+  number = {1},
+  pages = {139-140},
+  year = {2010},
+  doi = {10.1093/bioinformatics/btp616},
+}
+
+@Manual{sleuth_package,
+  title = {sleuth: Tools for investigating RNA-Seq},
+  author = {Harold Pimentel and Warren McGee},
+  year = {2023},
+  note = {R package version 0.30.1},
+  url = {https://github.com/pachterlab/sleuth},
+}
+
+@Article{dexseq_package,
+  title = {Detecting differential usage of exons from RNA-seq data.},
+  author = {Simon Anders and Alejandro Reyes and Wolfgang Huber},
+  year = {2012},
+  journal = {Genome Research},
+  volume = {22},
+  pages = {4025},
+  doi = {10.1101/gr.133744.111},
+}
+
+@Manual{diffbind_package,
+  title = {DiffBind: differential binding analysis of ChIP-Seq peak data},
+  author = {Rory Stark and Gordon Brown},
+  year = {2011},
+  url = {http://bioconductor.org/packages/release/bioc/vignettes/DiffBind/inst/doc/DiffBind.pdf},
+}
+
+@article{deseq2_2014,
+author = {Love, M. I. and Huber, W. and Anders, S.},
 title = {Moderated estimation of fold change and dispersion for RNA-seq data with DESeq2},
-author = {Michael I. Love and Wolfgang Huber and Simon Anders},
-year = {2014},
-journal = {Genome Biology},
-doi = {10.1186/s13059-014-0550-8},
+journal = {Genome Biol},
 volume = {15},
-issue = {12},
+number = {12},
 pages = {550},
+note = {Love, Michael I
+Huber, Wolfgang
+Anders, Simon
+2014/12/18},
+abstract = {In comparative high-throughput sequencing assays, a fundamental task is the analysis of count data, such as read counts per gene in RNA-seq, for evidence of systematic changes across experimental conditions. Small replicate numbers, discreteness, large dynamic range and the presence of outliers require a suitable statistical approach. We present DESeq2, a method for differential analysis of count data, using shrinkage estimation for dispersions and fold changes to improve stability and interpretability of estimates. This enables a more quantitative analysis focused on the strength rather than the mere presence of differential expression. The DESeq2 package is available at http://www.bioconductor.org/packages/release/bioc/html/DESeq2.html webcite.},
+keywords = {Algorithms
+Computational Biology
+High-Throughput Nucleotide Sequencing
+Models, Genetic
+RNA
+Sequence Analysis, RNA
+Software},
+ISSN = {1474-760X},
+DOI = {10.1186/s13059-014-0550-8},
+url = {https://www.ncbi.nlm.nih.gov/pubmed/25516281},
+year = {2014},
+type = {Journal Article}
+}
+
+@Manual{sva_package,
+  title = {sva: Surrogate Variable Analysis},
+  author = {Jeffrey T. Leek and W. Evan Johnson and Hilary S. Parker and Elana J. Fertig and Andrew E. Jaffe and Yuqing Zhang and John D. Storey and Leonardo Collado Torres},
+  year = {2023},
+  note = {R package version 3.48.0},
+  url = {https://bioconductor.org/packages/sva},
+  doi = {10.18129/B9.bioc.sva},
+}
+
+@Article{ruvseq_package,
+  title = {{Normalization of RNA-seq data using factor analysis of control genes or samples}},
+  author = {Davide Risso and John Ngai and Terence Speed and Sandrine Dudoit},
+  year = {2014},
+  journal = {Nature Biotechnology},
+  volume = {32},
+  number = {9},
+  pages = {896--902},
+  note = {In press},
+  url = {http://www.nature.com/nbt/journal/v32/n9/full/nbt.2931.html},
 }

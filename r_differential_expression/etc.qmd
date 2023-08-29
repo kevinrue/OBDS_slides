@@ -1,6 +1,462 @@
+## Differential expression {.smaller}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+```{r}
+#| fig-align: center
+knitr::include_graphics("img/counts_coldata.png")
+```
+
+```{r}
+deseq2_res
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| fig-align: center
+x <- plotMA(deseq2_res, returnData = TRUE)
+ggplot() +
+  geom_point(
+    aes(mean, lfc, colour = isDE),
+    x %>% filter(!is.na(lfc)),
+    size = 0.2) +
+  scale_x_log10() +
+  scale_colour_manual(values = c("FALSE" = "grey", "TRUE" = "blue")) +
+  labs(
+    x = "Mean of normalised counts",
+    y = "Log fold-change",
+    title = "MA plot"
+  ) +
+  theme_minimal() +
+  theme(
+    title = element_text(size = 20),
+    text = element_text(size = 14)
+  )
+```
+
+```{r}
+#| fig-align: center
+x <- as_tibble(deseq2_res)
+ggplot() +
+  geom_point(
+    aes(log2FoldChange, -log10(pvalue), colour = isDE),
+    x %>%
+      filter(!is.na(log2FoldChange) & !is.na(pvalue)) %>% 
+      mutate(isDE = padj < 0.05),
+    size = 0.2) +
+  scale_colour_manual(values = c("FALSE" = "grey", "TRUE" = "blue")) +
+  labs(
+    x = "Log fold-change",
+    y = "-log10(P)",
+    title = "Volcano plot"
+  ) +
+  theme_minimal() +
+  theme(
+    title = element_text(size = 20),
+    text = element_text(size = 14)
+  )
+```
+:::
+
+::::
+
+## Goals of differential expression analysis
+
+::: {style="text-align: center;"}
+**Quantify differences between groups, taking into account variability within groups.**
+:::
+
+### Examples hypotheses
+
+- Which genes are significantly *up- or down-regulated* in *condition* A relative to condition B?
+- Which genes are significantly affected by the *interaction* of *covariates* A and B, taking into account the *independent* effect of those covariates?
+- Which genes show significant variation over a *time course*?
+
+### Input data
+
+Most methods require raw count data.
+
+- Range of methods including
+  `r BiocStyle::Biocpkg("DESeq2")`
+  and `r BiocStyle::Biocpkg("edgeR")`.
+- Suitable for various assays including RNA-seq, ChIP-seq, and ATAC-seq.
+- Read count associated with features of interest (e.g., gene, transcript, exon).
+
+### Outputs
+
+- A table of statistics, often accompanied by plots for quality control and further analyses.
+
+## Differential expression within an RNA-seq workflow
+
+```{r}
+#| fig-align: center
+knitr::include_graphics("img/overview-rnaseq-workflow.png")
+```
+
+## Packages for differential expression analysis
+
+### RNA-seq data
+
+#### Gene / transcripts
+
+- `r BiocStyle::Biocpkg("DESeq2")` `r Citep(bib, "deseq2_package")`.
+- `r BiocStyle::Biocpkg("edgeR")` `r Citep(bib, "edger_package")`.
+
+#### Exons
+
+- `r BiocStyle::Biocpkg("DEXSeq")` `r Citep(bib, "dexseq_package")`.
+  Note: uses `r BiocStyle::Biocpkg("DESeq2")` internally
+
+#### Salmon / Kallisto
+
+- `r BiocStyle::Githubpkg("pachterlab/sleuth")` `r Citep(bib, "sleuth_package")`.
+
+### ChIP-seq data
+
+- `r BiocStyle::Biocpkg("DiffBind")` `r Citep(bib, "diffbind_package")`.
+  Note: uses either `r BiocStyle::Biocpkg("edgeR")` or `r BiocStyle::Biocpkg("DESeq2")` internally.
+
 ## DESeq2
 
-Citation of DESeq2 `r Citep(bib, "deseq2_package")`.
+### Publications
+
+- "Moderated estimation of fold change and dispersion for RNA-seq data with DESeq2" `r Citep(bib, "deseq2_2014")`
+
+### Package vignette
+
+- [Analyzing RNA-seq data with DESeq2](https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html)
+- In the <i class="fab fa-r-project"></i> console:
+
+```{r}
+#| eval: false
+#| echo: true
+vignette("DESeq2")
+```
+
+### Bioconductor support site
+
+- <https://support.bioconductor.org/>
+
+### Other resources
+
+- [Gene-level differential expression analysis
+](https://hbctraining.github.io/DGE_workshop_salmon_online/lessons/01c_RNAseq_count_distribution.html) -- Harvard Chan Bioinformatics Core
+- [StatQuest: DESeq2 part 1: Library Normalization](https://statquest.org/statquest-deseq2-part-1-library-normalization/)
+
+## Workflow overview
+
+```{r}
+#| fig-align: center
+knitr::include_graphics("img/de-exploratory-analysis.png")
+```
+
+:::: {.columns}
+
+::: {.column width="50%"}
+#### Part 1
+
+- Get familiar with the data.
+- Expect the unexpected.
+:::
+
+::: {.column width="50%"}
+#### Part 2
+
+- Model the data.
+- Inspect the results.
+- Downstream analyses.
+:::
+
+::::
+
+# Input data
+
+## Input data
+
+In <i class="fab fa-r-project"></i>,
+a differential expression analysis needs three key inputs:
+
+- A matrix of read counts for each feature in each sample.
+
+```{r}
+n_genes <- 3
+n_samples <- 4
+matrix(
+  data = rbinom(n_genes * n_samples, 10, 0.1),
+  nrow = n_genes,
+  ncol = n_samples,
+  dimnames = list(
+    paste0("gene_", 1:n_genes),
+    paste0("S", 1:n_samples)
+  )
+)
+```
+
+- A table of metadata for each sample.
+
+```{r}
+data.frame(
+  sample_id = paste0("S", 1:n_samples),
+  condition = factor(sample(c("A", "B"), size = n_samples, replace = TRUE)),
+  age = sample(30:60, size = n_samples, replace = TRUE)
+)
+```
+
+
+- A formula that describes the experimental design.
+
+```{r}
+#| echo: true
+#| eval: false
+~ age + condition
+```
+
+## The Bioconductor SummarizedExperiment
+
+`r BiocStyle::Biocpkg("SummarizedExperiment")` provides a base class that is re-used throughout Bioconductor packages.
+
+```{r}
+#| fig-align: center
+knitr::include_graphics("img/summarizedexperiment.jpeg")
+```
+
+::: {style="text-align: center;"}
+**Why is the `SummarizedExperiment` relevant to differential expression analysis?**
+:::
+
+## The DESeq2 DESeqDataSet
+
+```{r}
+oo <- options()
+options(width = 60)
+```
+
+`r BiocStyle::Biocpkg("DESeq2")` defines the class `DESeqDataSet` that extends the class `RangedSummarizedExperiment`.
+
+```{r}
+dds_se <- as(dds, "RangedSummarizedExperiment")
+```
+
+<br/>
+
+:::: {.columns}
+
+::: {.column width="50%"}
+### `r as.character(class(dds_se))`
+
+```{r}
+slotNames(dds_se)
+```
+:::
+
+::: {.column width="50%"}
+### `r as.character(class(dds))`
+
+```{r}
+slotNames(dds)
+```
+:::
+
+::::
+
+<br/>
+
+::: {style="text-align: center;"}
+**What slots does the class `DESeqDataSet` add to the base case `RangedSummarizedExperiment`?**
+:::
+
+```{r}
+options(oo)
+```
+
+## Additional slots
+
+`design`
+
+- Dedicated to the storage of the formula that describes the experimental design.
+
+```{r}
+#| echo: true
+design(dds)
+```
+
+`dispersionFunction`
+
+- Dedicated to the storage of the function that models dispersion in the data.
+
+:::: {.columns}
+
+::: {.column width="50%"}
+```{r}
+#| echo: true
+dispersionFunction(dds)
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| echo: true
+plot(dispersionFunction(dds))
+```
+:::
+
+::::
+
+## Constructing a DESetDataSet object
+
+The first step of a `r BiocStyle::Biocpkg("DESeq2")` workflow is to construct a `DESetDataSet` object.
+
+- Combines all the key information in a single object.
+- Makes it easy for package functions to find information in standard places and formats.
+
+### Methods
+
+`DESetDataSet` objects can be constructed from various inputs:
+
+- The function `DESeqDataSet()` takes a *SummarizedExperiment* object and a design *formula*.
+- The function `DESeqDataSetFromMatrix()` takes a counts *matrix*, a *data.frame* of sample metadata, and a design *formula*.
+- The function `DESeqDataSetFromHTSeqCount()` takes a *data.frame* of sample names, associated count files and metadata, and a design *formula*.
+- The function `DESeqDataSetFromTximport()` takes the *list* output of the function `tximport()`.
+
+## Constructing a DESetDataSet object from a matrix
+
+```{r}
+knitr::include_graphics("img/construct-desseqdataset.png")
+```
+
+## Constructing a DESeqDataSet -- Example
+
+```{r}
+count_matrix <- assay(airway)
+sample_info <- colData(airway)
+```
+
+```{r}
+#| echo: true
+dds <- DESeqDataSetFromMatrix(
+  countData = count_matrix,
+  colData = sample_info,
+  design = ~ cell + dex)
+dds
+```
+
+<br/>
+
+### Design
+
+Note that the design formula is not displayed in the summarised view.
+It is accessible directly if needed:
+
+```{r}
+#| echo: true
+design(dds)
+```
+
+## The design formula
+
+::: {style="text-align: center;"}
+`~ condition + treatment`
+:::
+
+A *formula* is a specific type of <i class="fab fa-r-project"></i> object that refers to variables in the environment, or columns in a *data.frame*.
+
+In the context of differential expression analysis, the design formula refers to known sample metadata that are expected sources of variations affecting the expression levels of features in the data set (e.g., condition, treatment, batch).
+
+- Some covariates are sources of *interesting* (i.e., biological) variation.
+  Those are modelled with the aim of testing for significant differences between groups.
+- Other covariates are sources of *technical* variation.
+  Those are modelled with the aim of regressing out (i.e, controlling for) their effect on gene expression.
+
+All covariates mentioned in the design formula must be present in the `colData()` of the *DESeqDataSet* object.
+
+**Tip: Place the most interesting covariate last in the formula. It will be the one reported by default in the differential expression results.**
+
+## Interpreting the design formula
+
+`~ condition`
+
+Models the effect of conditions relative to one another, ignoring any other covariate.
+
+`~ condition + genotype`
+
+Models the effets of conditions and genotypes independently.
+Allows for the testing of either covariate while accounting for the effect of the other.
+
+`~ condition + genotype + condition:genotype`
+
+Models the effets of conditions and genotypes independently, as well as the effect of their interaction.
+The interaction term captures the joint effect of two covariates.
+
+:::: {.columns}
+
+::: {.column width="50%"}
+#### No interaction
+
+```{r}
+#| fig-align: center
+knitr::include_graphics("img/interaction-no.png")
+```
+:::
+
+::: {.column width="50%"}
+#### Interaction
+
+```{r}
+#| fig-align: center
+knitr::include_graphics("img/interaction-yes.png")
+```
+:::
+
+::::
+
+## What should you include in the design formula?
+
+- Covariate(s) to test must be included.
+- Known batch covariates should be included.
+
+### Surrogate variables
+
+Some methods attempt to capture one or more 'unknown' sources of variation *post hoc*, e.g.
+
+- Batch effects that were not formally recorded (e.g., date, operator, instrument).
+- Unexpected sources of variation (e.g., experimental issue).
+
+Once computed, surrogate variables can be added to the sample metadata and used in the design formula.
+
+Packages capable of producing surrogate variables:
+
+- `r BiocStyle::Biocpkg("sva")` `r Citep(bib, "sva_package")`.
+- `r BiocStyle::Biocpkg("RUVSeq")` `r Citep(bib, "ruvseq_package")`.
+
+## Exercise
+
+### Data
+
+In this lesson, we use RNA-seq data obtained from the European Nucleotide Archive (ENA).
+
+#### Project PRJEB18572
+
+::: {style="text-align: center;"}
+"RNAseq analysis of CD4 and CD8 T cells in response to vaccinia virus infection".
+:::
+
+- Murine CD4+ and CD8+ T cells with Egr2/3 double KO.
+- Samples collected seven days after infection with vaccinia virus.
+- Three biological replicates per group.
+– Contrast of interest: CD4+ vs CD8+ cells.
+
+#### Experimental question
+
+::: {style="text-align: center;"}
+**What genes are DE in CD8 vs CD4 cells in Egr2/3 KO in response to infection?**
+:::
+
+#### Input files
+
+- *allsamples_counts.tsv.gz*
+- *PRJEB18572_sample_info.tsv*
 
 ## Exercise
 
@@ -10,12 +466,12 @@ Citation of DESeq2 `r Citep(bib, "deseq2_package")`.
   and use the function `read_tsv()`
   to import count data from the file `allsamples_counts.tsv.gz`
   into a tibble called `featurecounts_table`.
-  Display a preview of `featurecounts_table` using `glimpse()`.
+  Display a preview of `featurecounts_table` using the function `glimpse()`.
 - Extract gene metadata from the tibble `featurecounts_table` into a new tibble called `gene_info`.
-  Display a preview of `gene_info` using `glimpse()`.
+  Display a preview of `gene_info` using the function `glimpse()`.
 - Similarly, extract the read counts per sample from `featurecounts_table`
   into a numeric matrix called `counts_table`.
-  Display the first few rows of `counts_table` using `head()`.
+  Display the first few rows of `counts_table` using the function `head()`.
 - Display the dimensions of the matrix `counts_table`.
 - What does the function `storage.mode()` tell you about `counts_table`?
 
@@ -48,7 +504,7 @@ Citation of DESeq2 `r Citep(bib, "deseq2_package")`.
 
 - Check whether sample names in the count matrix (column names) and sample meta (column `sample_id`) match.
 - If not, display the two sets of sample names.
-  (Hint: you display them individually, or as two columns in a single tibble, for easier side-by-side comparison).
+  (Hint: you may display them individually, or as two columns in a single tibble, for easier side-by-side comparison).
 
 ::: {style="text-align: center;"}
 **What makes the two sets of sample names different from each other?**
@@ -127,6 +583,30 @@ Citation of DESeq2 `r Citep(bib, "deseq2_package")`.
   Extract the rows 1 to 5 and columns 1 to 4.
   Display the result without assigning it to any object.
 
+# Preprocessing
+
+## Preprocessing
+
+### Filter lowly expressed genes
+
+Preprocessing can take a number of different meanings in bioinformatics analyses.
+
+Here, we focus on the filtering of 'uninformative' genes, in the form of *lowly expressed genes*.
+
+Even then, *lowly expressed genes* can be defined in a number of ways, based on:
+
+- An arbitrary cut-off on their expression level in individual samples, to consider the gene as 'detected'.
+- An arbitrary number or fraction of samples in which the gene is 'detected' (see above).
+- More elaborate rules (e.g., using sample metadata to request detection in specific groups of samples).
+
+### Motivations
+
+Filtering lowly expressed genes has a number of positive effects:
+
+- Reduce genes very unlikely to be differentially expressed.
+- Reduce the multiple testing correction burden on the remaining genes.
+- Reduce noise in exploratory data analyses (e.g., PCA, clustering).
+
 ## Exercise
 
 ### Filter out lowly genes expressed
@@ -134,7 +614,7 @@ Citation of DESeq2 `r Citep(bib, "deseq2_package")`.
 - Use the functions `counts()` and `rowSums()`
   to count the number of samples in which each gene is expressed
   (i.e., strictly more than zero read counts).
-  Use that information to extract genes expressed in at least 4 samples
+- Use that information to extract genes expressed in at least 4 samples
   into a new object called `dds_filtered`.
   Display the object `dds_filtered`.
 
@@ -149,6 +629,169 @@ Explore different cut-offs and filtering strategies, e.g.
 - Change the minimum read count cut-off from 0 to higher values.
 - Change the number of samples in which genes should be detected above the read count cut-off.
 - Keep only genes detected above the read count cut-off in all the samples of either cell type.
+
+# Statistical distributions and modelling
+
+## Poisson or Negative binomial distribution? {.smaller}
+
+RNA-seq data is count based, i.e. all values are positive integers.
+
+- Cannot have negative values.
+- Cannot have floating points.
+
+As such, cannot be normally distributed.
+
+### Distributions for count data
+
+#### Poisson
+
+- Assumes variance and mean are equal.
+  May be true for technical replicates, but not for biological replicates.
+- Basic shape of a Poisson distribution changes with $lamba$ parameter.
+
+```{r}
+#| fig-align: center
+#| fig-height: 2
+#| fig-width: 8
+x <- lapply(c(0.8, 1.5, 5, 12), function(x) tibble(value = rpois(1E6, x), lamba = x))
+x <- do.call("bind_rows", x)
+ggplot(x, aes(value)) +
+  geom_histogram(fill = "grey", colour = "black", bins = 20, linewidth = 0.3) +
+  facet_wrap(~lamba, nrow = 1, labeller = "label_both") +
+  theme_bw()
+```
+
+#### Negative binomial
+
+- More appropriate for count data where $variance > mean$.
+
+::: {.notes}
+<https://www.theanalysisfactor.com/differences-between-normal-and-poisson-distributions/>
+:::
+
+## Heteroskedasticity
+
+Phenomenon when the variance of the error term is not constant across the scale of the value being measured.
+
+:::: {.columns}
+
+::: {.column width="33%"}
+```{r}
+#| fig-align: center
+#| out-height: 250px
+#| out-width: 100%
+## Source: https://www.dummies.com/article/business-careers-money/business/economics/how-to-distinguish-between-homoskedastic-and-heteroskedastic-disturbances-156402/
+knitr::include_graphics("img/homoskedastic.jpg")
+```
+:::
+
+::: {.column width="66%"}
+```{r}
+#| fig-align: center
+#| out-height: 250px
+#| out-width: 100%
+## Source: https://www.dummies.com/article/business-careers-money/business/economics/how-to-distinguish-between-homoskedastic-and-heteroskedastic-disturbances-156402/
+knitr::include_graphics("img/heteroskedastic.jpg")
+```
+:::
+
+::::
+
+- Naturally present in gene expression data.
+- Data must be made homoskedastic prior to downstream analyses that rely on variance (e.g., PCA, ).
+- Otherwise, genes with highest count (and thus, variance) will dominate the analyses.
+
+## Data transformations for RNA-seq {.smaller}
+
+Methods that aim to produce homoskedastic transformed data are often described as "variance stabilising transformations".
+
+`DESeq2::vst()`
+
+Wrapper for the varianceStabilizingTransformation (VST) that provides much faster estimation of the dispersion trend used to determine the formula for the VST.
+
+### Alternatives
+
+`DESeq2::rlog()`
+
+Transforms the count data to the log2 scale in a way which minimizes differences between samples for rows with small counts, and which normalizes with respect to library size.
+Produces a similar variance stabilizing effect as *vst()*, though *rlog()* is more robust in the case when the size factors vary widely.
+
+`log1p()`
+
+Log-transform counts after adding 1 (to avoid `log(0)`).
+
+**Caveat:**
+
+- Introduce higher variance in lowly expressed genes.
+
+`scale(..., center = TRUE, scale = TRUE)`
+
+Centers each individual gene to a mean of 0 and scales it to a variance of 1.
+
+**Caveats:**
+
+- Loses relative expression between genes.
+- Scaling can be skewed by the presence of outliers.
+
+## Side-by-side transformations {.smaller}
+
+```{r}
+airway_counts <- assay(airway)
+airway_counts <- airway_counts[rowMeans(airway_counts) > 1, ]
+airway_counts_log1p <- log1p(airway_counts)
+x_ylim <- ylim(0, 3.5)
+x_theme <- theme(
+  title = element_text(size = 24),
+  text = element_text(size = 22)
+)
+```
+
+:::: {.columns}
+
+::: {.column width="33%"}
+```{r}
+#| fig-align: center
+#| fig-height: 8
+##| out-height: 250px
+vsn::meanSdPlot(airway_counts_log1p, plot = FALSE)$gg +
+    x_ylim + x_theme + ggtitle("log1p")
+```
+
+- Inflated variance at low counts.
+:::
+
+::: {.column width="33%"}
+```{r}
+#| fig-align: center
+#| fig-height: 8
+##| out-height: 300px
+vsn::meanSdPlot(DESeq2::vst(airway_counts), plot = FALSE)$gg +
+    x_ylim + x_theme + ggtitle("vst")
+```
+
+- Faster (great for larger numbers of samples).
+- Less sensitive to high outliers.
+:::
+
+::: {.column width="33%"}
+```{r}
+#| fig-align: center
+#| fig-height: 8
+##| out-height: 350px
+vsn::meanSdPlot(DESeq2::rlog(airway_counts), plot = FALSE)$gg +
+    x_ylim + x_theme + ggtitle("rlog")
+```
+
+- Slower.
+- Better for variable sequencing depths.
+:::
+
+::::
+
+::: {.notes}
+Plots inspired by the answer to Question 8.12 of
+<https://www.huber.embl.de/msmb/08-chap.html#fig-countdata-meansd>
+:::
 
 ## Exercise
 
@@ -171,6 +814,198 @@ Explore different cut-offs and filtering strategies, e.g.
 ::: {style="text-align: center;"}
 **Can you spot differences between the rlog() and vst() outputs?**
 :::
+
+# Exploratory data analysis
+
+## Exploratory data analysis (EDA) {.smaller}
+
+EDA is an integral part of your differential expression workflow.
+
+Getting to know your data informs key decisions that impact your results.
+
+:::: {.columns}
+
+::: {.column width="66%"}
+### Motivations
+
+#### The good
+
+- Sanity check that samples from the same experimental groups cluster together.
+- Compute quality control metrics that inform your decision-making.
+
+#### The bad
+
+- Spot outliers.
+- Spot swapped samples (i.e., mislabelled samples).
+
+#### The ugly
+
+Know when the data set as a whole is just not good enough!
+:::
+
+::: {.column width="33%"}
+### Methods
+
+- PCA
+- Clustering
+- Correlation between samples
+- Distance between samples
+- ...
+:::
+
+::::
+
+## Correlation heat map
+
+```{r}
+#| echo: true
+airway_rlog <- rlog(DESeqDataSet(airway, design = ~ cell + dex))
+dds_cor <- cor(assay(airway_rlog), method="spearman")
+```
+
+:::: {.columns}
+
+::: {.column width="50%"}
+```{r}
+#| fig-align: center
+#| fig-height: 7
+pheatmap(dds_cor, fontsize = 20)
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| fig-align: center
+#| fig-height: 7
+pheatmap(dds_cor, breaks = seq(.99, 1, length.out = 100), fontsize = 20)
+```
+:::
+
+::::
+
+::: {style="text-align: center;"}
+**Pro-tip: What is the difference between those heat maps?**
+:::
+
+## Distance heat map
+
+```{r}
+#| echo: true
+dds_dist <- dist(t(assay(airway_rlog)))
+```
+
+
+```{r}
+#| fig-align: center
+#| fig-height: 7
+blue_colors <- colorRampPalette( rev(brewer.pal(9, "Blues")) )(255)
+pheatmap(
+  as.matrix(dds_dist),
+  clustering_distance_rows = dds_dist,
+  clustering_distance_cols = dds_dist,
+  color = blue_colors,
+  fontsize = 20
+)
+```
+
+## Principal component analysis (PCA)
+
+Unsupervised method identifying major axes of *variance* in a matrix.
+
+:::: {.columns}
+
+::: {.column width="50%"}
+```{r}
+#| fig-align: center
+#| fig-height: 5
+#| fig-width: 5
+#| out-height: 450px
+#| out-width: 450px
+plotPCA(airway_rlog, intgroup = "dex")
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| fig-align: center
+#| fig-height: 5
+#| fig-width: 5
+#| out-height: 450px
+#| out-width: 450px
+plotPCA(airway_rlog, intgroup = "cell")
+```
+:::
+
+::::
+
+**Pro-tip:** Pre-processing, filtering, and transformations applied to the data set have major effects on PCA.
+
+## Unwanted variation and surrogate variables {.smaller}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+```{r}
+#| fig-align: center
+set.seed(1)
+n_replicates <- 3
+n_genes <- 1000
+sample_names <- paste0(rep(c("Control_", "Treated_"), each = n_replicates), rep(1:n_replicates, times = 2))
+sample_shift <- runif(n_replicates * 2)
+names(sample_shift) <- sample_names
+x <- tibble(
+  sample = rep(sample_names, each = n_genes),
+  group = str_extract(sample, "[[:alpha:]]+"),
+  value = rnorm(n_replicates * 2 * n_genes)
+) %>% 
+  group_by(sample) %>% 
+  mutate(value = value + sample_shift[.data[["sample"]]])
+ggplot(x, aes(sample, value, fill = group)) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_boxplot() +
+  scale_fill_manual(values = c("Control" = "turquoise", "Treated" = "salmon")) +
+  theme_bw()
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| fig-align: center
+x <- x %>% 
+  group_by(sample) %>% 
+  mutate(value = value - mean(value))
+ggplot(x, aes(sample, value, fill = group)) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_boxplot() +
+  scale_fill_manual(values = c("Control" = "turquoise", "Treated" = "salmon")) +
+  theme_bw()
+```
+:::
+
+::::
+
+:::: {.columns}
+
+::: {.column width="66%"}
+### Objective(s)
+
+- Detected and correct systematic 'unwanted' bias in the data.
+- Remaining signal should be 'cleaner' and produce 'better' results.
+
+### Challenge(s)
+
+- Define 'unwanted', 'cleaner', 'better'.
+- Use and processing of spike-in molecules to capture (some) technical biases.
+:::
+
+::: {.column width="33%"}
+### Packages
+
+- `r BiocStyle::Biocpkg("sva")` `r Citep(bib, "sva_package")`.
+- `r BiocStyle::Biocpkg("RUVSeq")` `r Citep(bib, "ruvseq_package")`.
+:::
+
+::::
 
 ## Exercise
 
@@ -204,6 +1039,55 @@ Using either of the objects `dds_rlog` or `dds_vst` produced earlier.
   Display the sample metadata of the new object
   (compare with objects prior to indexing).
 
+# Differential expression analysis
+
+## Different expression (DE) analysis
+
+DE analysis may be the first thing on your mind.
+
+However, only proceed if you can answer 'yes' to the question:
+
+::: {style="text-align: center;"}
+**Am I satisfied with the quality of my data set?**
+:::
+
+## The DESeq() one-stop shop
+
+:::: {.columns}
+
+::: {.column width="25%"}
+```{r}
+#| fig-align: center
+knitr::include_graphics("img/deseq-internal-steps.svg")
+```
+:::
+
+::: {.column width="75%"}
+```{r}
+#| echo: true
+#| message: true
+library(DESeq2)
+dds <- DESeq(dds)
+dds
+```
+
+:::
+
+::::
+
+## Extracting results from a DESeqDataSet object
+
+```{r}
+#| echo: true
+deseq_results <- results(dds)
+deseq_results
+```
+
+```{r}
+#| echo: true
+summary(deseq_results)
+```
+
 ## Exercise
 
 ### Perform differential expression analysis
@@ -231,7 +1115,7 @@ Using either of the objects `dds_rlog` or `dds_vst` produced earlier.
 
 - What does the function `summary()` tell you about the object `dds_results`?
 
-## References
+## References {.smaller}
 
 ```{r}
 #| results: asis
