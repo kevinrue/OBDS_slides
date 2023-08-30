@@ -1088,6 +1088,491 @@ deseq_results
 summary(deseq_results)
 ```
 
+## DESeq2 workflow as individual steps
+
+:::: {.columns}
+
+::: {.column width="50%"}
+#### Quick start
+
+```{r}
+#| echo: true
+#| eval: false
+dds <- DESeq(dds)
+```
+:::
+
+::: {.column width="50%"}
+#### Detailed workflow
+
+```{r}
+#| echo: true
+#| eval: false
+dds <- estimateSizeFactors(dds)
+dds <- estimateDispersions(dds)
+dds <- nbinomWaldTest(dds)
+```
+:::
+
+::::
+
+:::: {.columns}
+
+::: {.column width="33%"}
+`estimateSizeFactors()`
+:::
+
+::: {.column width="66%"}
+Computes sample-wise size factor that normalise counts for sequencing depth and RNA composition.
+:::
+
+::::
+
+:::: {.columns}
+
+::: {.column width="33%"}
+`estimateDispersions()`
+:::
+
+::: {.column width="66%"}
+Computes gene-wise dispersion estimates for Negative Binomial data.
+
+Calls successively:
+
+- `estimateDispersionsGeneEst()` -- "gene-wise estimates"
+- `estimateDispersionsFit()` -- "fit model across genes"
+- `estimateDispersionsMAP()` -- "maximum *a posteriori*"
+:::
+
+::::
+
+:::: {.columns}
+
+::: {.column width="33%"}
+`nbinomWaldTest()`
+:::
+
+::: {.column width="66%"}
+Tests for significance of coefficients in a Negative Binomial generalised linear model (GLM),
+using previously calculated size factors.
+:::
+
+::::
+
+## Size factors -- Library size
+
+:::: {.columns}
+
+::: {.column width="45%"}
+```{r}
+#| fig-align: center
+## Source: https://hbctraining.github.io/DGE_workshop/lessons/02_DGE_count_normalization.html
+knitr::include_graphics("img/normalization-depth.png")
+```
+:::
+
+::: {.column width="55%"}
+#### Fact(s)
+
+- Sample A was sequenced *X times* deep than Sample B.
+- At equal expression level, every gene in Sample A will have *X times* as many counts as in Sample B.
+
+#### Consequence(s)
+
+- Counts in one sample must be multiplied by a scaling factor to be directly comparable to counts in the other sample.
+:::
+
+::::
+
+#### Assumption(s)
+
+- All genes are affected equally (i.e., one single scaling factor per sample).
+
+## Size factors -- RNA composition
+
+:::: {.columns}
+
+::: {.column width="45%"}
+```{r}
+#| fig-align: center
+## Source: https://hbctraining.github.io/DGE_workshop/lessons/02_DGE_count_normalization.html
+knitr::include_graphics("img/normalization-composition.png")
+```
+:::
+
+::: {.column width="55%"}
+#### Fact(s)
+
+- Gene DE takes up a much *larger fraction* of counts in Sample A than in Sample B.
+- As a result, all other genes share an overall *smaller fraction* of counts in Sample A than in Sample B.
+- Every other genes takes up a slightly *smaller fraction* of counts in Sample A than in Sample B.
+
+#### Consequence(s)
+
+- Gene DE should be ignored (or downweighted) during the estimation of size factors,
+  so that size factors yield comparable counts for *most* genes across samples.
+:::
+
+::::
+
+#### Assumption(s)
+
+- The sequencing depth is the same in both samples.
+- Most genes should yield a *similar fraction* of counts across samples (i.e., housekeeping, unaffected).
+
+## Size factors using geometric mean
+
+### Step 1
+
+For each gene, a pseudo-reference sample is created that is equal to the geometric mean across all samples.
+
+:::: {.columns}
+
+::: {.column width="20%"}
+Note(s):
+:::
+
+::: {.column width="80%"}
+- Geometric mean is less skewed by outliers than the arithmetic mean.
+- Any zero in any sample results in a zero for the gene (see below).
+:::
+
+::::
+
+### Step 2
+
+For every gene in every sample, the ratio of counts divided by pseudo-reference counts (for that gene) is calculated.
+
+### Step 3
+
+The median value for each sample is taken as the size factor.
+
+:::: {.columns}
+
+::: {.column width="20%"}
+Note(s):
+:::
+
+::: {.column width="80%"}
+- The median should not be affected by the set of zero values produced in step 1.
+- The median should not be affected by differentially expressed genes. 
+:::
+
+::::
+
+<https://hbctraining.github.io/DGE_workshop_salmon_online/lessons/02_DGE_count_normalization.html>
+
+## Estimate size factors
+
+:::: {.columns}
+
+::: {.column width="40%"}
+### Compute
+
+```{r}
+oo <- options()
+options(width = 45)
+```
+
+```{r}
+#| echo: true
+dds <- estimateSizeFactors(dds)
+```
+
+### Access
+
+```{r}
+#| echo: true
+sizeFactors(dds)
+```
+
+
+```{r}
+options(oo)
+```
+:::
+
+::: {.column width="50%"}
+### Plot
+
+```{r}
+x <- tibble(
+  SampleName = dds$SampleName,
+  dex = dds$dex,
+  sizeFactor = dds$sizeFactor
+) %>% 
+  arrange(dex) %>% 
+  mutate(SampleName = factor(SampleName, SampleName))
+ggplot(x, aes(SampleName, sizeFactor, fill = dex, group = dex)) +
+  geom_col() +
+  theme_minimal() +
+  theme(
+    title = element_text(size = 20),
+    text = element_text(size = 14),
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)
+  )
+```
+:::
+
+::::
+
+### Apply to counts
+
+```{r}
+#| echo: true
+counts_normalized <- counts(dds, normalized = TRUE)
+class(counts_normalized)
+```
+
+## Dispersion
+
+:::: {.columns}
+
+::: {.column width="50%"}
+```{r}
+#| echo: true
+#| fig-align: center
+#| fig-height: 7
+#| fig-width: 7
+dds <- estimateDispersions(dds)
+plotDispEsts(dds)
+```
+
+:::
+
+::: {.column width="50%"}
+**Black**
+
+Actual dispersion estimate for each gene.
+
+<span style="color:red;">**Red**</span>
+
+Fitted trend.
+
+<span style="color:blue;">**Blue (dot)**</span>
+
+Genes shrunk toward the fitted trend.
+
+<span style="color:blue;">**Blue (circle)**</span>
+
+Outliers *not* shrunk toward the fitted trend.
+:::
+
+::::
+
+## Estimating gene dispersion {.smaller}
+
+**Reminder:** RNA-seq count data is heteroskedastic and modelled using the Negative Binomial distribution.
+
+:::: {.columns}
+
+::: {.column width="50%"}
+### Motivation(s)
+
+- Dispersion accounts for the variance *and* the mean of each gene.
+- Higher variance $\rightarrow$ higher dispersion.
+- Higher mean $\rightarrow$ lower dispersion.
+- High dispersion $\rightarrow$ noisy gene.
+:::
+
+::: {.column width="50%"}
+$$K_{ij} \sim \textrm{NB}(\mu_{ij},
+\alpha_i)$$
+
+With
+counts $K_{ij}$ for gene $i$, sample $j$,
+fitted mean $\mu_{ij}$,
+and a gene-specific **dispersion** parameter $\alpha_i$
+:::
+
+::::
+
+### Consequence(s)
+
+- The significance differential expression for a gene depends on its fold-change as well as its **dispersion** within each group of samples being compared.
+- Dispersion *shrinkage* is employed by differential expression methods to estimate more accurately the **dispersion** of individual genes, taking into account the dispersion of other genes with similar abundance.
+
+::: {style="text-align: center;"}
+**Dispersion shrinkage helps reduce false positive in DE results.**
+:::
+
+### Challenge(s)
+
+Dispersion is increasing difficult to estimate as:
+
+- the number of samples decreases,
+- the abundance of the gene decreases (i.e., Poisson sampling noise increases leading to over-dispersion).
+
+Read <https://hbctraining.github.io/DGE_workshop_salmon_online/lessons/04b_DGE_DESeq2_analysis.html>.
+
+## Test for significance {.smaller}
+
+At this point, we have computed:
+
+- sample-wise **size factors** to account for library size and RNA composition.
+- gene-wise **dispersion estimates** to reduce false positive in DE results.
+
+We also defined a **design formula** to indicate covariates to control for and to test.
+
+:::: {.columns}
+
+::: {.column width="50%"}
+Given the design
+
+$$\sim 0 + dex + cell$$
+
+The expression of gene $i$ in sample $j$ is modelled as
+
+$$y = \beta_{0} + \beta_{dex}X_{dex} + \beta_{cell}X_{cell} + \epsilon$$
+:::
+
+::: {.column width="50%"}
+With
+
+- $y$ the expression level of the gene being modelled (i.e., the 'dependent' or 'outcome' variable).
+- $\beta_{0}$ the average expression a reference group of samples
+  (i.e., when all predictor variables are zero).
+- $\beta_{dex}$ the coefficient associated with the covariate $dex$,
+  modelling the independent effect of covariate $dex$ in each group of sample
+  relative to the baseline.
+- $X_{dex}$ a discrete predictor variable that represents the different values of $dex$.
+- ...
+- $\epsilon$ represents the error term (i.e., variability in $y$ not explained by the model).
+:::
+
+::::
+
+::: {style="text-align: center;"}
+**The $\beta$ coefficients represent the log~2~ fold-change values tested for significance.**
+:::
+
+## Methods for differential expression testing {.smaller}
+
+**Null hypothesis:** Log~2~ fold-change is zero.
+
+Two major tests in `r BiocStyle::Biocpkg("DESeq2")`:
+
+:::: {.columns}
+
+::: {.column width="50%"}
+### Wald significance test
+
+Tests for significance of coefficients in a Negative Binomial GLM.
+
+```{r}
+dds <- nbinomWaldTest(dds)
+res <- results(dds)
+res
+```
+
+- Compares two groups of samples.
+- The log~2~ fold-change coefficients are scaled by their standard error.
+- The resulting $z$-statistics are then compared to a standard Normal distribution
+  to yield a $P$-value.
+
+Default: last level of last variable in design compared to first level.
+:::
+
+::: {.column width="50%"}
+### Likelihood ratio test
+
+Tests for significance of change in **deviance** between a *full* and *reduced* models.
+
+```{r}
+dds <- nbinomLRT(dds, reduced = ~ cell)
+res <- results(dds)
+res
+```
+
+- Analyse all levels of a factor at once,
+  to identify changes of expression across the different levels (e.g., time course).
+- Requires a 'reduced' model formula (i.e., without the terms of interest).
+- $P$-values are determined *solely* by the difference in **deviance** between the 'full' and 'reduced' models.
+- Deviance = difference between observed data and values predicted by model (i.e., smaller deviance = better fit = significant effect of additional covariates).
+:::
+
+::::
+
+Read
+<https://hbctraining.github.io/DGE_workshop/lessons/05_DGE_DESeq2_analysis2.html>
+and
+<https://hbctraining.github.io/DGE_workshop/lessons/08_DGE_LRT.html>.
+
+## Multiple testing correction
+
+::: {style="text-align: center;"}
+Tens of thousands of tests.
+:::
+
+Occasionally, random variability may coincide with experimental design,
+resulting in *false positive* results (i.e., $P$-values).
+
+::: {style="text-align: center;"}
+More tests = more opportunities for false positives.
+:::
+
+Multiple testing correction computes *adjusted* $P$-values,
+controlling for:
+
+:::: {.columns}
+
+::: {.column width="50%"}
+#### Family-Wise Error Rate (FWER)
+
+- **Synonyms:** false positives, type I errors.
+- The expected proportion of false positive across *all* tests.
+- Stricter.
+
+e.g., 'holm', 'hochberg', 'hommel', 'bonferroni'
+
+:::
+
+::: {.column width="50%"}
+#### False Discovery Rate (FDR)
+
+- The expected proportion of false discoveries amongst the *rejected* hypotheses.
+- More lenient.
+
+e.g. 'BH', 'BY', 'fdr'
+:::
+
+::::
+
+## Multiple testing correction and independent filtering
+
+`r BiocStyle::Biocpkg("DESeq2")` offers the usual choice of multiple testing correction methods,
+along with their own additional *independent filtering* method (enabled by default).
+
+Independent filtering is applied prior to multiple testing correction:
+
+- Genes with the lowest average expression level are progressively removed,
+  until the number of null hypotheses rejected is maximised.
+- The chosen multiple testing correction method (default: Benjamini-Hochberg)
+  is applied to the *remaining* genes.
+
+**Remember:** Lowly expressed genes are less likely to reach statistical significance,
+due to higher dispersion.
+
+The False Discovery Rate (FDR) can be adjusted to control the expected fraction of false positives in the results.
+
+:::: {.columns}
+
+::: {.column width="50%"}
+```{r}
+#| echo: true
+summary(results(dds, alpha = 0.1))
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| echo: true
+summary(results(dds, alpha = 0.05))
+```
+:::
+
+::::
+
 ## Exercise
 
 ### Perform differential expression analysis
@@ -1114,6 +1599,153 @@ summary(deseq_results)
 :::
 
 - What does the function `summary()` tell you about the object `dds_results`?
+
+- Export the table of differential expression results to a CSV file.
+
+## Column definitions and results metadata {.smaller}
+
+The `r BiocStyle::Biocpkg("S4Vectors")` method `mcols()` can be used to
+access metadata associated with columns in the results *DataFrame* object.
+
+:::: {.columns}
+
+::: {.column width="50%"}
+```{r}
+#| echo: true
+results(dds)
+```
+
+:::
+
+::: {.column width="50%"}
+```{r}
+#| echo: true
+mcols(results(dds))
+```
+:::
+
+::::
+
+## MA plot
+
+The `r BiocStyle::Biocpkg("DESeq2")` function `plotMA()` can be used to
+visualise a scatter plot of log~2~ fold changes (on the y-axis)
+versus the mean of normalized counts (on the x-axis).
+
+It is usually recommended to call `lfcShrink()` to shrink log~2~ fold changes prior to plotting.
+
+:::: {.columns}
+
+::: {.column width="50%"}
+```{r}
+#| echo: true
+#| fig-align: center
+#| fig-height: 6
+#| fig-width: 7
+plotMA(dds)
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| echo: true
+#| fig-align: center
+#| fig-height: 6
+#| fig-width: 7
+dds_shrink <- lfcShrink(dds, coef = 2)
+plotMA(dds_shrink)
+```
+:::
+
+::::
+
+## Shrinkage of log~2~ fold-change
+
+:::: {.columns}
+
+::: {.column width="50%"}
+```{r}
+#| fig-align: center
+#| out-width: 400px
+#| out-height: 400px
+knitr::include_graphics("img/logfc-shrinkage.jpg")
+```
+:::
+
+::: {.column width="50%"}
+The mean expression of the two genes is similar.
+
+Without shrinkage, their log fold-change would be similar.
+
+However, the dispersion of the purple gene is greater than that of the green gene.
+
+The larger dispersion of the purple gene indicates more uncertainty (less information)
+giving the *prior* (black) more influence on its posterior,
+and shrinking its log fold-change towards zero.
+
+`r Citet(bib, "deseq2_2014")`
+:::
+
+::::
+
+::: {style="text-align: center;"}
+**Shrinkage does not impact significance. However, it may be relevant for downstream analyses.**
+:::
+
+## Plot counts for gene in individual samples
+
+The `r BiocStyle::Biocpkg("DESeq2")` function `plotCounts()` can be used to
+visualise the counts for a given gene,
+in individual samples grouped by condition.
+
+```{r}
+#| echo: true
+#| fig-align: center
+#| fig-height: 6
+#| fig-width: 7
+plotCounts(dds, gene = "ENSG00000000003", intgroup = "dex")
+```
+
+## Histogram of $P$-values
+
+There is no dedicated function in `r BiocStyle::Biocpkg("DESeq2")`.
+
+However, the results being reported as a table,
+the desired plot can be produced with a minimum of `r BiocStyle::Biocpkg("ggplot2")` code.
+
+```{r}
+#| echo: true
+#| fig-align: center
+#| fig-height: 6
+#| fig-width: 7
+ggplot(as.data.frame(deseq2_res), aes(pvalue)) +
+  geom_histogram(fill = "grey", color = "black") +
+  theme_bw()
+```
+
+::: {style="text-align: center;"}
+**This plot should be done on the *raw* $P$-values, to be interpreted correctly.**
+:::
+
+<http://varianceexplained.org/statistics/interpreting-pvalue-histogram/>
+
+## Checklist
+
+### Essentials
+
+- [ ] Are samples in the same order in the count matrix and the metadata table?
+- [ ] Does the dispersion plot look reasonable?
+- [ ] Does the MA plot look reasonable?
+- [ ] Does the histogram of raw $P$-values look reasonable?
+
+### Quality of life
+
+- [ ] Is the covariate of interest last in the *design formula*?
+- [ ] Are discrete covariates encoded as *factors* with *levels* in the desired order?
+
+### Better practice
+
+- [ ] Have you recorded the version of the `r BiocStyle::Biocpkg("DESeq2")` package that you are using?
 
 ## References {.smaller}
 
