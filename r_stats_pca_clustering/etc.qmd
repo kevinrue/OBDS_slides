@@ -1,0 +1,6 @@
+## References
+
+```{r}
+#| results: asis
+PrintBibliography(bib)
+```

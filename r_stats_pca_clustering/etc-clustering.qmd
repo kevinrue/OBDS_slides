@@ -1,0 +1,314 @@
+# Clustering
+
+## Cluster analysis
+
+Task of grouping a set of objects in such a way that objects in the same group are more similar to each other than to those in other groups.
+
+:::: {.columns}
+
+::: {.column width="50%"}
+```{r}
+#| fig-align: center
+#| fig-height: 6
+ggplot(iris, aes(Sepal.Length, Sepal.Width)) +
+  geom_point(size = 3) +
+  cowplot::theme_cowplot() +
+  labs(x = "variable 1", y = "variable 2")
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| fig-align: center
+#| fig-height: 6
+iris %>% 
+  mutate(
+    Cluster = Species %>% 
+      fct_recode(
+        "1" = "setosa",
+        "2" = "versicolor",
+        "3" = "virginica"
+      )
+  ) %>% 
+  ggplot(aes(Sepal.Length, Sepal.Width, color = Cluster)) +
+  geom_point(size = 3) +
+  cowplot::theme_cowplot() +
+  labs(x = "variable 1", y = "variable 2")
+```
+:::
+
+::::
+
+- Unsupervised machine learning task.
+- Many methods (e.g.,$k$-means clustering, hierarchical clustering).
+- Insights arise from downstream analyses of the resulting clusters.
+- Often an iterative process as a result of initial over- or under-clustering.
+
+## $k$-means clustering
+
+:::: {.columns}
+
+::: {.column width="33%"}
+
+<br/>
+
+1. Initialise $k$ centroids randomly.
+2. Assign each data points to the nearest centroid.
+3. Compute new centroid coordinates.
+4. Repeat (2) and (3) until convergence, or for a maximum number of iterations allowed.
+:::
+
+::: {.column width="66%"}
+```{r}
+#| fig-align: center
+#| out-height: 400px
+#| out-width: 600px
+## Source: https://stanford.edu/~cpiech/cs221/handouts/kmeans.html
+knitr::include_graphics("img/kmeans-steps.png")
+```
+
+:::
+
+::::
+
+:::: {.columns}
+
+::: {.column width="50%"}
+#### Pro(s)
+
+- Easy to understand and implement.
+- Extremely fast.
+:::
+
+::: {.column width="50%"}
+#### Con(s)
+
+- Must pre-select the number of groups.
+- Stochastic (must set seed for reproducibility).
+:::
+
+::::
+
+## K-Means Clustering - How many clusters?
+
+```{r}
+#| fig-align: center
+#| fig-height: 7
+#| fig-width: 9
+set.seed(1)
+airway_logcounts <- assay(airway, "logcounts")[pca_use_rows, ]
+airway_logcounts %>%
+  t() %>% 
+  as_tibble() %>% 
+  mutate(
+    "k = 1" = as.factor(NA),
+    "k = 2" = as.factor(kmeans(x = t(airway_logcounts), centers = 2)$cluster),
+    "k = 4" = as.factor(kmeans(x = t(airway_logcounts), centers = 4)$cluster),
+    "k = 6" = as.factor(kmeans(x = t(airway_logcounts), centers = 6)$cluster)
+  ) %>% 
+  dplyr::select(starts_with("k = ")) %>% 
+  bind_cols(
+    airway_pca$x[keep_samples, c("PC1", "PC2")] %>% as_tibble()) %>% 
+  pivot_longer(cols = starts_with("k ="), names_to = "k", values_to = "cluster") %>% 
+  ggplot(aes(PC1, PC2, color = cluster)) +
+  geom_point(size = 3) +
+  facet_wrap(~k) +
+  theme_cowplot() +
+  theme(
+      panel.border = element_rect(color = "black")
+  )
+```
+
+## K-means clustering
+
+To choose $k$, run multiple values identify the one that
+maximises the distance between data points of different clusters,
+while minimising the distance between data points within each clusters.
+
+- **Sum of squares between clusters:** how far points are _between_ clusters (separation).
+- **Sum of squares within clusters:** how close points are _within_ clusters (compactness).
+- **Total sum of squares:** overall scatter in the data set.
+
+For good clustering we want small `sum(withinss)` and large `betweenss`.
+
+```{r}
+kmeans_scree <- lapply(seq_len(nrow(airway_pca$x)-1), function(x) {
+  out <- kmeans(x = t(airway_logcounts), centers = x)
+  tibble(
+    k = x,
+    totss = out$totss,
+    betweenss = out$betweenss,
+    withinss_sum = sum(out$withinss)
+  )
+}) %>% 
+  bind_rows()
+```
+
+:::: {.columns}
+
+::: {.column width="50%"}
+```{r}
+#| fig-align: center
+#| fig-height: 5
+#| fig-width: 7
+kmeans_scree %>% 
+  ggplot(aes(k, betweenss / totss)) +
+  geom_line() +
+  geom_point() +
+  labs(title = "betweenss / totss") +
+  scale_y_continuous(limits = c(0, 1)) +
+  theme_cowplot()
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| fig-align: center
+#| fig-height: 5
+#| fig-width: 7
+kmeans_scree %>% 
+  ggplot(aes(k, withinss_sum)) +
+  geom_line(linetype = "F1") +
+  geom_point() +
+  labs(title = "sum(withinss)") +
+  theme_cowplot()
+```
+:::
+
+::::
+
+## Hierarchical clustering
+
+$$Distances \rightarrow Tree \rightarrow Clusters.$$
+
+:::: {.columns}
+
+::: {.column width="50%"}
+```{r}
+#| fig-align: center
+#| out-height: 250px
+#| out-width: 280px
+## Source: https://en.wikipedia.org/wiki/Hierarchical_clustering
+knitr::include_graphics("img/hierarchical-clustering-scatter.png")
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| fig-align: center
+#| out-height: 250px
+#| out-width: 300px
+## Source: https://en.wikipedia.org/wiki/Hierarchical_clustering
+knitr::include_graphics("img/hierarchical-clustering-dendrogram.png")
+```
+:::
+
+::::
+
+### Key parameters
+
+- Distance metric
+- Agglomeration method
+- Number of cluster / Height of cut
+
+## Hierarchical clustering in action {.smaller}
+
+```{r}
+hclust_out <- hclust(dist(t(assay(airway, "logcounts")[keep_rows, ])))
+```
+
+:::: {.columns}
+
+::: {.column width="50%"}
+```{r}
+#| fig-align: center
+#| fig-height: 4
+#| fig-width: 7
+plot(hclust_out)
+```
+
+```{r}
+#| fig-align: center
+#| fig-height: 4
+#| fig-width: 7
+pvclust_out <- pvclust(assay(airway, "logcounts")[keep_rows, ], quiet = TRUE)
+plot(pvclust_out)
+rect.hclust(hclust_out, 4)
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| fig-align: center
+#| fig-height: 8
+#| fig-width: 7
+keep_pc <- "PC1"
+keep_rows <- airway_pca$rotation %>%
+  as.data.frame() %>% 
+  rownames_to_column("gene") %>% 
+  as_tibble() %>% 
+  pivot_longer(cols = -gene, names_to = "PC", values_to = "loading") %>% 
+  filter(PC == keep_pc) %>% 
+  top_n(n = 20, wt = loading) %>% 
+  pull(gene) %>%
+  as.character()
+pheatmap(assay(airway, "logcounts")[keep_rows, ] + 1)
+```
+
+`r BiocStyle::CRANpkg("pvclust")`
+:::
+
+::::
+
+## Density-based clustering
+
+```{r}
+#| fig-align: center
+#| out-height: 350px
+#| out-width: 800px
+## Source: Adobe Illustrator (Kevin Rue-Albrecht)
+knitr::include_graphics("img/dbscan.svg")
+```
+
+Two parameters:
+- Minimum number of points to initiate a cluster.
+- Maximum distance to search for neigbouring points.
+
+Core points have at least $minPoints-1$ neigbours within $epsilon$ distance.
+
+Border points are located within $epsilon$ of a core point
+(without being a core point themselves).
+
+Outlier points are further than $epsilon$ from any other point.
+
+## Comparing clustering algorithms on toy datasets
+
+```{r}
+#| fig-align: center
+#| out-height: 600px
+#| out-width: 1000px
+## Source: https://newbedev.com/scikit_learn/modules/clustering
+knitr::include_graphics("img/sphx_glr_plot_cluster_comparison_0011.png")
+```
+
+## Exercise
+
+### Hierarchical clustering
+
+- Perform hierarchical clustering on the `iris_features` data set,
+  using the `euclidean` distance and method `ward.D2`.
+  Use the functions `dist()` and `hclust()`.
+- Plot the clustering tree.
+  Use the function `plot()`.
+
+::: {style="text-align: center;"}
+**How many clusters would you call from a visual inspection of the tree?**
+:::
+
+- Cut the tree in 3 clusters and extract the cluster label for each flower.
+  Use the function `cutree()`.
+- Repeat clustering using 3 other agglomeration methods:
+  - `complete`
+  - `average`
+  - `single`
+- Compare clustering results on scatter plots of the data.

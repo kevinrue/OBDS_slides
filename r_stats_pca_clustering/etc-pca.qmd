@@ -1,0 +1,692 @@
+# Dimensionality reduction and clustering
+
+## Visually extracting information from data
+
+:::: {.columns}
+
+::: {.column width="50%"}
+### Data
+
+<br/>
+
+::: {.small-table}
+```{r}
+knitr::kable(head(assay(airway, "counts"), 20), format = "html", escape = FALSE)
+```
+:::
+:::
+
+::: {.column width="50%"}
+### Information
+
+```{r}
+#| fig-align: center
+#| fig-height: 8
+#| fig-width: 7
+top_var_idx <- head(order(rowVars(assay(airway, "logcounts")), decreasing = TRUE), 40)
+Heatmap(
+  matrix = assay(airway, "logcounts")[top_var_idx, ],
+  row_names_gp = gpar(fontsize = 8),
+  name = "logcounts"
+)
+```
+:::
+
+::::
+
+## Sources of variation in data
+
+Variation in data (e.g., expression) can come from multiple sources.
+
+:::: {.columns}
+
+::: {.column width="50%"}
+### Biological
+
+- Stimulus (e.g., infection, drug)
+- Condition (e.g., healthy, disease)
+- ...
+:::
+
+::: {.column width="50%"}
+### Technical
+
+- Instrumentation
+- Operator
+- ...
+:::
+
+::::
+
+Whether each source of variation is seen as signal or noise depends on the goal of the study.
+
+## Confounding variables
+
+Experimental design is crucial to ensure that sources of interesting variation are not confounded with independent sources of uninteresting variation.
+
+:::: {.columns}
+
+::: {.column width="50%"}
+### Confounded
+
+<br/>
+
+```{r}
+nrow <- 8
+data.frame(
+  Cell = seq_len(nrow),
+  Site = rep(c("S1", "S2"), each = 4),
+  Treatment = rep(c("A", "B"), each = 4)
+) %>%
+  mutate(
+    Site = cell_spec(Site, "html", color = ifelse(Site == "S2", "red", "blue")),
+    Treatment = cell_spec(Treatment, "html", color = ifelse(Treatment == "A", "cyan", "orange"))
+  ) %>% 
+  knitr::kable(format = "html", escape = FALSE)
+```
+:::
+
+::: {.column width="50%"}
+### Balanced
+
+<br/>
+
+```{r}
+nrow <- 8
+data.frame(
+  Cell = seq_len(nrow),
+  Site = rep(c("S1", "S2"), each = 4),
+  Treatment = rep(c("A", "B"), times = 4)
+) %>%
+  mutate(
+    Site = cell_spec(Site, "html", color = ifelse(Site == "S2", "red", "blue")),
+    Treatment = cell_spec(Treatment, "html", color = ifelse(Treatment == "A", "cyan", "orange"))
+  ) %>% 
+  knitr::kable(format = "html", escape = F)
+```
+
+:::
+
+::::
+
+## Feature selection
+
+Many genes are not interesting because they don't vary much, or they
+don’t have enough counts.
+
+Filtering for feature selection is needed to:
+
+- Select genes that display useful variation.
+- Reduce memory usage and computational cost/time.
+
+```{r}
+#| fig-align: center
+#| fig-height: 4
+#| fig-width: 6
+set.seed(1)
+mat <- matrix(c(rnorm(12*4, 0, 10), rnorm(12*4, 0, 1)), nrow = 8, ncol = 12, byrow = TRUE)
+ComplexHeatmap::Heatmap(mat, name = "values")
+```
+
+## Dimensionality reduction {.smaller}
+
+We use dimensionality reduction methods to:
+
+- Find structure in the data.
+
+- Aid in visualization.
+
+Unsupervised learning helps finding groups of homogeneous items
+
+- Many approaches to do this (e.g. PCA, t-SNE, UMAP)
+
+:::: {.columns}
+
+::: {.column width="70%"}
+#### High dimensional
+
+```{r}
+nrow <- 10
+ncol <- 5
+rownames <- paste("gene", seq_len(nrow))
+colnames <- paste("sample", seq_len(ncol))
+x <- matrix(data = rbinom(nrow*ncol, 10E3, 1E-4), nrow = nrow, ncol = ncol, dimnames = list(rownames, colnames))
+knitr::kable(x, format = "html", escape = T)
+```
+:::
+
+::: {.column width="30%"}
+#### Reduced dimensionality
+
+```{r}
+nrow <- 5
+ncol <- 2
+rownames <- paste("sample", seq_len(nrow))
+colnames <- paste("dim", seq_len(ncol))
+x <- matrix(data = rnorm(nrow*ncol, 0, 10), nrow = nrow, ncol = ncol, dimnames = list(rownames, colnames))
+knitr::kable(x, format = "html", escape = T)
+```
+:::
+
+::::
+
+## Principal component analysis (PCA)
+
+:::: {.columns}
+
+::: {.column width="50%"}
+### Goals
+
+- Find linear combination of variables to create principal components (PCs).
+- Maintain most of the variance in the data (for given number of PCs).
+- PCs are uncorrelated (orthogonal to each other) and ordered with respect to the percentage of variance explained.
+
+### Assumptions
+- Relationship between variables is linear!
+- Not optimal for non-linear data structures.
+:::
+
+::: {.column width="50%"}
+```{r}
+#| fig-align: center
+#| fig-height: 7
+#| fig-width: 9
+data_x <- tibble(
+  x = rnorm(n = 100, mean = 0, sd = 1)
+) %>% 
+  mutate(
+  y = x + rnorm(n = 100, mean = 0, sd = 0.8)
+  )
+data_pca <- prcomp(data_x)
+data_eigengenes <- as_tibble(t(data_pca$rotation * rep(data_pca$sdev^2, each=2))) %>% 
+  mutate(
+    xend = 0,
+    yend = 0,
+    PC = paste0("PC", 1:2))
+ggplot() +
+  geom_point(aes(x, y), data_x) +
+  geom_segment(
+    aes(x = xend, y = yend, xend=x, yend=y, color = PC), data_eigengenes,
+    size=1.25,
+    arrow = arrow(length = unit(10, "points"), angle = 30)) +
+  labs(x = "gene 1", y = "gene 2") +
+  theme_bw() +
+  theme(text = element_text(size = 20))
+```
+:::
+
+::::
+
+```{r}
+#| echo: true
+#| eval: false
+pca <- prcomp(x, center = TRUE, scale. = FALSE, ...)
+```
+
+Each principal component is described as a linear combination of the original dimensions.
+
+$$PC_{i} = \beta_{(i,1)} * gene_1 + \beta_{(i,2)} * gene_2$$
+
+## Decomposition into principal components
+
+:::: {.columns}
+
+::: {.column width="50%"}
+```{r}
+#| fig-align: center
+knitr::include_graphics("img/pca.png")
+```
+:::
+
+::: {.column width="50%"}
+### Terminology
+
+$A$ is the original data matrix.
+
+$V$ is calls the **loadings** matrix.
+
+$U$ is the **scores** matrix.
+:::
+
+::::
+
+### Interpretation
+
+**Loadings** can be understood as the weights for each original variable when calculating the principal component.
+$V$ is also often called the **rotation** matrix.
+
+**Scores** contain the original data in a rotated coordinate system.
+$U$ is the matrix of new coordinates used to produce PCA plots.
+
+::: {.notes}
+It can be shown that the principal components are eigenvectors of the data's covariance matrix. Thus, the principal components are often computed by eigendecomposition of the data covariance matrix or singular value decomposition of the data matrix.
+[Wikipedia](https://en.wikipedia.org/wiki/Principal_component_analysis)
+
+Remember that eigendecomposition works on a square matrix (https://notes.andrewgurung.com/data-science/linear-algebra/eigenvalues-and-eigenvectors).
+The covariance matrix is square, not the original data matrix.
+:::
+
+## General advice for PCA
+
+::: {style="text-align: center;"}
+Always **center** data (the default in `prcomp()`).
+:::
+
+- This is key to computing the *covariance* matrix.
+
+::: {style="text-align: center;"}
+If comparing different units, **scale** data.
+:::
+
+- Uses the *correlation* matrix rather than the *covariance* matrix.
+- Not necessary for log-normalised gene expression.
+
+<https://towardsdatascience.com/let-us-understand-the-correlation-matrix-and-covariance-matrix-d42e6b643c22>
+
+::: {style="text-align: center;"}
+Use a **subset** of the principal components in downstream analyses.
+:::
+
+- PCA *rotates* the data, it does not reduce dimensionality.
+- Principal components are ordered by decreasing variance captured.
+- Extract the first $k$ components to reduce dimensionality
+  while preserving as much variance as desired.
+
+::: {.notes}
+Centering data for PCA:
+<https://stats.stackexchange.com/questions/22329/how-does-centering-the-data-get-rid-of-the-intercept-in-regression-and-pca>
+
+DESeq2 PCA:
+<https://github.com/thelovelab/DESeq2/blob/e67c68886bf07b90a12594e16d533b42340ad63b/R/plots.R#L249>
+:::
+
+## Example gene expression data set {.smaller}
+
+Airway smooth muscle cells expression profiling by high throughput sequencing; [GSE52778](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE52778).
+Accessible in R as:
+
+```{r, echo=TRUE, eval=FALSE}
+library(airway)
+data("airway")
+```
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+<br/>
+
+::: {.small-table}
+```{r}
+knitr::kable(head(assay(airway, "counts"), 20), format = "html", escape = FALSE)
+```
+:::
+:::
+
+::: {.column width="50%"}
+```{r}
+#| fig-align: center
+#| fig-height: 8
+#| fig-width: 7
+top_var_idx <- head(order(rowVars(assay(airway, "logcounts")), decreasing = TRUE), 40)
+Heatmap(
+  matrix = assay(airway, "logcounts")[top_var_idx, ],
+  row_names_gp = gpar(fontsize = 8),
+  name = "logcounts"
+)
+```
+:::
+
+::::
+
+## Example PCA results
+
+```{r}
+scree_table <- tibble(
+  sdev = airway_pca$sdev,
+  PC = seq_along(airway_pca$sdev),
+  var = sdev^2 / sum(sdev^2),
+  var_cumsum = cumsum(var)
+)
+```
+
+:::: {.columns}
+
+::: {.column width="50%"}
+```{r}
+#| fig-align: center
+#| fig-height: 6
+keep_samples <- rownames(airway_pca$x)
+airway_pca$x %>%
+  as_tibble() %>% 
+  dplyr::select(PC1, PC2) %>% 
+  bind_cols(colData(airway)[keep_samples, ] %>% as_tibble()) %>% 
+  ggplot(aes(PC1, PC2, color = cell, shape = dex)) +
+  geom_point(size = 5) +
+  labs(
+    x = sprintf("PC1 (%.2f %%)", 100*subset(scree_table, PC == 1, "var")),
+    y = sprintf("PC2 (%.2f %%)", 100*subset(scree_table, PC == 2, "var"))
+  ) +
+  theme_bw()
+```
+
+Percentage variance explained:
+
+$$pct\_var = sdev^2 / sum(sdev^2)$$
+:::
+
+::: {.column width="50%"}
+```{r}
+#| fig-align: center
+#| fig-height: 5
+ggplot(scree_table, aes(PC, var)) +
+  geom_col(fill = "grey") +
+  geom_point() +
+  scale_x_continuous(breaks = seq_along(scree_table$PC)) +
+  labs(y = "% Variance explained", title = "Percentage of Variance Explained") +
+  theme_bw()
+```
+
+```{r}
+#| fig-align: center
+#| fig-height: 5
+ggplot(scree_table, aes(PC, var_cumsum)) +
+  geom_line() + geom_point(size = 2) +
+  scale_x_continuous(breaks = seq_along(scree_table$PC)) +
+  labs(y = "Cumulative % Variance explained", title = "Cumulative Percentage of Variance Explained") +
+  theme_bw()
+```
+:::
+
+::::
+
+## PCA - Loadings / Rotation matrix
+
+The object produced by `prcomp()` can be used to visualise loadings for given genes and principal components.
+
+```{r}
+#| echo: true
+airway_pca$rotation[1:20, ]
+```
+
+Meaning that for each cell:
+
+$$PC1_{(cell)} = 0.14156568 \times ENSG00000229807_{(cell)}\ - 0.12810133 \times\ ...$$
+
+## Prioritise genes by PCA loading
+
+PCA loadings can be used to identify the genes with the highest influence on each principal component.
+
+:::: {.columns}
+
+::: {.column width="50%"}
+### PC1
+
+```{r}
+#| fig-align: center
+#| fig-height: 6
+keep_pc <- "PC1"
+airway_pca$rotation %>%
+  as.data.frame() %>% 
+  rownames_to_column("gene") %>% 
+  as_tibble() %>% 
+  pivot_longer(cols = -gene, names_to = "PC", values_to = "loading") %>% 
+  filter(PC == keep_pc) %>% 
+  top_n(n = 10, wt = loading) %>% 
+  mutate(direction = "+") %>% 
+  bind_rows(
+  airway_pca$rotation %>%
+  as.data.frame() %>% 
+  rownames_to_column("gene") %>% 
+  as_tibble() %>% 
+  pivot_longer(cols = -gene, names_to = "PC", values_to = "loading") %>% 
+  filter(PC == keep_pc) %>% 
+  top_n(n = 10, wt = -loading) %>% 
+  mutate(direction = "-")
+) %>% 
+  mutate(
+    gene = reorder(gene, loading, identity),
+    direction = factor(direction, c("-", "+"))
+  ) %>% 
+  ggplot(aes(gene, loading)) +
+  geom_col(aes(fill = direction), show.legend = FALSE) +
+  labs(x = NULL, title = keep_pc) +
+  theme_cowplot() +
+  theme(
+    axis.text.x = element_text(angle = 90)
+  )
+```
+:::
+
+::: {.column width="50%"}
+### PC2
+
+```{r}
+#| fig-align: center
+#| fig-height: 6
+keep_pc <- "PC2"
+airway_pca$rotation %>%
+  as.data.frame() %>% 
+  rownames_to_column("gene") %>% 
+  as_tibble() %>% 
+  pivot_longer(cols = -gene, names_to = "PC", values_to = "loading") %>% 
+  filter(PC == keep_pc) %>% 
+  top_n(n = 10, wt = loading) %>% 
+  mutate(direction = "+") %>% 
+  bind_rows(
+  airway_pca$rotation %>%
+  as.data.frame() %>% 
+  rownames_to_column("gene") %>% 
+  as_tibble() %>% 
+  pivot_longer(cols = -gene, names_to = "PC", values_to = "loading") %>% 
+  filter(PC == keep_pc) %>% 
+  top_n(n = 10, wt = -loading) %>% 
+  mutate(direction = "-")
+) %>% 
+  mutate(
+    gene = reorder(gene, loading, identity),
+    direction = factor(direction, c("-", "+"))
+  ) %>% 
+  ggplot(aes(gene, loading)) +
+  geom_col(aes(fill = direction), show.legend = FALSE) +
+  labs(x = NULL, title = keep_pc) +
+  theme_cowplot() +
+  theme(
+    axis.text.x = element_text(angle = 90)
+  )
+```
+:::
+
+::::
+
+## Visualize gene expression {.smaller}
+
+Genes with large loadings -- both positive and negative -- for the same principal component tend to vary in a coordinated manner.
+
+:::: {.columns}
+
+::: {.column width="50%"}
+### ggplot2::geom_tile()
+
+```{r}
+#| fig-align: center
+#| fig-height: 7
+#| fig-width: 7
+keep_pc <- "PC1"
+keep_rows <- airway_pca$rotation %>%
+  as.data.frame() %>% 
+  rownames_to_column("gene") %>% 
+  as_tibble() %>% 
+  pivot_longer(cols = -gene, names_to = "PC", values_to = "loading") %>% 
+  filter(PC == keep_pc) %>% 
+  top_n(n = 30, wt = loading) %>% 
+  pull(gene) %>%
+  as.character()
+assay(airway, "logcounts")[keep_rows, , drop=FALSE] %>%
+  t() %>%
+  as_tibble() %>%
+  bind_cols(colData(airway) %>% as_tibble()) %>%
+  pivot_longer(
+    cols = starts_with("ENS"),
+    names_to = "gene", values_to = "logcounts"
+  ) %>% 
+  ggplot() +
+  geom_tile(aes(dex, gene, fill = logcounts)) +
+  facet_wrap(~cell, nrow = 1) +
+  labs(fill = "logcounts") +
+  scale_fill_viridis_c() +
+  labs(y = NULL) +
+  theme_minimal()
+```
+:::
+
+::: {.column width="50%"}
+### ComplexHeatmap::Heatmap()
+
+```{r}
+#| fig-align: center
+#| fig-height: 7
+#| fig-width: 7
+keep_pc <- "PC1"
+dex_col <- head(brewer.pal(2, "Set1"), 2); names(dex_col) <- levels(airway$dex)
+cell_col <- head(brewer.pal(4, "Set3"), 4); names(cell_col) <- levels(airway$cell)
+ha_top <- columnAnnotation(
+  df = colData(airway) %>% as.data.frame() %>% dplyr::select(dex, cell),
+  col = list(dex = dex_col, cell = cell_col),
+  simple_anno_size = unit(1, "cm"))
+hm <- Heatmap(
+  matrix = assay(airway, "logcounts")[keep_rows, ],
+  name = "logcounts",
+  row_names_gp = gpar(fontsize = 8),
+  top_annotation = ha_top)
+draw(hm)
+```
+:::
+
+::::
+
+## Exercise
+
+### Setup
+
+- Import the `iris` data set.
+- Separate the matrix of measurements in a new object named `iris_features`.
+
+## Exercise
+
+### Apply Principal Components Analysis (PCA)
+
+The `prcomp()` function allows you to standardise the data as part of the principal components analysis itself.
+
+- Apply PCA, centering and scaling the matrix of features.
+  Assign the result to an object called `pca_iris`.
+- Examine the object `pca_iris`.
+  Display the loading of each feature on each principal component.
+- Visualise the PCA projection using `plot()`.
+
+### Bonus point
+
+- Edit the plot above, coloring data points according to their class label.
+
+## Exercise
+
+### Variance explained
+
+- Compute the variance explained by principal components, using information present in the return value of the `prcomp()` function.
+- Visualise the variance explained by each principal component using `barplot()`.
+
+## Non-linear dimensionality reduction techniques
+
+In many cases, the relationship between features is not linear.
+
+```{r}
+#| fig-align: center
+#| out-height: 300px
+#| out-width: 450px
+## Source: https://en.wikipedia.org/wiki/Nonlinear_dimensionality_reduction
+knitr::include_graphics("img/non-linear-dim-red.png")
+```
+
+Linear dimensionality reduction techniques like PCA (in blue) will fit their model as best as they can.
+
+But non-linear techniques will be able to accurately capture deviations non-linear patterns.
+
+- e.g., self organising map (SOM), t-distributed stochastic neighbor embedding (t-SNE), Uniform manifold approximation and projection (UMAP).
+
+## t-SNE
+
+::: {style="text-align: center;"}
+**t-Distributed Stochastic Neighbor Embedding**
+:::
+
+Technique for dimensionality reduction that is particularly well suited for the visualization of high-dimensional datasets.
+
+Aims to place cells with similar local neighbourhoods in high-dimensional space together in low-dimensional space.
+
+:::: {.columns}
+
+::: {.column width="60%"}
+- Non-linear dimensionality reduction (as opposed to PCA).
+- R implementation https://lvdmaaten.github.io/tsne/
+- Preserve local structure / small pairwise distances / local similarities 
+:::
+
+::: {.column width="40%"}
+```{r}
+#| fig-align: center
+#| out-height: 200px
+#| out-width: 300px
+## Source: https://medium.com/@violante.andre/an-introduction-to-t-sne-with-python-example-47e6ae7dc58f
+knitr::include_graphics("img/tsne-swiss-roll.png")
+```
+:::
+
+::::
+
+<https://towardsdatascience.com/an-introduction-to-t-sne-with-python-example-5a3a293108d1>
+
+## Non-linear dimensionality reduction methods in action
+
+:::: {.columns}
+
+::: {.column width="50%"}
+```{r}
+#| fig-align: center
+#| out-height: 400px
+#| out-width: 700px
+## Source: https://medium.com/@violante.andre/an-introduction-to-t-sne-with-python-example-47e6ae7dc58f
+knitr::include_graphics("img/swissroll.png")
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| fig-align: center
+#| out-height: 500px
+#| out-width: 500px
+## Source: https://medium.com/@violante.andre/an-introduction-to-t-sne-with-python-example-47e6ae7dc58f
+knitr::include_graphics("img/swissroll_lle_tsne.png")
+```
+:::
+
+::::
+
+## UMAP
+
+::: {style="text-align: center;"}
+**Uniform manifold approximation and projection**
+:::
+
+At its core, UMAP works very similarly to t-SNE.
+
+Most notably, UMAP is much faster than t-SNE, especially on larger data sets.
+
+UMAP also better preserves the global structure in the data (i.e., relative position of clusters).
+
+<https://pair-code.github.io/understanding-umap/>
+
+<br/>
+
+::: {style="text-align: center;"}
+**There is no wrong choice. Comparing the result of multiple visualisation method is the most direct way to identify the one best suited for your own data.**
+:::
