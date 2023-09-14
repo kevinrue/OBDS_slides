@@ -1,0 +1,264 @@
+# Talk 1: Managing Linux processes and system resources
+
+## Overview
+
+- Linux processes
+- Monitoring processes
+- Terminating processes
+- Monitoring disk usage
+
+## Linux processes
+
+- When you execute a Linux command, the shell session creates a process
+- A process is a running instance of a program
+- Every process has a process identifier (PID)
+- During execution, a process changes from one state to another depending on its environment/circumstances
+  + **Running** - process is running on the system
+  + **Waiting** - process is waiting for an event to occur or for a system resource
+  + **Stopped** - process has been stopped, usually by receiving a termination signal (either from user or system)
+  + **Zombie** - process has been halted but it still has an entry in the table of processes
+
+
+## Foreground and background processes
+
+- By default, command executed interactively in the Bash session of a Terminal application are run in the **foreground**
+  + A command running in the foreground will not return the prompt -- user cannot use the terminal until the command has finished running
+  + **stdout** and **stderr** are printed on the terminal
+
+## Foreground and background processes
+
+- Processes can be run in the **background** to continue using the terminal while the they run
+  + To run a command in the background, add an **ampersand '&'** to the end of the command
+  + Best to prevent the process from printing to the terminal while running in the background -- redirect stdout and stderr to a file or suppress them
+  + To move a running process to the background
+    - Press Control + z to pause the process
+    - Type 'bg' to send it to the background
+    - Type 'fg' then Return key to bring the task back to the foreground
+
+## Monitor processes with `jobs`
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+- Check how many processes you are running in the background
+
+```{r}
+#| fig-align: center
+#| out-height: 50px
+#| out-width: 500px
+## Source: CCB Doks
+knitr::include_graphics("img/jobs.png")
+```
+
+```{r}
+#| fig-align: center
+#| out-height: 300px
+#| out-width: 400px
+## Source: custom-made (obds_sep2023/04_Managing_linux_processes_and_system_resources.pptx, slide 5)
+knitr::include_graphics("img/jobs_option.png")
+```
+
+:::
+
+::: {.column width="5%"}
+
+:::
+
+::: {.column width="45%"}
+
+- If you have more than one process running in the background:
+  + Type fg followed by the integer number next to the command that you want to bring to the foreground (e.g. fg 2)
+  
+- In the `jobs` output 
+  + '+' - job that would be brought to the foreground by default
+  + '-' - second job that would be brought to the foreground by default
+  
+:::
+
+::::
+
+## Monitoring processes with `ps`
+
+- Use `ps` (process status) to report a snapshot of the current processes
+
+- Output of `ps` will always include at least two entries:
+  + Bash process that is used to run the current Bash session
+  + `ps` process itself, which is being being executed to snapshot currently running processes
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+```{r}
+#| fig-align: center
+#| out-height: 200px
+#| out-width: 500px
+## Source: CCB Doks
+knitr::include_graphics("img/ps-sleep.png")
+```
+
+:::
+
+::: {.column width="50%"}
+
+  + PID  - Process identifier (unique)
+  + TTY  - Terminal type
+  + TIME - CPU runtime
+  + CMD  - Process name
+  
+:::
+
+::::
+
+```
+$ ps -ef                  # Show all processes (-e) in the full format (-f)
+$ ps -u <username>        # Show all processes for <username>
+```
+
+- `jobs` output is specific to the shell session while `ps` is more system-wide, able to return all processes
+
+- When a processes has completed it will no longer appear in this process table
+
+## Real-time monitoring with `top`
+
+- Monitor processes and resource usage in real time
+- Shows all processes running, not just yours
+- Information is displayed as a table that can be filtered, for example to show processes for specific users, and sorted by different columns
+- Above the table, a header displays system-wide information 
+
+```
+$ top
+```
+
+```{r}
+#| fig-align: center
+#| out-height: 350px
+#| out-width: 1000px
+## Source: custom-made (obds_sep2023/04_Managing_linux_processes_and_system_resources.pptx, slide 7)
+knitr::include_graphics("img/top_from_slide.png")
+```
+
+## Real-time monitoring with `htop`
+
+- Improved and more user-friendly version of `top`, commonly installed on Linux computers
+- Presents the same information as `top`, but in a more graphical and colour-coded way
+ - Launches an interactive process viewer
+ - Can use mouse and keyboard (f-keys) to interact with it
+
+```{r}
+#| fig-align: center
+#| out-height: 450px
+#| out-width: 900px
+## Source: CCB Doks
+knitr::include_graphics("img/htop-annotated.png")
+```
+
+##  Monitoring hard disk usage with `du`
+
+- Frequently useful to know disk usage
+  + HPC clusters often charge for disk space
+  + They may use a quota system to limit disk usage
+
+```
+$ du -h             # Show directory space usage in human readable form
+79K   ./slurm       # Works recursively showing usage in each subdirectory by default
+8.2MB ./rnaseq
+17M   .
+
+$ du -hs            # Show total directory space usage in human readable form
+17M   .
+```
+
+## Terminating processes with `kill` or `killall`
+
+- Common reasons for terminating processes include:
+  + Taking too long (e.g. froze, entered an infinite loop)
+  + Using too many resources (e.g. memory, open file connections)
+  + No longer functioning properly
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+```
+# Kills a specific process by process ID
+
+$ kill <PID>     
+```
+
+```{r}
+#| fig-align: center
+#| out-height: 150px
+#| out-width: 400px
+## Source: CCB Doks
+knitr::include_graphics("img/kill.png")
+```
+
+:::
+
+::: {.column width="50%"}
+
+```
+# Kills all processes by name
+
+$ killall <name>  
+```
+
+```{r}
+#| fig-align: center
+#| out-height: 250px
+#| out-width: 400px
+## Source: CCB Doks
+knitr::include_graphics("img/killall.png")
+```
+
+:::
+
+::::
+
+## Terminating shell session and exiting the terminal
+
+- Log out of the server using any of these
+  + Type 'exit' and press Return key 
+  + Type 'logout' and press Return key 
+  + Press Control + d
+  
+- Connection to a Bash session on a remote host may be lost for a number of reasons
+  + Loss of internet or VPN for remote sessions
+  + Power loss causing an unexpected outage of computing systems
+
+- When connection is lost, the HUP (hangup) signal is sent to the Bash session 
+  + HUP signal prompts the session to terminate commands (including background processes) that are currently running, potentially resulting in lost work for users
+
+## Resilience to loss of connection
+
+- `nohup` command can be used to run a command that is immune to the HUP signal
+  + Tells a process to ignore the hangup signal
+  + By default, sends stdout to a file 'nohup.out'
+  + By default, does not save stderr so should be explicitly redirected
+
+```
+$ nohup <command> &        # '&' commonly used with nohup to launch process in 
+                             background
+$ nohup wc -l file1.txt > stdout.txt 2> stderr.txt &
+```
+
+```{r}
+#| fig-align: center
+#| out-height: 50px
+#| out-width: 700px
+## Source: CCB Doks
+knitr::include_graphics("img/nohup.png")
+```
+
+# Talk 1 Exercise 1 - Linux processes & system resources
+
+@sec-Talk1Exercise1
+
+## References
+
+```{r}
+#| results: asis
+PrintBibliography(bib)
+```
