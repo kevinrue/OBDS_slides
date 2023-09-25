@@ -49,6 +49,21 @@ knitr::include_graphics("img/object-oriented-programming.svg")
 Use `rowSums()` as an example of method that accepts different classes of inputs but always returns the same class of output.
 :::
 
+## Objects are instances of a class
+
+- A _class_ is the generic description of an object
+  
+  + Like a recipe for a dish; or an entry in a dictionary.
+
+- An _object_ is an instance of that class
+
+  + Like one specific plate of food serve on a table.
+
+```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='300px', out.width='500px'}
+## Source: https://www.guru99.com/java-oops-class-objects.html
+knitr::include_graphics("img/class-object-relationship.jpeg")
+```
+
 ## Classes: the cornerstone of OOP
 
 - _Classes_ represent the generic definition of real-world objects.
@@ -78,21 +93,6 @@ knitr::include_graphics("img/class-animal-attributes-methods.svg")
 :::
 
 ::::
-
-## Objects are instances of a class
-
-- A _class_ is the generic description of an object
-  
-  + Like a recipe for a dish; or an entry in a dictionary.
-
-- An _object_ is an instance of that class
-
-  + Like one specific plate of food serve on a table.
-
-```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='300px', out.width='500px'}
-## Source: https://www.guru99.com/java-oops-class-objects.html
-knitr::include_graphics("img/class-object-relationship.jpeg")
-```
 
 ## Object Oriented Programming (OOP)
 
@@ -178,6 +178,24 @@ knitr::include_graphics("img/class-animal-attributes-methods.svg")
 **What are advantages of bundling attributes and methods together?**
 :::
 
+## Abstraction
+
+- Expose only high-level methods.
+
+- Keep details of low-level implementation internal.
+
+- As a result, the private methods and attributes can be changed without affecting users.
+
+- Do not overwhelm users with more information than they need to be aware of.
+
+```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='300px', out.width='500px'}
+knitr::include_graphics("img/class-abstraction.svg")
+```
+
+::: {style="text-align: center;"}
+**How much do think users should know about the details of the internal implementation?**
+:::
+
 ## Inheritance
 
 - Child classes inherit all the attributes and methods of their parent class(es).
@@ -207,24 +225,6 @@ knitr::include_graphics("img/class-bird-attributes-methods.svg")
 
 ::: {style="text-align: center;"}
 **How much time do you think is saved when _learning_ classes developed by inheritance?**
-:::
-
-## Abstraction
-
-- Expose only high-level methods.
-
-- Keep details of low-level implementation internal.
-
-- As a result, the private methods and attributes can be changed without affecting users.
-
-- Do not overwhelm users with more information than they need to be aware of.
-
-```{r, include=TRUE, echo=FALSE, fig.align='center', out.height='300px', out.width='500px'}
-knitr::include_graphics("img/class-abstraction.svg")
-```
-
-::: {style="text-align: center;"}
-**How much do think users should know about the details of the internal implementation?**
 :::
 
 ## Polymorphism
@@ -292,7 +292,7 @@ attributes(character_object)
 
 ::: {.column width="50%"}
 ```{r, echo=TRUE, include=TRUE}
-character_object2 <- c("A", "B", "C")
+character_object2 <- c("A", "B", "A", "C")
 character_object2
 ```
 
@@ -323,7 +323,7 @@ attributes(character_object2)
 
 ::: {.column width="50%"}
 ```{r, echo=TRUE, include=TRUE}
-factor_object <- factor(c("A", "B", "C"))
+factor_object <- factor(c("A", "B", "A", "C"))
 factor_object
 ```
 
@@ -367,8 +367,8 @@ attr(factor_object, "class")
 ::: {.column width="50%"}
 ```{r, echo=TRUE, include=TRUE}
 dataframe_object <- data.frame(
-  numbers = c(1, 2, 3),
-  strings = c("A", "B", "C")
+  numbers = c(4, 2, 1),
+  strings = c("C", "B", "D")
   )
 dataframe_object
 ```
@@ -402,7 +402,8 @@ attributes(dataframe_object)
 ```{r, echo=TRUE, include=TRUE}
 matrix_object <- matrix(
   data = c(1, 2, 3, 4, 5, 6, 7, 8),
-  nrow = 2
+  nrow = 2,
+  byrow = TRUE
   )
 matrix_object
 ```

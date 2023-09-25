@@ -10,9 +10,9 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 ```
 
-# Exercises
+## Demo
 
-## Character
+### Character
 
 ```{r}
 character_object <- "A"
@@ -32,7 +32,7 @@ attributes(character_object)
 ```
 
 ```{r}
-character_object2 <- c("A", "B", "C")
+character_object2 <- c("A", "B", "A", "C")
 character_object2
 ```
 
@@ -48,12 +48,12 @@ class(character_object2)
 attributes(character_object2)
 ```
 
-# Exercise
+## Demo
 
-## Factors
+### Factors
 
 ```{r, include=TRUE}
-factor_object <- factor(c("A", "B", "C"))
+factor_object <- factor(c("A", "B", "A", "C"))
 factor_object
 ```
 
@@ -77,14 +77,14 @@ attr(factor_object, "levels")
 attr(factor_object, "class")
 ```
 
-# Exercise
+## Demo
 
-## Data-frames
+### Data-frames
 
 ```{r}
 dataframe_object <- data.frame(
-  numbers = c(1, 2, 3),
-  strings = c("A", "B", "C")
+  numbers = c(4, 2, 1),
+  strings = c("C", "B", "D")
   )
 dataframe_object
 ```
@@ -101,14 +101,15 @@ str(dataframe_object)
 attributes(dataframe_object)
 ```
 
-# Exercise
+## Demo
 
-## Matrices
+### Matrices
 
 ```{r}
 matrix_object <- matrix(
   data = c(1, 2, 3, 4, 5, 6, 7, 8),
-  nrow = 2
+  nrow = 2,
+  byrow = TRUE
   )
 matrix_object
 ```
@@ -129,9 +130,9 @@ attributes(matrix_object)
 attr(matrix_object, "dim")
 ```
 
-# Exercise
+## Demo
 
-## S3 method dispatch
+### S3 method dispatch
 
 ```{r}
 methods("print") %>% head(14)
