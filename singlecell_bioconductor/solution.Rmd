@@ -18,6 +18,7 @@ library(DelayedMatrixStats)
 library(uwot)
 library(Rtsne)
 library(scran)
+library(scater)
 library(iSEE)
 ```
 
@@ -75,13 +76,9 @@ metadata(sce)
 
 ## Quality control
 
-- Compute and visualise quality control metrics (library size, genes detected, mitochondrial fraction); use `scuttle` and/or `scater`.
+- Compute and visualise quality control metrics (library size, genes detected, mitochondrial fraction); use `r BiocStyle::Biocpkg("scuttle")` and/or `r BiocStyle::Biocpkg("scater")`.
 
-  + Identify mitochondrial genes and pass those to the `subsets` argument of the `scuttle::addPerCellQC()` function.
-  
-  + What is the return value?
-    Where are the quality metrics stored?
-    What is the difference with `scuttle::perCellQCMetrics()`?
+**Hint:** Identify mitochondrial genes and pass those to the `subsets` argument of the `scuttle::addPerCellQC()` function.
 
 ```{r}
 is.mito <- grepl("^MT-", rowData(sce)$Symbol)
@@ -93,6 +90,10 @@ library(scuttle)
 sce <- scuttle::addPerCellQC(sce, percent_top = 50, subsets = list(MT=is.mito))
 colnames(colData(sce))
 ```
+
+- What is the return value?
+  Where are the quality metrics stored?
+  What is the difference with `scuttle::perCellQCMetrics()`?
 
 > Answer:
 >
@@ -134,9 +135,19 @@ sce
 
 - Similarly, use `scuttle::perFeatureQCMetrics()` or `scuttle::addPerFeatureQC()` to compute per-feature quality metrics, and visualise those metrics.
 
+**Hint:** For instance, visualise the fraction of cells with non-zero counts on the x-axis,
+  and the log10-transformed mean expression on the y-axis.
+
 ```{r}
 sce <- scuttle::addPerFeatureQC(sce)
 ```
+
+> Answer:
+>
+> The return value of `scuttle::addPerFeatureQC()` is a `SingleCellExperiment` object.
+> The quality metrics are stored in the `rowData` component of the object.
+> - `mean` = mean count of the gene/feature across all cells
+> - `detected` = percentage of cells with non-zero counts for each gene
 
 ```{r}
 rowData(sce) %>%
@@ -169,8 +180,8 @@ assayNames(sce)
 - Plot the variance against the mean of each gene.
 
 **Note:** how can you tell whether the normalisation was effective?
-  Compare with https://osca.bioconductor.org/feature-selection.html#quantifying-per-gene-variation
-
+  Compare with <https://bioconductor.org/books/3.17/OSCA.basic/feature-selection.html#quantifying-per-gene-variation>
+  
 ```{r}
 library(DelayedMatrixStats)
 #
@@ -274,15 +285,15 @@ dec %>%
 
 ## Dimensionality reduction
 
-- Apply PCA; use `scater` or `BiocSingular`.
+- Apply PCA; use `scran::fixedPCA()`.
   Set a seed to control reproducibility.
   List the names of dimensionality reduction results available.
 
-**Note:** only give the set of highly variable genes to the `scater::runPCA()` function, to save time, memory, and to focus on biologically informative genes in the data set.
+**Note:** only give the set of highly variable genes to the `scran::runPCA()` function, to save time, memory, and to focus on biologically informative genes in the data set.
 
 ```{r}
 set.seed(1234)
-sce <- scater::runPCA(sce, subset_row=hvg)
+sce <- scran::fixedPCA(sce, subset.row = hvg)
 reducedDimNames(sce)
 ```
 
@@ -290,12 +301,12 @@ reducedDimNames(sce)
   List the names of dimensionality reduction results available each time.
 
 ```{r}
-sce <- scater::runUMAP(sce, dimred = 'PCA', external_neighbors=TRUE)
+sce <- runUMAP(sce, dimred = 'PCA', external_neighbors=TRUE)
 reducedDimNames(sce)
 ```
 
 ```{r}
-sce <- scater::runTSNE(sce, dimred = 'PCA', external_neighbors=TRUE)
+sce <- runTSNE(sce, dimred = 'PCA', external_neighbors=TRUE)
 reducedDimNames(sce)
 ```
 
