@@ -160,27 +160,28 @@ rowData(sce) %>%
 
 ## Normalisation
 
-- Convert the counts into normalized expression values to eliminate cell-specific biases (e.g., in capture efficiency); use `scuttle` and/or `scran`.
-  Display the names of the assays available after that step.
+- Convert the counts into normalized expression values to eliminate cell-specific biases (e.g., in capture efficiency); use `scuttle`.
 
-**Note:** use `scuttle::logNormCounts()` to compute log-normalised counts.
-  What is the return value?
-  Where can you find the normalised counts?
+**Note:**
+
+- Use `scuttle::logNormCounts()` to compute log-normalised counts.
 
 ```{r}
 sce <- scuttle::logNormCounts(sce)
 assayNames(sce)
 ```
 
+- What is the return value?
+- Where can you find the normalised counts?
+
 > Answer:
 > 
 > The return value of `scuttle::logNormCounts()` is a `SingleCellExperiment` object.
 > The normalised counts are stored as a new assay called `"logcounts"`.
 
-- Plot the variance against the mean of each gene.
+### Bonus
 
-**Note:** how can you tell whether the normalisation was effective?
-  Compare with <https://bioconductor.org/books/3.17/OSCA.basic/feature-selection.html#quantifying-per-gene-variation>
+- Plot the variance against the mean of each gene (use `ggplot2`)
   
 ```{r}
 library(DelayedMatrixStats)
@@ -203,6 +204,9 @@ plot_logcounts <- ggplot(plot_data, aes(mean, variance)) +
 cowplot::plot_grid(plot_counts, plot_logcounts, nrow = 1)
 ```
 
+- How can you tell whether the normalisation was effective?
+  Compare with <https://bioconductor.org/books/3.17/OSCA.basic/feature-selection.html#quantifying-per-gene-variation>
+  
 > Answer:
 > 
 > After normalisation, the relationship between variance and mean is relatively flat (i.e., inexistant).
@@ -231,25 +235,6 @@ dec
 > Answer:
 > 
 > A `DataFrame`, with one row per feature.
-
-- Visualise the relation between the mean expression of each gene and the total / biological / technical variance of each gene.
-
-How do you interpret those different values?
-
-```{r}
-ggplot(as_tibble(dec)) +
-    geom_point(aes(mean, total), color = "black") +
-    geom_point(aes(mean, bio), color = "blue") +
-    geom_point(aes(mean, tech), color = "red")
-```
-
-> Answer:
-> 
-> - Total variance = empirically calculated.
-> - Technical variance = mean trend fitted
-> - Biological = (total variance) - (technical variance)
-> 
-> Yes, biological variance can be negative (less variable than expected for that mean expression).
 
 - Use `scran::getTopHVGs()` to identify highly variable genes (e.g., top 10%).
 
@@ -281,15 +266,38 @@ dec %>%
 > 
 > The genes are located at the highest values of variance (toward the top of the plot).
 
+### Bonus
+
+- Visualise the relation between the mean expression of each gene and the total/biological/technical variance of each gene.
+
+How do you interpret those different values?
+
+```{r}
+ggplot(as_tibble(dec)) +
+    geom_point(aes(mean, total), color = "black") +
+    geom_point(aes(mean, bio), color = "blue") +
+    geom_point(aes(mean, tech), color = "red")
+```
+
+> Answer:
+> 
+> - Total variance = empirically calculated.
+> - Technical variance = mean trend fitted
+> - Biological = (total variance) - (technical variance)
+> 
+> Yes, biological variance can be negative (less variable than expected for that mean expression).
+
 # Exercise
 
 ## Dimensionality reduction
 
 - Apply PCA; use `scran::fixedPCA()`.
-  Set a seed to control reproducibility.
   List the names of dimensionality reduction results available.
 
-**Note:** only give the set of highly variable genes to the `scran::runPCA()` function, to save time, memory, and to focus on biologically informative genes in the data set.
+**Note:**
+
+- Only give the set of highly variable genes to the `scran::runPCA()` function, to save time, memory, and to focus on biologically informative genes in the data set.
+- Set a seed to control reproducibility.
 
 ```{r}
 set.seed(1234)
@@ -297,7 +305,7 @@ sce <- scran::fixedPCA(sce, subset.row = hvg)
 reducedDimNames(sce)
 ```
 
-- Apply UMAP and t-SNE successively on the output of the PCA.
+- Apply UMAP and t-SNE successively, each time on the output of the PCA.
   List the names of dimensionality reduction results available each time.
 
 ```{r}
@@ -327,9 +335,12 @@ sce_umap
 ## Bonus point
 
 - Use `scran::denoisePCA()` to remove principal components that correspond to technical noise, and compare downstream t-SNE or UMAP with those obtained before de-noising.
-  Name the output `sce_denoise`.
-  How many components remain after denoising?
-  Visualise a UMAP of the denoised PCA and compare.
+
+**Note:**
+
+- Name the output `sce_denoise`.
+- How many components remain after denoising?
+- Visualise a UMAP of the denoised PCA and compare.
 
 ```{r}
 sce_denoise <- scran::denoisePCA(sce, dec, subset.row=hvg)
@@ -451,9 +462,9 @@ rowData(sce)[rownames(markers[[1]]),] %>%
     head()
 ```
 
-- Visualise the expression of selected markers:
+Visualise the expression of selected markers:
 
-  + As a dot plot, optionally with a violin layer.
+- As a dot plot, optionally with a violin layer.
 
 ```{r}
 marker_id <- rownames(markers$`1`)[1]
@@ -469,8 +480,8 @@ colData(sce) %>%
     scale_color_viridis_c()
 ```
 
-  + On a dimensionality reduction layout.
-    Compare with the cluster labels.
+- On a dimensionality reduction layout.
+  Compare with the cluster labels.
 
 ```{r}
 gg_marker <- reducedDim(x = sce, type = "UMAP") %>%
