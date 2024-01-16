@@ -4,7 +4,7 @@ Change directory to your new local clone of the repository, and list its content
 For instance:
 
 ```{bash, eval=FALSE, echo=TRUE}
-cd OBDS_May_2022
+cd OBDS_Month_YEAR
 ls -a
 ```
 
@@ -39,7 +39,9 @@ One or more special files named `.gitignore` can be placed in your repository.
 
 Each line in those file specifies a file name or pattern that <i class="fab fa-git"></i> will ignore (i.e., not track) *in the future*.
 
-> Files that are already tracked will continue to be tracked even after they are added to `.gitignore`, unless they are explicitly removed from the repository using `git rm` (use the `--cached` option to only remove the file from the _index_, but keep the file itself).
+::: {.callout-note}
+Files that are already tracked will continue to be tracked even after they are added to `.gitignore`, unless they are explicitly removed from the repository using `git rm` (use the `--cached` option to only remove the file from the _index_, but keep the file itself).
+:::
 
 :::: {.columns}
 
@@ -267,8 +269,8 @@ $ git remote -v
 ```
 
 ```
-origin	git@github.com:kevinrue/OBDS_May_2022.git (fetch)
-origin	git@github.com:kevinrue/OBDS_May_2022.git (push)
+origin	git@github.com:kevinrue/OBDS_Month_YEAR.git (fetch)
+origin	git@github.com:kevinrue/OBDS_Month_YEAR.git (push)
 ```
 
 <br/>
@@ -299,7 +301,7 @@ Delta compression using up to 40 threads
 Compressing objects: 100% (2/2), done.
 Writing objects: 100% (2/2), 289 bytes | 96.00 KiB/s, done.
 Total 2 (delta 0), reused 0 (delta 0), pack-reused 0
-To github.com:kevinrue/OBDS_May_2022.git
+To github.com:kevinrue/OBDS_Month_YEAR.git
    81acf15..9e2b638  main -> main
 ```
 
@@ -335,7 +337,7 @@ knitr::include_graphics("img/github-network-graph.png")
 
 ```{r}
 #| fig-align: center
-#| out-height: 300px
+#| out-height: 500px
 #| out-width: 900px
 ## Source: Kevin Rue-Albrecht (Screenshot)
 knitr::include_graphics("img/github-commit-view.png")
@@ -456,7 +458,7 @@ and click the pencil above the file on the right.
 ```{r}
 #| fig-align: center
 #| out-height: 300px
-#| out-width: 575px
+#| out-width: 750px
 ## Source: Kevin Rue-Albrecht (Screenshot)
 knitr::include_graphics("img/github-readme-view.png")
 ```
@@ -466,9 +468,23 @@ knitr::include_graphics("img/github-readme-view.png")
 ```{r}
 #| fig-align: center
 #| out-height: 500px
-#| out-width: 600px
+#| out-width: 750px
 ## Source: Kevin Rue-Albrecht (Screenshot)
 knitr::include_graphics("img/github-readme-edit.png")
+```
+
+::: {style="text-align: center;"}
+**Click the green button `Commit changes...` when you are ready.**
+:::
+
+## Commit changes on <i class="fab fa-github"></i> GitHub
+
+```{r}
+#| fig-align: center
+#| out-height: 500px
+#| out-width: 750px
+## Source: Kevin Rue-Albrecht (Screenshot)
+knitr::include_graphics("img/github-readme-commit.png")
 ```
 
 ::: {style="text-align: center;"}
@@ -520,7 +536,7 @@ remote: Counting objects: 100% (5/5), done.
 remote: Compressing objects: 100% (3/3), done.
 remote: Total 3 (delta 0), reused 0 (delta 0), pack-reused 0
 Unpacking objects: 100% (3/3), 718 bytes | 17.00 KiB/s, done.
-From github.com:kevinrue/OBDS_May_2022
+From github.com:kevinrue/OBDS_Month_YEAR
    81acf15..73f7a57  main       -> origin/main
 Updating 81acf15..73f7a57
 Fast-forward
