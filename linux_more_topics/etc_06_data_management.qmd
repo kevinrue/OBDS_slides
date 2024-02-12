@@ -51,7 +51,10 @@ knitr::include_graphics("img/linux_file_tree.png")
 
 - Symbols to avoid in file names
   + e.g. % $ £ “ ‘ / \ | =
-  + Do not put spaces into your file or directory names
+  + Do not put spaces into your file or directory names 
+    ```
+    $ ls My Directory # Interpret as two separate input arguments / directories
+    ```
   + Use underscore or dash to separate words e.g. file_name.txt
 
 ## Name files carefully
@@ -154,6 +157,28 @@ my_project/
   + Use symbolic links (`ln -s`) to keep data together without copying files
 - Regularly check your disk usage and available disk / quota with `du`
 
+# Accessing files to/from remote hosts and from other online databases
+
+## Transferring files across systems on the command line using `scp`
+
+- `scp` (secure copy) uses SSH protocol to copy files securely
+
+  + `scp` \<options> \<source path> \<destination path>
+  
+- Typing on the local machine, we can transfer files *via* bastion host from OBDS server to local machine:
+```
+$ scp -o ProxyJump=<username>@bastion.imm.ox.ac.uk <username>@obds:<source path> <destination path>
+```
+
+- With the SSH config, we can simplify to:
+```
+$ scp obds-bastion:<source path> <destination path>
+```
+
+- `scp` vs. `rsync`
+   + `scp` - Straightforward copying of files using SSH
+   + `rsync` - Synchronises files and directories between a source and a destination 
+
 ## Transferring files using FileZilla
 
 - The [FileZilla Client](https://filezilla-project.org/download.php?platform=osx) is a free solution for transferring files between computers via FTP/SFTP/FTPS protocols
@@ -214,20 +239,28 @@ $ wget \
 
 - ArrayExpress (EBI)
 - ENA – European Nucleotide archive (EBI)
-- GEO - Gene expression Omnibus (NCBI)
+- GEO – Gene expression Omnibus (NCBI)
 - SRA – Short Read Archive (NCBI)
 - Download published datasets
   + Raw sequencing data (fastq files)
   + Processed results (bed, count matrix)
   + Metadata (experiment details, sample processing, data analysis)
 
+## Downloading remote files using the command line
+
+- `wget`
+- `curl`
+   + Like `wget`, `curl` can be used for downloading files from the Internet 
+   + The two have differences in terms of other functionality e.g. `wget` can download recursively
+
 ## Verify integrity of downloads
 
 - We can check if files have downloaded correctly using checksums
-- Checksum tools generate a unique code (checksum) for each file
-- There are multiple checksum algorithms `md5sum`, `sha256sum`, `sum` etc.
-- These commands are useful if the remote provider ran any of the command themselves and made available the output for each file 
-- Users can then run the same command on their own copy of the downloaded files, and compare the output with that of the provider
+- A **checksum** is a value or code derived from digital data to verify its integrity
+  + Like a unique fingerprint of a data
+- `md5sum`, `sha256sum`, `sum` are examples of commands to calculate and verify checksums
+  + They differ in algorithms used to calculate checksum
+- Users can compare locally generated checksums with those provided by the source to verify file integrity
 
 ## Verify integrity of downloads
 
@@ -252,7 +285,7 @@ knitr::include_graphics("img/md5_file.png")
 
 ## Verify integrity of downloads
 
-- ENA uses `md5sum` 
+- ENA uses `md5sum`
 
 ```
 $ wget http…/md5sum.txt     # Download reference checksum file to local system
@@ -268,16 +301,9 @@ $ md5sum –c md5sum.txt      # Generate checksum for downloaded file and compar
 knitr::include_graphics("img/md5sum-c.png")
 ```
 
-## Downloading remote files using the command line
-
-- `wget`
-- `curl`
-   + Like `wget`, can be used for downloading files from the Internet 
-   + The two have differences in terms of other functionality e.g. `wget` can download recursively
-   
 # Talk 3 Exercise 1 - Working directory
 
-@sec-Talk3Exercise1
+<!-- @sec-Talk3Exercise1 -->
 
 ## References
 
