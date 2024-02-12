@@ -3,10 +3,10 @@ title: 'Introduction to the Linux command line'
 subtitle: 'Genomics on the Linux command Line'
 author: "Liezel Tamon"
 institute: "Oxford Biomedical Data Science Training Programme"
-date: "2023-09-11 (updated: `r Sys.Date()`)"
+date: "2024-01-15 (updated: `r Sys.Date()`)"
 date-format: long
 execute: 
-  echo: true
+  echo: false
 format:
   revealjs: 
     slide-number: true
@@ -53,10 +53,6 @@ bib <- ReadBib("bibliography.bib")
 # NoCite(bib, "R")
 ```
 
-```{r}
-#| child: goals_and_objectives.qmd
-```
-
 ## Credits
 
 - David Sims
@@ -68,6 +64,10 @@ bib <- ReadBib("bibliography.bib")
 - An account on the teaching server or cluster
 - VPN to remotely connect to the University network
 - Git Bash for Microsoft Windows users
+
+```{r}
+#| child: goals_and_objectives.qmd
+```
 
 ```{r}
 #| child: etc_01_genomics.qmd
