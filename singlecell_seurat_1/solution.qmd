@@ -30,18 +30,19 @@ read10x_data <- Read10X(
 )
 ```
 
-- Display the first 15 rows and 4 columns of the object using indexing.
+- Display the first 15 rows and 4 columns of `read10x_data` using `[]`.
 
 ```{r}
 read10x_data[1:15, 1:4]
 ```
 
-- Display the structure of the object using `str()`.
-  What is a sparse matrix and how does it store data?
+- Use `str()` to display the structure of `read10x_data`.
 
 ```{r}
 str(read10x_data)
 ```
+
+**What is a sparse matrix and how does it store data?**
 
 > Answer:
 > 
@@ -54,7 +55,7 @@ str(read10x_data)
 > The memory-efficiency of sparse matrices increase with the fraction of zero values
 > in the matrix.
 
-- Use the `dim()` function to determine the number of features and barcodes (i.e., cells) in the data set.
+- Use the `dim()` function to display the number of features and barcodes (i.e., cells) in the data set.
 
 ```{r}
 dim(read10x_data)
@@ -64,12 +65,11 @@ dim(read10x_data)
 > 
 > 33,538 features and 5,155 barcodes.
 
-- Create a Seurat object using the function `CreateSeuratObject()`.
-  Name the object `seurat_object`.
+- Use `CreateSeuratObject()` to create a Seurat object.
+  Name the object 'seurat_object'.
   Include features detected in at least 3 cells,
   and cells where at least 200 features detected.
-  Name the project `pbmc5k`.
-  How many features and barcodes are left in the Seurat object?
+  Name the project 'pbmc5k'.
 
 ```{r}
 seurat_object <- CreateSeuratObject(
@@ -80,6 +80,8 @@ seurat_object <- CreateSeuratObject(
 )
 seurat_object
 ```
+
+**How many features and barcodes are left in the Seurat object?**
 
 > Answer:
 > 
@@ -111,12 +113,13 @@ DefaultAssay(object = seurat_object)
 Assays(object = seurat_object)
 ```
 
-- Combine `GetAssayData()` and indexing to display the first six rows and four columns of the RNA assay data.
-  What happens if you do not specify the `layer` argument?
+- Combine `GetAssayData()` and `[]` to display the first six rows and first four columns of the RNA assay data.
 
 ```{r}
 GetAssayData(object = seurat_object, layer = "counts")[1:6, 1:4]
 ```
+
+**What happens if you do not specify the `layer=` argument?**
 
 > Answer:
 > 
@@ -129,34 +132,37 @@ head(seurat_object[[]])
 ```
 
 - Use the `[[]]` operator to fetch only one column of metadata.
-  What type of object do you get back?
 
 ```{r}
 head(seurat_object[["nCount_RNA"]])
 ```
+
+**What type of object do you get back?**
 
 > Answer:
 > 
 > The `[[` symbol returns a `data.frame`.
 
 - Instead, use the `$` operator to fetch the same column of metadata.
-  What type of object do you get back this time?
 
 ```{r}
 head(seurat_object$nCount_RNA)
 ```
 
+**What type of object do you get back this time?**
+
 > Answer:
 > 
 > The `$` symbol returns a named vector.
 
-- Use `FetchData()` to access the metadata column `"nCount_RNA"` and the counts of the gene named `"LYZ"`.
+- Use `FetchData()` to access the metadata column 'nCount_RNA' and the counts of the gene named 'LYZ'.
   Combine this with `head()` to display only the first few rows.
-  What type of object do you get back?
 
 ```{r}
 head(FetchData(object = seurat_object, vars = c("nCount_RNA", "LYZ"), layer = "counts"))
 ```
+
+**What type of object do you get back?**
 
 > Answer:
 > 
@@ -192,7 +198,7 @@ subset(
 
 ## Quality control and visualisation
 
-- The library size and number of features detected per cell are already present in the per-cell metadata of the Seurat object, under the names `"nCount_RNA"` and `"nFeature_RNA"`.
+- The library size and number of features detected per cell are already present in the per-cell metadata of the Seurat object, under the names 'nCount_RNA' and 'nFeature_RNA'.
   Use `VlnPlot()` to display them in a single violin plot.
 
 ```{r}
@@ -200,7 +206,7 @@ VlnPlot(seurat_object, c("nCount_RNA", "nFeature_RNA"))
 ```
 
 - Use `PercentageFeatureSet()` to compute the fraction of reads assigned to mitochondrial genes in each cell.
-  Combine this with `AddMetaData()` to store the metric in the cell metadata of the Seurat object, under the name `"percent_mt"`.
+  Combine this with `AddMetaData()` to store the metric in the cell metadata of the Seurat object, under the name 'percent_mt'.
   Finally, use `VlnPlot()` to visualise this new metric alongside the previous two in a new violin plot.
 
 ```{r}
@@ -212,7 +218,7 @@ seurat_object <- AddMetaData(
 VlnPlot(seurat_object, c("nCount_RNA", "nFeature_RNA", "percent_mt"))
 ```
 
-- Use `FeatureScatter()` to sisualise a scatter plot of the proportion of mitochondrial UMIs (`"percent_mt"`) on the Y-axis against the library size (`"nCount_RNA"`) on the X-axis.
+- Use `FeatureScatter()` to sisualise a scatter plot of the proportion of mitochondrial UMIs ('percent_mt') on the Y-axis against the library size ('nCount_RNA') on the X-axis.
 
 ```{r}
 FeatureScatter(object = seurat_object, feature1 = "nCount_RNA", feature2 = "percent_mt")
@@ -228,21 +234,17 @@ seurat_after_qc <- subset(
 seurat_after_qc
 ```
 
-- Combine the `dim()` function with the subtraction operator to determine how many cells were removed in this step.
+- Combine the `ncol()` function with the subtraction operator to determine how many cells were removed in this step.
 
 ```{r}
-dim(seurat_after_qc) - dim(seurat_object)
+ncol(seurat_after_qc) - ncol(seurat_object)
 ```
-
-> Answer:
-> 
-> 896 cells were removed in this step.
 
 # Exercise
 
 ## Normalisation
 
-- Use `NormalizeData()` to normalise the RNA assay of the Seurat object (after quality control) using the `"LogNormalize"` method.
+- Use `NormalizeData()` to normalise the RNA assay of the Seurat object (after quality control) using the 'LogNormalize' method.
 
 ```{r}
 seurat_after_qc <- NormalizeData(
@@ -272,14 +274,17 @@ cowplot::plot_grid(ggplot_counts_raw, ggplot_data_normalised, ncol = 1)
 ## Variable features and scaling
 
 - Use `FindVariableFeatures()` to identify variable features in the normalised RNA assay of the Seurat object.
-  Use the `"vst"` method and select the 2,000 most variable features.
-  What does this subsetting do, and what are our motivations for doing it?
+  Use the 'vst' method and select the 2,000 most variable features.
 
 ```{r}
 seurat_after_qc <- FindVariableFeatures(
-    object = seurat_after_qc
+  object = seurat_after_qc,
+  selection.method = "vst",
+  nfeatures = 2000
 )
 ```
+
+**What does this subsetting do, and what are our motivations for doing it?**
 
 > Answer:
 > 
@@ -294,12 +299,15 @@ seurat_after_qc <- FindVariableFeatures(
 > Limiting the amount of features to work is one way of reducing the memory footprint and requirements for an analysis.
 
 - Combine `VariableFeatures()` and `head()` to display the names of the first few variable features in the Seurat object.
-  How can you control which assay the variable features are pull from?
 
 ```{r}
 head(VariableFeatures(seurat_after_qc))
 ```
 
+**How can you control which assay the variable features are pull from?**
+
+> Answer:
+> 
 > The target assay can be specific using the `assay` argument:
 > `VariableFeatures(seurat_after_qc, assay = "RNA")`.
 >
@@ -307,11 +315,12 @@ head(VariableFeatures(seurat_after_qc))
 > The default assay can be changed using `DefaultAssay(seurat_after_qc) <- "RNA"`.
 
 - Use `VariableFeaturePlot()` to visualise the scatter plot of standardised variance against average expression.
-  How would you use this plot?
 
 ```{r}
 VariableFeaturePlot(seurat_after_qc)
 ```
+
+**How would you use this plot?**
 
 > Answer:
 > 
@@ -319,7 +328,6 @@ VariableFeaturePlot(seurat_after_qc)
 > Ideally, variable features should appear as outliers relative to the trend set by the majority of features in the data set.
 
 - Use `ScaleData()` to scale the normalised RNA assay of the Seurat object, regressing the the fraction of UMI counts assigned to mitochondrial features.
-  What are the motivations for removing that source of variation?
 
 ```{r}
 seurat_after_qc <- ScaleData(
@@ -328,6 +336,10 @@ seurat_after_qc <- ScaleData(
 )
 ```
 
+**What are the motivations for removing that source of variation?**
+
+> Answer:
+> 
 > Cells with a higher percentage of UMI counts assigned to mitochondrial features often represent "leaky" broken cells that lost some of their cytoplasmic RNA transcripts that was not captured nor sequenced.
 > If those cells are not removed or corrected for, they can introduce unwanted variation in the data set that can affect downstream analyses.
 
@@ -336,13 +348,12 @@ seurat_after_qc <- ScaleData(
 ## Dimensionality reduction
 
 - Use `RunPCA()` to run a principal component analysis on the Seurat object.
-  Which features are used by the method in the default settings?
-  How could you change this?
-  How do you read the message displayed by the function `RunPCA()`?
 
 ```{r}
 seurat_after_qc <- RunPCA(seurat_after_qc)
 ```
+
+**Which features are used by the method in the default settings? How could you change this?**
 
 > Answer:
 > 
@@ -352,6 +363,10 @@ seurat_after_qc <- RunPCA(seurat_after_qc)
 > 
 > A custom set of features (e.g., all of them!) can be given to the argument `features`.
 
+**How do you read the message displayed by the function `RunPCA()`?**
+
+> Answer:
+> 
 > The `RunPCA()` function produces a message in the console
 > that shows the names of the features with the highest positive and negative loadings on a set of principal components.
 > This gives a qualitative view that can help the intepretation of those axes of variation in the data set.
@@ -391,16 +406,20 @@ ggplot(pca_data, aes(PC_1, PC_2)) +
 
 - Use `ElbowPlot()` to visualise the amount of variance explained the principal components that capture most variance.
   Use argument `ndims` to control the number of principal components to plot.
-  What is the maximum number of principal components that you can plot?
-  How many principal components would you use for downstream analyses?
 
 ```{r}
 ElbowPlot(seurat_after_qc, ndims = 100)
 ```
 
+**What is the maximum number of principal components that you can plot?**
+
 > Answer:
 > 
 > By default, `RunPCA()` computes 50 principal components. If you want to see more principal components, you need to re-run `RunPCA()` with a higher value for the `npcs` argument. 
+
+**How many principal components would you use for downstream analyses?**
+
+> Answer:
 > 
 > In this case, the first 20 components seem to capture most of the variance in the data set.
 
@@ -421,12 +440,13 @@ UMAPPlot(seurat_after_qc)
 ## Clustering
 
 - Use `FindNeighbors()` to compute the graph of nearest neighbours.
-  Which principal components are used by default?
-  Instead, specify the set of principal components that you have chosen earlier.
+  Use the argument `dims=` to specify the set of principal components that you have chosen earlier.
 
 ```{r}
 seurat_after_qc <- FindNeighbors(seurat_after_qc, dims = 1:20)
 ```
+
+**Which principal components are used by default?**
 
 > Answer:
 > 
@@ -439,21 +459,28 @@ Graphs(seurat_after_qc)
 ```
 
 - Use `FindClusters()` to identify clusters in the data set.
-  What is the default setting for the `resolution` argument?
-  Instead, set it to `0.5`.
-  Do you expect more or fewer clusters following that change?
-  What other parameters would you also try to experiment with?
+  Set the argument `resolution=` to `0.5`.
 
 ```{r}
 seurat_after_qc <- FindClusters(seurat_after_qc, resolution = 0.5)
 ```
 
+**What is the default setting for the `resolution=` argument?**
+
 > Answer:
 > 
 > The `resolution` argument has a default value of `0.8`.
+
+**Do you expect more or fewer clusters following that change?**
+
+> Answer:
 > 
 > A smaller resolution intuitively implies fewer clusters.
 > We may take the time to confirm this in a bonus exercise, if we have time.
+
+**What other parameters would you also try to experiment with?**
+
+> Answer:
 > 
 > Other parameters that can have a major impact on clustering results include `algorithm`, `method`, and `modularity.fxn`.
 >
@@ -461,11 +488,12 @@ seurat_after_qc <- FindClusters(seurat_after_qc, resolution = 0.5)
 > can affect the ability to find clusters in the resulting graph.
 
 - Use `UMAPPlot()` to visualise the cluster labels on the UMAP scatter plot.
-  How would you describe the agreement between the UMAP layout and the clustering results?
 
 ```{r}
 UMAPPlot(seurat_after_qc)
 ```
+
+**How would you describe the agreement between the UMAP layout and the clustering results?**
 
 > Answer:
 > 
@@ -481,8 +509,6 @@ UMAPPlot(seurat_after_qc)
   keeping only markers that are detected in at least 25% of the target cluster,
   and with a log fold-change greater than `0.25`.
   Assign the result to an object named `seurat_markers_all`.
-  What is the class of that object?
-  How do you control the set of clusters that are used?
 
 ```{r}
 seurat_markers_all <- FindAllMarkers(
@@ -491,24 +517,33 @@ seurat_markers_all <- FindAllMarkers(
     min.pct = 0.25,
     logfc.threshold = 0.25
 )
+```
+
+**How do you control the set of clusters that are used?**
+
+> Answer:
+> 
+> The function uses the active identity in the Seurat object as a grouping variable.
+> To use a different set of identities, use `Idents(seurat_after_qc) <- name` to use a different column of cell metadata as the active identity,
+> before running the function `FindAllMarkers()`.
+
+- Use `class()` to display the class of `seurat_markers_all`.
+
+```{r}
 class(seurat_markers_all)
 ```
 
 > Answer:
 > 
 > The function `FindAllMarkers()` returns a `data.frame`.
->
-> The function uses the active identity in the Seurat object as a grouping variable.
-> To use a different set of identities, use `Idents(seurat_after_qc) <- name` to use a different column of cell metadata as the active identity,
-> before running the function `FindAllMarkers()`.
 
 - Use `head()` to display the first few rows of the object `seurat_markers_all`.
-  How do you read the contents of that object?
-  How do you know which features are the markers of each cluster?
 
 ```{r}
 head(seurat_markers_all)
 ```
+
+**How do you read the contents of that object? How do you know which features are the markers of each cluster?**
 
 > Answer:
 > 
@@ -535,7 +570,6 @@ FeaturePlot(
 ```
 
 - Use `VlnPlot()` to visualise the same 4 markers as a violin plot.
-  Do you have any particular preference between the two types of plots?
 
 ```{r}
 VlnPlot(
@@ -544,6 +578,8 @@ VlnPlot(
     ncol = 2
 )
 ```
+
+**Do you have any particular preference between the two types of plots?**
 
 > Answer:
 > 
