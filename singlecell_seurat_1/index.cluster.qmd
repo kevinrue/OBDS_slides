@@ -54,6 +54,11 @@ NoCite(bib, "Satija2015")
 #| child: goals_and_objectives.qmd
 ```
 
+## Credits
+
+- Liezel Tamon
+- Kevin Rue-Albrecht
+
 ## Prerequisites
 
 - An account on the teaching cluster.
