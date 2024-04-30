@@ -41,10 +41,10 @@ $ command1 2> file2     # Write error output of command1 to file2
 
 ## Linux pipes to pass information between commands
 
-- Linux philosophy is that one tool should only perform only one task
-  + Complex workflows may be broken down into smaller tasks that can be resolved by combining multiple tools
-- Tools can be combined using pipes represented by '|'
-- Pipes connect the standard output of one command to the standard input of another 
+- Aside from files, streams can be redirected between commands
+- The Linux philosophy is to make one tool for one task
+- So to perform more complex operations we can combine multiple tools/commands using pipes
+- Pipes take the standard output from one command and direct it to the standard input of the subsequent command
 
 ```
 $ <command1> | <command2> 
@@ -53,12 +53,18 @@ $ cat file1.txt | wc -l
 
 ## Combining commands
 
-- Generally, successive commands are executed in separate statements but certain characters can be used combine multiple commands in a single statement
+- Another way to combine commands is to simply run commands one after another using a semi-colon
 
 ```
 $ <command1>; <command2>        # Execute command1 and then command2 (left to right)
-$ <command1> && <command2>      # Execute command2 only if command1 is sucessful 
-$ <command1> || <command2>      # Execute command2 only if command1 fails 
+```
+
+- If multiple commands are dependent on each other, we can run them conditionally
+
+```
+$ <command1> && <command2>  # Double ampersand - Execute command2 only if command1 is 
+                              sucessful 
+$ <command1> || <command2>  # Double pipe - Execute command2 only if command1 fails 
 ```
 
 ## (De)compressing files with `gzip` and `gunzip`
@@ -66,17 +72,19 @@ $ <command1> || <command2>      # Execute command2 only if command1 fails
 - Raw data files and files created during analyses can be large (up to hundreds of GB)
 - Compressing files is an efficient way to save disk space
 
-- You can compress your files using gzip to save disk space
-```
-$ gzip filename.fq
-```
+- You can compress your files using **gzip** to save disk space
+
+  ```
+  $ gzip filename.fq
+  ```
 
   + This will add a .gz suffix to the existing file e.g. filename.fq.gz
 
-- To decompress the gzipped file
-```
-$ gunzip filename.fq.gz
-```
+- To decompress the gzipped file, use **gunzip**
+
+  ```
+  $ gunzip filename.fq.gz
+  ```
 
 - Many programs support gzip compressed input files
   + So no need to decompress before use
@@ -96,24 +104,29 @@ $ gzip -c file1.txt > compressed.txt.gz
 - `tar` stands for tape archive, an archiving file format
 - A tar archive combines multiple files and directories into a single file 
 - Optionally, tar archives can be further compressed during their creation
-- `tar` creates, modifies and extracts files that are archived in the tar format
-- Compress an entire directory or a single file
+<!-- - `tar` creates, modifies and extracts files that are archived in the tar format -->
+- Works on entire directory or a single file
 
-```
-$ tar -czvf name-of-archive.tar.gz /path/to/directory-or-file/s
-```
+  ```
+  $ tar -czvf name-of-archive.tar.gz /path/to/directory-or-file/s
+  ```
   + -c = **C**reate an archive
   + -z = Compress the archive with g**z**ip
   + -v = **V**erbose to display progress in the terminal while creating the archive
   + -f = To specify the **f**ile name (path) of the archive file to create
 
-## (De)compressing files
+- `tar` can also be used to extract files from a tar archive
 
-- Compression turns text files into binary files to save hard disk space
-- Good practice to compress all non-trivial text files
+  ```
+  $ tar -xzvf name-of-archive.tar.gz  # Extract files from an archive
+  ```
+
+## (De)compressing and/or archiving files
+
+- Good practice to compress and/or archive all non-trivial text files
 
 ```
-$ gzip file1 	                  # Compress file1 in place (adds .gz file extension)
+$ gzip file1 	                # Compress file1 in place (adds .gz file extension)
 $ gunzip file1.gz 	            # Decompress file1 in place (removes .gz file 
                                   extension)
 $ gunzip -c file1.gz > f1.txt   # Decompress file1 to standard out (can be 
@@ -124,6 +137,8 @@ $ zless file1.gz                # Interactively scroll through compressed files
 $ tar -czf jpg.tar.gz *.jpg     # Create a compressed archive from multiple files
 $ tar -xzf jpg.tar.gz           # Extract files from an archive
 ```
+
+# More commands
 
 ## Searching within files using ``grep``
 
@@ -223,7 +238,118 @@ $ sort file1.txt | uniq
 knitr::include_graphics("img/search_find.png")
 ```
 
-# Advanced topics
+# Talk 3 Exercise 1
+
+<!-- @sec-Talk3Exercise1 -->
+
+## Talk 3 Exercise 1 - Working with files and streams {#sec-Talk3Exercise1}
+
+1. Copy compressed tar archive **dnase1_new.tar.gz** from resources directory to your **1_linux_intro** directory.
+
+```{bash, eval = FALSE}
+cd <course working dir>/1_linux/1_linux_intro
+cp <resources dir>/1_linux/1_linux_intro/dnase1_new.tar.gz .
+```
+
+2. Decompress and extract the archive using `tar`. Check if successful. 
+
+```{bash, eval = FALSE}
+tar -xzf dnase1_new.tar.gz      # There will be a directory named 'bed'
+```
+
+3. Move into the **bed** directory and count the number of lines in each **.bed** file.
+
+```{bash, eval = FALSE}
+cd bed
+wc -l *.bed
+```
+
+4. Print the first 5 lines of the file **cpg.bed**. Compress the **cpg.bed** file in place using `gzip` and then head the compressed file. What do you notice about the compressed file?
+
+```{bash, eval = FALSE}
+head -n 5 cpg.bed
+gzip cpg.bed
+head cpg.bed.gz
+```
+
+5. Decompress the **cpg.bed.gz** file (generated from 4) in place using `gunzip`.
+
+```{bash, eval = FALSE}
+gunzip cpg.bed.gz
+ls -l
+head cpg.bed
+```
+
+6. Extract all the lines in **cpg.bed** containing regions on chromosome 5 to a new file called **cpg_chr5.bed**.
+
+```{bash, eval = FALSE}
+grep chr5 cpg.bed > cpg_chr5.bed
+```
+
+7. Extract all of the entries EXCEPT those on chr5 to another file called **cpg_nochr5.bed**.
+
+```{bash, eval = FALSE}
+grep -v chr5 cpg.bed > cpg_nochr5.bed
+```
+
+How can you check that this command has worked?
+
+```{bash, eval = FALSE}
+wc -l cpg*.bed      # Check if sum of cpg_chr5.bed and cpg_nochr5.bed lines 
+                    # equal to cpg.bed lines 
+```
+
+8. With the **cpg.bed** file count how many intervals (rows) are on each chromosome (column1).
+  Hint: you will need to pipe together 3 commands.
+
+```{bash, eval = FALSE}
+cut -f 1 cpg.bed | sort | uniq -c
+```
+
+## Talk 3 Exercise 1 - Working with files and streams
+
+9. Use `find` to find all files in your course working directory with 'dnase' in their names. How many are there?
+
+```{bash, eval = FALSE}
+find <course working dir> -type f -name '*dnase*' | wc -l
+```
+
+10. Find all the **.bed** files in your course working directory and count the number of lines in each file.
+
+```{bash, eval = FALSE}
+find <course working dir> -type f -name '*.bed' -exec wc -l {} \;
+```
+
+# Bonus topics
+
+## Using octal notation for file permissions
+
+- Octal notation is more compact but takes more practice to read and write
+- Each type of permission is assigned a numerical value
+  + **4** for **read** permission
+  + **2** for **write** permission
+  + **1** for **execute** permission
+- We sum the numbers for each category to give a single unique number for each combination of permissions
+- Each permissions category (owner, group, other) is represented by a number between **0** (no permission) and **7** (all permission)
+
+## Changing file permissions using octal notation
+
+- We can change file permissions with ``chmod`` using octal notation
+
+  ```
+  $ chmod 700 file1.txt
+  $ ls -l file1.txt
+  -rwx------ 1 dsims obds 2981 Apr 26  2021 file1.txt
+  ```
+
+- File permissions can be displayed in octal format using ``stat``
+
+  ```
+  stat -c "%a: %n" *              # %a: access rights in octal, %n: file name
+  755: jupyter_notebooks
+  644: mm10.blacklist.bed.gz
+  ```
+  + -c - use the specified format instead of the default
 
 ## Loops in Bash
 
@@ -287,15 +413,43 @@ done
   + When writing a new loop, consider testing it on a small set of inputs before executing it on the full set of inputs
   + Consider adding commands that display informative messages during the execution of the loop e.g. using `echo` to print messages on stdout
   
-# Talk 3 Exercise 1 and advanced exercises (optional)
+# Bonus exercises
 
-<!-- @sec-Talk3Exercise1 -->
+## Bonus exercises - Octal permissions
 
-<br>
+1. Look up the usage of the `stat` command.
 
-Talk 2 Advanced Exercise 3 - Octal permissions
-<br>
-Talk 3 Advanced exercise 2 - Loops
+```{bash, eval = FALSE}
+stat --help
+man stat
+```
+
+2. Display the octal permission/s for file/s in your copy of **1_linux/1_linux_intro** directory, showing only permissions, file names and total size in bytes of files. 
+
+```{bash, eval = FALSE}
+stat -c "%a: %n - %s bytes" *
+```
+
+3. Create a new text file called **test.txt** in your **1_linux_intro** and set the file permissions using octal notation to allow read, write and execute access only for you. 
+
+```{bash, eval = FALSE}
+cd <course working dir>/1_linux/1_linux_intro
+touch test.txt
+chmod 700 test.txt
+```
+
+## Bonus exercises - Loops
+
+1. Create files containing subsets of cpg.bed for chromosomes, chr20, chr21 and chr22.
+
+```{bash, eval = FALSE}
+cd <course working dir>/1_linux/1_linux_intro/bed
+
+for chr in chr20 chr21 chr22
+do
+    grep ${chr} cpg.bed > cpg_${chr}.bed
+done
+```
 
 ## References
 
