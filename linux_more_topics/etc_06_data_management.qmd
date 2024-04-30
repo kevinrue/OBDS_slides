@@ -53,7 +53,8 @@ knitr::include_graphics("img/linux_file_tree.png")
   + e.g. % $ £ “ ‘ / \ | =
   + Do not put spaces into your file or directory names 
     ```
-    $ ls My Directory # Interpret as two separate input arguments / directories
+    # Interpret as two separate input arguments / directories
+    $ ls My Directory
     ```
   + Use underscore or dash to separate words e.g. file_name.txt
 
@@ -112,7 +113,7 @@ my_project/
 - Record all the steps used to process data
 - Include links to relevant websites, files, reports or plots
 - Record your observations, conclusions, and ideas for future work
-- Include your lab notebook in a git repo, and upload to GitHub regularly
+- Include your lab notebook in a git repository, and upload to GitHub regularly
 
 ## Backup your work
 
@@ -165,14 +166,10 @@ my_project/
 
   + `scp` \<options> \<source path> \<destination path>
   
-- Typing on the local machine, we can transfer files *via* bastion host from OBDS server to local machine:
-```
-$ scp -o ProxyJump=<username>@bastion.imm.ox.ac.uk <username>@obds:<source path> <destination path>
-```
+- Typing on the local machine, we can transfer files from OBDS server to local machine:
 
-- With the SSH config, we can simplify to:
 ```
-$ scp obds-bastion:<source path> <destination path>
+$ scp <username>@obds:<source path> <destination path>
 ```
 
 - `scp` vs. `rsync`
@@ -182,7 +179,7 @@ $ scp obds-bastion:<source path> <destination path>
 ## Transferring files using FileZilla
 
 - The [FileZilla Client](https://filezilla-project.org/download.php?platform=osx) is a free solution for transferring files between computers via FTP/SFTP/FTPS protocols
-  + Transfer files between a local computer (where the FileZilla Client is installed) and a remote computer (e.g. CCB cluster)
+  + Transfer files between a local computer (where the FileZilla Client is installed) and a remote computer
 
 :::: {.columns}
 
@@ -208,7 +205,7 @@ knitr::include_graphics("img/filezilla-drop-areas.png")
 
 - Or use ssh key
 
-<span style="color:green;">DEMO connection to CCB cluster</span>
+<span style="color:green;">DEMO</span>
 
 :::
 
@@ -239,7 +236,10 @@ $ wget \
 
 - ArrayExpress (EBI)
 - ENA – European Nucleotide archive (EBI)
+- ENCODE - Encyclopedia of DNA Elements
 - GEO – Gene expression Omnibus (NCBI)
+- GTEx - Genotype-Tissue Expression
+- HCA - Human Cell Atlas
 - SRA – Short Read Archive (NCBI)
 - Download published datasets
   + Raw sequencing data (fastq files)
@@ -262,48 +262,158 @@ $ wget \
   + They differ in algorithms used to calculate checksum
 - Users can compare locally generated checksums with those provided by the source to verify file integrity
 
-## Verify integrity of downloads
+<span style="color:green;">Illustrate</span>
 
-- Ensembl uses `sum` 
-
-```
-$ wget http…/CHECKSUMS      # Download reference checksum file to local system
-$ cat CHECKSUMS             # Print reference checksum
-$ sum <downloaded file>     # Generate checksum for downloaded file and compare 
-                              to value in reference checksum file
-```
-
-```{r}
-#| fig-align: center
-#| out-height: 150px
-#| out-width: 800px
-## Source: CCB Doks
-knitr::include_graphics("img/md5_file.png")
-```
-
-<span style="color:green;">DEMO [Ensembl](http://www.ensembl.org/index.html)</span>
+- Note that public databases differ in commands they use
 
 ## Verify integrity of downloads
 
 - ENA uses `md5sum`
 
 ```
-$ wget http…/md5sum.txt     # Download reference checksum file to local system
-$ md5sum –c md5sum.txt      # Generate checksum for downloaded file and compare 
-                              to value in reference checksum file
+$ wget http…/md5sum.txt   # Download files along with reference checksum file to
+                            your working machine
+$ cat md5sum.txt          # View reference checksum file
 ```
 
 ```{r}
 #| fig-align: center
-#| out-height: 150px
-#| out-width: 800px
+#| out-height: 70px
+#| out-width: 600px
+## Source: CCB Doks
+knitr::include_graphics("img/md5_file.png")
+```
+
+```
+$ md5sum –c md5sum.txt    # Generate checksum for downloaded file/s and command also 
+                            compares to value in reference checksum file
+```
+
+```{r}
+#| fig-align: center
+#| out-height: 70px
+#| out-width: 600px
 ## Source: CCB Doks
 knitr::include_graphics("img/md5sum-c.png")
 ```
 
-# Talk 3 Exercise 1 - Working directory
+- Ensembl uses `sum` 
+
+<!-- <span style="color:green;">DEMO [Ensembl](http://www.ensembl.org/index.html)</span> -->
+
+```
+$ wget http…/CHECKSUMS    # Download files along with reference checksum file to
+                            your working machine
+$ cat CHECKSUMS           # View reference checksum file
+$ sum <downloaded file>   # Generate checksum for downloaded file
+                          # Then can compare by eye to value in reference checksum 
+                            file
+```
+
+# Talk 3 Exercise 1
 
 <!-- @sec-Talk3Exercise1 -->
+
+## Talk 3 Exercise 1 – Working directory {#sec-Talk3Exercise1}
+
+**Set up a working directory for RNAseq data analysis**
+
+1. Create a new directory called **rnaseq** within **1_linux** in your course working directory. 
+
+```{bash, eval = FALSE}
+cd <course working dir>/1_linux/
+mkdir rnaseq
+```
+
+2. Change into your **rnaseq/**. Create subdirectories called **fastq** and **genome**.
+
+```{bash, eval = FALSE}
+cd rnaseq/
+mkdir fastq genome
+```
+
+3. Create symbolic links to a pair of fastq files in the rnaseq resources directory, in **fastq/**.
+
+```{bash, eval = FALSE}
+cd fastq/
+ls <resources dir>/1_linux/rnaseq/
+ln -s <resources dir>/1_linux/rnaseq/ERR1755082_1.fastq.gz ERR1755082_1.fastq.gz
+ln -s <resources dir>/1_linux/rnaseq/ERR1755082_2.fastq.gz ERR1755082_2.fastq.gz
+```
+
+4. Copy the file **md5sum.txt** from rnaseq resources directory to **fastq**.
+
+```{bash, eval = FALSE}
+cp <resources dir>/1_linux/rnaseq/md5sum.txt md5sum.txt
+```
+
+5. Check that the checksums for your fastq files (downloaded from ENA) are correct.
+
+```{bash, eval = FALSE}
+md5sum -c --ignore-missing md5sum.txt
+``` 
+
+6. Download the fasta file for the mouse genome (GRCm38, release 102) from Ensembl to **genome/** and check it downloaded correctly using the CHECKSUMS file that can also be downloaded from the database.
+
+```{bash, eval = FALSE}
+# Go to Ensembl home, Downloads tab, FTP Download section then the table links 
+# to most current release but you can work your way up to get to older releases
+# This way is good because directory structure is similar across releases and 
+# you should be able to find the file type you want in older releases
+
+# Alternatively, you can change the text of the links below based on the release 
+# you want (e.g. to download release 110, change 102 to 110 in the links) but 
+# this approach is subject to typos and also you are not sure whether the link
+# really (or still) exists or not
+
+cd ../genome/
+# Download Mus_musculus.GRCm38.dna.primary_assembly.fa.gz
+wget \
+https://ftp.ensembl.org/pub/release-102/fasta/mus_musculus/dna/Mus_musculus.GRCm38.dna.primary_assembly.fa.gz &
+wget https://ftp.ensembl.org/pub/release-102/fasta/mus_musculus/dna/CHECKSUMS &
+cat CHECKSUMS | grep 'Mus_musculus.GRCm38.dna.primary_assembly.fa.gz'
+sum Mus_musculus.GRCm38.dna.primary_assembly.fa.gz
+# The checksums value in CHECKSUMS file (downloaded from public database) for 
+# 'Mus_musculus.GRCm38.dna.primary_assembly.fa.gz' should match the generated 
+# checksums value (generated using sum command) for the file you downloaded
+```
+
+## Talk 3 Exercise 1 – Working directory
+
+7. Download the annotation GTF file for the mouse (release 102) genome from Ensembl to **genome/** and check it downloaded correctly using the CHECKSUMS file that can also be downloaded from the database.
+
+```{bash, echo = TRUE, eval = FALSE}
+wget \
+https://ftp.ensembl.org/pub/release-102/gtf/mus_musculus/Mus_musculus.GRCm38.102.gtf.gz &
+wget https://ftp.ensembl.org/pub/release-102/gtf/mus_musculus/CHECKSUMS &
+ls  # Because there is an existing CHECKSUMS for the genome, it downloaded GTF CHECKSUMS as CHECKSUMS.1
+cat CHECKSUMS.1 | grep 'Mus_musculus.GRCm38.102.gtf.gz'
+sum Mus_musculus.GRCm38.102.gtf.gz
+```
+
+8. Create a **README.txt** file in the **genome/** detailing how you obtained the public data files.
+
+```{bash, eval = FALSE}
+nano README.txt  # Or
+touch README.txt
+```
+
+<!-- 9. Create a third directory called **3_analysis** in your **rnaseq** directory. Change into the new directory and create a subdirectory called **1_fastqc**. View rnaseq directory structure using `tree`. -->
+
+<!-- ```{bash, eval = FALSE} -->
+<!-- cd .. -->
+<!-- mkdir 3_analysis -->
+<!-- cd 3_analysis -->
+<!-- mkdir 1_fastqc -->
+<!-- cd .. -->
+<!-- tree -->
+<!-- ``` -->
+
+9. Create an analysis lab-book called **rnaseq_commands.txt** in **rnaseq/**.
+
+```{bash, eval = FALSE}
+touch rnaseq_commands.txt
+```
 
 ## References
 
@@ -311,3 +421,35 @@ knitr::include_graphics("img/md5sum-c.png")
 #| results: asis
 PrintBibliography(bib)
 ```
+
+# Bonus topics
+
+## Advanced shell configuration 
+
+- You may come across other Bash startup files other than ~/.bashrc e.g. ~/.profile, ~/.bash_profile
+
+- Those other files perform a task similar to ~/.bashrc, but with subtle differences with respect to the order and the environment in which they are executed
+
+- <span style="color:red;">We strongly discourage users from editing or creating those other files, stick with editing ~/.bashrc!</span>
+
+## Advanced shell configuration - ~/.inputrc file
+
+- This file allows you to customise how keystrokes are interpreted in the terminal emulator
+- Like ~/.bashrc, it is a hidden file in the home directory that is applied on login
+- Common shortcuts added to ~/.inputrc are:
+  + In case of ambiguity when using tab completion, display options right away instead of asking whether to display them or not
+  ```
+  set show-all-if-ambiguous on
+  ```
+  
+  + Search history of commands (forward or backward) starting with the pattern you typed (could be a command therefore)
+  + "\<key combination>":\<command>
+  
+  ```
+  "\e[A":history-search-backward
+  "\e[B":history-search-forward
+  ```
+  
+  + [List of key combinations and commands from Bash Reference Manual](http://www.gnu.org/software/bash/manual/bashref.html#Command-Line-Editing)
+
+<span style="color:green;">DEMO on OBDS server</span>

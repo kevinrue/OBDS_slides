@@ -25,21 +25,35 @@
 
 - Sometimes, instead of directly editing the ~/.bashrc file, another configuration file, **~/.bash_aliases**, can be created and used for user-defined configuration
   + This file is also typically loaded automatically by the Bash shell
-  + In this course, we will be modifying this file
+  + In this course, we will be modifying this file (<span style="color:green;">**Show current ~/.bashrc**</span>)
+  
  
 ## Aliases
 
-- Shortcut for a command or series of commands
+- Shortcut for a command or series of commands created using `alias`
 - Reduce keystrokes and improve efficiency
-- While `alias` command can be used to define shortcuts interactively in the Bash session, aliases are most commonly defined in the ~/.bashrc file, to make them available as soon as users open a new shell
-- Be mindful of overriding existing command name as aliases take precedence over commands of the same name
 
 ```
 $ alias la='ls -alhF'       # Informative listing of files
 $ alias rm='rm -i'          # Force an interactive prompt before every removal
 
-$ alias wd='cd </path/to/working_dir/> && pwd && ls
+$ alias wd='cd </path/to/working_directory/> && pwd && ls'
 ```
+
+- While `alias` command can be used to define shortcuts interactively in the Bash session, aliases are most commonly defined in the ~/.bashrc file, to make them available as soon as users open a new shell
+- Be mindful of overriding existing command name as aliases take precedence over commands of the same name
+
+<br>
+
+- Apply new changes (e.g. adding alias) to shell configuration file by:
+  + Open new session
+  + Sourcing file using `source` in current shell session
+
+```
+$ source ~/.bashrc
+$ source ~/.bash_aliases
+```
+  
 
 ## Environment variables
 
@@ -50,11 +64,10 @@ $ alias wd='cd </path/to/working_dir/> && pwd && ls
 
 ## Environment variables
 
-- Can be user defined and modified
-  + A number of environment variables are often already available in the Bash session
+- A number of environment variables are often already available in the Bash session
 
 ```
-$ echo $HOME            # Set for each user to their own home directory
+$ echo $HOME            # Home directory
 $ echo $USER            # Username
 $ printenv USER         # Print $USER
 ```
@@ -65,16 +78,18 @@ $ printenv USER         # Print $USER
 <!-- $ printenv              # Print currently defined environment variables -->
 
 - Above are among the most commonly used variables but users can define any number of custom variable names using `export`
-- Some programs might expect users to define additional environment variables
 
 ```
-export TMP="$HOME"      # Not set by default, preferably define in ~/.bashrc
+export TMP="/home/david/tmp/"      # Preferably define in ~/.bashrc
 ```
+
+- Some programs might expect users to define additional environment variables
 
 ## Environment variables - System path ($PATH)
 
 - One of the most important environment variable
-- Stored as a colon-separated (:) character string that represents the list of directories that are searched – in the given order – to find executable files that are invoked by users and their scripts
+- It contains a list of directories on the file system where bash should look to find executable commands/programs/software
+- List is a colon-separated (:) character string that is searched – in the given order – to find the executable program
 
 ```
 $ echo $PATH
@@ -82,24 +97,43 @@ $ echo $PATH
 ```
 
 - If the wanted program is not in the list of directories, it will not run
-- Modify to add directories or remove directories (e.g. when a command is defined in multiple directories)
 - Alternatively, you can provide the full path to the program you wish to run
-- Whenever possible, we recommend using `module` to add and remove programs (i.e. modules) from the $PATH
+
+<br>
+
+- But you can also modify $PATH to add directories or remove directories (e.g. when a command is defined in multiple directories)
+- Whenever possible, we recommend using `module` to add and remove programs (provided as modules) from the $PATH
 
 ## Environment modules
 
-- Provide a central install of software available to multiple users on the same computer system 
-- Dynamic modification of a user’s shell environment via modulefiles
-  + Modulefiles are created by the system administrator to instruct `module` how software will be loaded or configured e.g. adding path of software to environment variable, $PATH
-  + New modules can be requested from system administrators 
+- Often, computer systems shared by multiple users provide a central install of software
+using the module system
+- Accessing software is then done by dynamic modification of a user’s shell environment via modulefiles
+  + Modulefiles are created by the system administrator to instruct `module` how software will be loaded or configured e.g. adding or removing path of software to $PATH
+  + New modules can be requested from system administrators
 
 ```
 $ module avail                              # List modules currently available
-$ module <avail | search> python            # Search for specific pattern of 
-                                              module names 
+$ module avail python                       # Search for specific pattern of 
+                                              module names
+$ module search python
+
 $ module list                               # List modules currently loaded
-$ module <add | load>                       # Add or load modules 
+
+$ module add                                # Add or load modules
+$ module load
 $ module load fastqc/0.11.9 bowtie2/2.4.2   # Load multiple modules
+```
+
+```{r}
+#| fig-align: center
+#| out-height: 100px
+#| out-width: 700px
+## Source: Liezel
+knitr::include_graphics("img/module_add.png")
+```
+
+```
 $ module unload <module name>               # Unload 
 $ module purge                              # Unload all loaded modules 
 ```
@@ -142,13 +176,92 @@ $ ssh -o ProxyJump=<jump username>@<jump host> <target username>@<target host>
 
 -->
 
+# Talk 2 Exercise 1 (Shell configuration) and 2 (Working with modules)
+
+<!-- @sec-Talk2Exercise1 -->
+
+
+## Talk 2 Exercise 1 – Shell configuration {#sec-Talk2Exercise1}
+
+1. Locate your **.bash_aliases** in your home directory.
+
+```{bash, eval = FALSE}
+cd ~; ls -a
+```
+
+2. If file does not exist, create **.bash_aliases** in your home directory. 
+
+```{bash, eval = FALSE}
+touch ~/.bash_aliases
+```
+
+3. Use a terminal text editor to open your **.bash_aliases** and add the **alias la='ls -alhF'**.
+
+```{bash, eval = FALSE}
+nano .bash_aliases     
+```
+
+4. Add aliases to **.bash_aliases** for the resources directory and your course working directory.
+
+```{bash, eval = FALSE}
+alias resdir='cd <resources dir>'
+alias cwdir='cd <course working dir>'
+```
+
+5. To apply the changes, source the modified .bash_aliases file. Check that your aliases work.
+
+```{bash, eval = FALSE}
+source ~/.bash_aliases
+la
+```
+
+## Talk 2 Exercise 2 – Modules {#sec-Talk2Exercise2}
+
+1. List the available modules on the server.
+
+```{bash, eval = FALSE}
+module avail
+```
+
+2. Search module list for available fastqc versions.
+
+```{bash, eval = FALSE}
+module search fastqc
+```
+
+3. Load the fastqc module and use `which` to confirm it has worked. 
+Look at the system path, then unload the module and check it again.
+
+```{bash, eval = FALSE}
+which fastqc
+module add fastqc/0.11.9 
+which fastqc
+
+echo $PATH
+module unload fastqc
+echo $PATH
+```
+
+<!--
+3. Try using the module system to load different versions of programs you are familiar with.
+Look at how system path changes.
+
+```{bash, eval = FALSE}
+module add cellranger/2.1.1
+module list
+module unload cellranger
+module list
+module add cellranger/7.1.0
+```
+-->
+
 ## Remote connection to a Linux server
 
 - Typing the `ssh` command and all its options works on the command line 
-  + but could be tedious especially when using a jump host as in our case and needing to repeatedly connect
+  + but could be tedious especially when using an intermediate host and needing to repeatedly connect
 - To minimise typing when connecting to a remote target host, we can:
   + Use an **SSH public-private key pair (SSH key)** **(1)** to avoid repeatedly entering passwords, which are likely hard to remember for security purposes, and **(2)** to enhance security e.g. not prone to password-guessing attacks
-  + Use an **SSH config file** to store SSH connection details to multiple target hosts and accessing them using host shortcuts or nicknames, instead of typing long `ssh` commands
+  + Use an **SSH configuration file** to store SSH connection details to multiple target hosts and accessing them using host shortcuts or nicknames, instead of typing full `ssh` commands
   + <span style="color:red;">Note that these two are independent, you can do either or both! We will do both of course!</span>
   
 ## Setting up a public-private key pair
@@ -168,50 +281,9 @@ knitr::include_graphics("img/ssh-key-pair.png")
 
 <span style="color:green;">Do together</span>
 
-# Talk 2 Exercise 1 (Shell configuration) and 2 (Working with modules)
-
-<!-- @sec-Talk2Exercise1 -->
-
-<!--
-## Useful links
--->
-
 ## References
 
 ```{r}
 #| results: asis
 PrintBibliography(bib)
 ```
-
-# Bonus topics
-
-## Advanced shell configuration 
-
-- You may come across other Bash startup files other than ~/.bashrc e.g. ~/.profile, ~/.bash_profile
-
-- Those other files perform a task similar to ~/.bashrc, but with subtle differences with respect to the order and the environment in which they are executed
-
-- <span style="color:red;">We strongly discourage users from editing or creating those other files, stick with editing ~/.bashrc!</span>
-
-## Advanced shell configuration - ~/.inputrc file
-
-- This file allows you to customise how keystrokes are interpreted in the terminal emulator
-- Like ~/.bashrc, it is a hidden file in the home directory that is applied on login
-- Common shortcuts added to ~/.inputrc are:
-  + In case of ambiguity when using tab completion, display options right away instead of asking whether to display them or not
-  ```
-  set show-all-if-ambiguous on
-  ```
-  
-  + Search history of commands (forward or backward) starting with the pattern you typed (could be a command therefore)
-  + "\<key combination>":\<command>
-  
-  ```
-  "\e[A":history-search-backward
-  "\e[B":history-search-forward
-  ```
-  
-  + [List of key combinations and commands from Bash Reference Manual](http://www.gnu.org/software/bash/manual/bashref.html#Command-Line-Editing)
-
-<span style="color:green;">DEMO on OBDS server</span>
-
