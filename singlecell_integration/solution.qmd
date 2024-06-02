@@ -11,6 +11,7 @@ library(Seurat)
 library(SeuratWrappers)
 library(patchwork)
 library(ggplot2)
+library(dplyr)
 ```
 
 ## Preamble
@@ -487,4 +488,32 @@ umap_rpca_cca <- DimPlot(obj, reduction = "umap.rpca", group.by = c("cca_cluster
 umap_harmony_cca <- DimPlot(obj, reduction = "umap.harmony", group.by = c("cca_clusters"))
 umap_mnn_cca <- DimPlot(obj, reduction = "umap.mnn", group.by = c("cca_clusters"))
 umap_unintegrated_cca | umap_cca_cca | umap_rpca_cca | umap_harmony_cca | umap_mnn_cca
+```
+
+### Quantitively compare with LISI
+
+```{r}
+reduction_names <- c("pca", "integrated.cca", "integrated.rpca", "harmony", "integrated.mnn", "integrated.rpca.sct")
+batch_variable <- "orig.ident"
+
+median_lisi <- vapply(reduction_names, USE.NAMES = TRUE, FUN.VALUE = numeric(1), FUN = function(reduction){
+  lisi_mx <- lisi::compute_lisi(Embeddings(obj, reduction), meta_data = obj[[]], label_colnames = batch_variable)
+  return(median(lisi_mx[,1]))
+})
+```
+
+```{r}
+median_lisi_tidy <- data.frame(
+  reduction = factor(names(median_lisi), levels = reduction_names),
+  median_lisi = median_lisi
+) %>% 
+  arrange(desc(median_lisi))
+```
+
+```{r}
+#| fig.width = 7, fig.height = 5
+ggplot(median_lisi_tidy, aes(reorder(reduction, median_lisi, decreasing = TRUE), median_lisi)) +
+  geom_col() +
+  labs(x = "Integration method", y = "Median lisi") +
+  theme_classic()
 ```
