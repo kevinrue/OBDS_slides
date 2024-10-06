@@ -29,7 +29,7 @@
 - Processes can be run in the **background** to continue using the terminal while the they run
   + To run a command in the background, add an **ampersand '&'** to the end of the command
   + Best to prevent the process from printing to the terminal while running in the background -- redirect stdout and stderr to a file or suppress them
-  + To move a running process to the background
+  + To move a foreground process to the background
     - Press Control + z to pause the process
     - Type 'bg' to send it to the background
     - Type 'fg' then Return key to bring the task back to the foreground
@@ -55,7 +55,7 @@ knitr::include_graphics("img/jobs.png")
   + '-' - second job that would be brought to the foreground by default
   
 - If you have more than one process running in the background:
-  + Type 'fg' followed by the integer number next to the command that you want to bring to the foreground (e.g. fg 2)
+  + Type 'fg' followed by the integer number next to the command that you want to bring to the foreground (e.g. fg %2)
   
 :::
 
