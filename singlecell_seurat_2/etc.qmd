@@ -25,6 +25,54 @@ knitr::include_graphics("img/seurat_workflow.png")
 :::
 ::::
 
+::: {.notes}
+SCTransform() parameters:
+# reference.SCT.model - see ?FindTransferAnchors(recompute.residuals)
+# do.correct.umi = FALSE - RNA counts will be used for SCT counts
+# residual.features = NUNLL - there will be residuals in data layer for all genes
+# latent.data - If vars not currently in metadata
+# do.scale = FALSE - Not scaling by default because variance stabilised, refer to https://github.com/satijalab/seurat/issues/7018
+:::
+
+## Log-normalisation has limitations
+
+```{r}
+#| fig-align: center
+#| out-height: 350px
+#| out-width: 1000px
+## Source: https://genomebiology.biomedcentral.com/articles/10.1186/s13059-019-1874-1
+knitr::include_graphics("img/librarysize_vs_meanexp.png")
+```
+`r Citet(bib, "hafemeister_normalization_2019")`
+
+Traditional log-normalisation only normalises low/medium-abundance genes effectively.
+
+Groups 1-3 still display a relationship between sequencing depth and gene expression after log-normalisation.
+
+## SCTransform is effective across wider range of expression
+
+All groups of genes show minimal correlation between Pearson residuals and sequencing depth.
+
+```{r}
+#| fig-align: center
+#| out-height: 250px
+#| out-width: 600px
+## Source: https://genomebiology.biomedcentral.com/articles/10.1186/s13059-019-1874-1
+knitr::include_graphics("img/correlation_librarysize_vs_meanexp.png")
+```
+
+Residuals represent effectively standardized expression values that are not influenced by technical metrics.
+
+## SCTransform is effective across wider range of expression
+
+```{r}
+#| fig-align: center
+#| out-height: 250px
+#| out-width: 1000px
+## Source: https://genomebiology.biomedcentral.com/articles/10.1186/s13059-019-1874-1
+knitr::include_graphics("img/librarysize_vs_varexp.png")
+```
+
 ## Conceptual differences between methods
 
 <!-- Old slide is about limitation of log normalisation (slide 5) -->
@@ -47,20 +95,6 @@ Highlight that with SCTransform, variance is normalised consistently across expr
 unlike log-normalisation which is more effective on low to medium expression levels.
 :::
 
-## Log-normalisation has limitations
-
-```{r}
-#| fig-align: center
-#| out-height: 400px
-#| out-width: 600px
-## Source: https://genomebiology.biomedcentral.com/articles/10.1186/s13059-019-1874-1
-knitr::include_graphics("img/sctransform-fig1.png")
-```
-
-Traditional log-normalisation only normalises low/medium-abundance genes effectively.
-
-Groups 1-3 still display a relationship between sequencing depth and gene expression after log-normalisation.
-
 ## The SCTransform method
 
 Normalisation factors specific to groups of genes rather than constant factor as in global scaling normalisation.
@@ -78,7 +112,7 @@ Construct a negative binomial generalised linear model (GLM) for each gene.
 
 Parameter estimates are regularised to avoid model overfitting, pooling information across genes.
 
-`r Citep(bib, "hafemeister_normalization_2019")`
+`r Citet(bib, "hafemeister_normalization_2019")`
 
 ## The SCTransform model
 
@@ -100,29 +134,12 @@ Second round of Negative Binomial (NB) regression, constraining parameters of mo
 
 #### Step 4
 
-Residuals from this model are taken as the normalised expression values.
-
-#### Step 5
-
-Pearson residuals (raw residuals divided by expected standard deviation of residuals) are taken as the scaled expression values
+Pearson residuals (residuals from model divided by expected standard deviation of residuals) are taken as the scaled expression values
 
 ::: {.callout-note}
 - Accounts for association between gene expression and variance.
 - Can be used to identify genes with unexpectedly high variance.
 :::
-
-## SCTransform is effective across wider range of expression
-
-```{r}
-#| fig-align: center
-#| out-height: 400px
-#| out-width: 600px
-## Source: https://genomebiology.biomedcentral.com/articles/10.1186/s13059-019-1874-1
-knitr::include_graphics("img/sctransform-fig3.png")
-```
-
-- All groups of genes show minimal correlation between Pearson residuals and sequencing depth.
-- Residuals represent effectively standardized expression values that are not influenced by technical metrics.
 
 ## SCTransform within a workflow
 
@@ -145,9 +162,19 @@ knitr::include_graphics("img/sct_analysis_steps.png")
 - `NormalizeData()`
 - `ScaleData()`
 - `FindVariableFeatures()`
+
+`SCTransform()` v2 `r Citep(bib, "choudhary_comparison_2022")`:
+
+-  Able to perform downstream differential expression analyses (see [vignette](https://satijalab.org/seurat/archive/v4.3/sctransform_v2_vignette))
+- "Improved speed, memory consumption, stability of parameter estimates, and identification of variable features"
+
 :::
 
 ::::
+
+<div style="text-align: center;">
+**When to use `SCTransform()`?**
+</div>
 
 ## Comparison example
 
@@ -181,6 +208,13 @@ knitr::include_graphics("img/umap_lognorm_vs_sct.png")
 knitr::include_graphics("img/Gprofiler2_exercise_result.png")
 ```
 
+## Useful links for sctransform and other normalisation methods
+
+- [sctransform paper](https://doi.org/10.1186/s13059-019-1874-1)
+- [sctransform v2 paper](https://doi.org/10.1186/s13059-021-02584-9)
+- [sctransform vignette](https://satijalab.org/seurat/articles/sctransform_vignette.html)
+- [Comparison of transformations for single-cell RNA-seq data, 2023](https://doi.org/10.1038/s41592-023-01814-1)
+
 # Cell Hashing
 
 ## What is Cell Hashing
@@ -211,6 +245,10 @@ knitr::include_graphics("img/cell_hashing.png")
   
 :::
 ::: {.column width="50%"}
+
+::: {.notes}
+Super-loading is intentional loading of a much higher number of cells than typically recommended, which normally is not encouraged as it increases probability of multiplets. But with cell hashing, super-loading is more acceptable as cell hashing allows more effective identification of multiples.
+:::
 
 ### Cons
 
@@ -273,6 +311,12 @@ knitr::include_graphics("img/genetic_demultiplexing.png")
 ```
 
 `r Citet(bib, "huang_vireo_2019")`
+
+::: {.notes}
+Identify informative SNPs.
+If available, reference genotypes of each donor are used to match SNP profiles more accurately.
+Cluster cells based on SNP profiles.
+:::
 
 ## CellhashR: Alternative tool for demultiplexing
 
@@ -359,6 +403,10 @@ HTODemux is implemented in the [Seurat](https://satijalab.org/seurat/) package.
 knitr::include_graphics("img/seurat_HTODemux.png")
 ```
 
+::: {.notes}
+K = number of samples + 1 to account for e.g. negative barcode cluster
+:::
+
 ## Cell Hashing data
 
 ```{r}
@@ -399,12 +447,6 @@ Total: 12 samples.
 ### Bonus
 
 - Compare and evaluate HTO- and RNA- based clustering for demultiplexed samples.
-
-## Useful links for sctransform and other normalisation methods
-
-- [sctransform paper](https://doi.org/10.1186/s13059-019-1874-1)
-- [sctransform vignette](https://satijalab.org/seurat/articles/sctransform_vignette.html)
-- [Comparison of transformations for single-cell RNA-seq data, 2023](https://doi.org/10.1038/s41592-023-01814-1)
 
 ## Useful links for cell hashing
 
