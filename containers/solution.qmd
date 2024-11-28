@@ -5,23 +5,275 @@ date: "1999-12-31"
 format: html
 ---
 
-## Quarto
+## Demo
 
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+### Using containers
 
-## Running Code
+#### apptainer shell
 
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
-
-```{r}
-1 + 1
+```bash
+apptainer shell /project/shared/resources/containers/ubuntu-22/ubuntu-22.sif
 ```
 
-You can add options to executable code like this 
+#### apptainer exec
 
-```{r}
-#| echo: false
-2 * 2
+```bash
+apptainer exec /project/shared/resources/containers/ubuntu-22/ubuntu-22.sif bash
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
+### Support for Docker Images
+
+Before you run the following command...
+
+```bash
+apptainer exec docker://ubuntu:22.04 bash
+```
+
+... add this line to your `~/.bash_aliases`!
+
+```bash
+export APPTAINER_CACHEDIR=/project/$USER/apptainer_cache
+```
+
+### Mounting (or Binding)
+
+### Single directory
+
+```bash
+apptainer exec -B /project/shared/resources /project/shared/resources/containers/ubuntu-22/ubuntu-22.sif bash 
+```
+
+### Multiple directories
+
+```bash
+apptainer exec \
+  -B /project/shared/resources \
+  -B /project/$USER \
+  /project/shared/resources/containers/ubuntu-22/ubuntu-22.sif \
+  bash 
+```
+
+## Exercise
+
+In the container: `r-4.3.0.sif`
+
+Execute the command:
+
+```bash
+R --version
+```
+
+### Hints
+
+- Use the `apptainer exec` command.
+
+### Solution
+
+```bash
+apptainer exec \
+  /project/shared/resources/containers/r-4.3.0/r-4.3.0.sif \
+  R --version 
+```
+
+## Exercise
+
+In the container: `r-4.3.0.sif`
+
+Execute the R script: `installed_packages.R`
+
+### Hints
+
+- Use the Bash command `Rscript`
+- The full command should look like `Rscript /path/to/installed_packages.R`.
+- The directory that contains the R script must be bound to the container,
+  to be visible from inside the container.
+
+### Solution
+
+```bash
+apptainer exec \
+  -B /project/shared/resources \
+  /project/shared/resources/containers/r-4.3.0/r-4.3.0.sif \
+  Rscript /project/shared/resources/containers/scripts/installed_packages.R
+```
+
+## Exercise
+
+In the Docker container accessible online:
+
+```
+bioconductor/bioconductor_docker:devel
+```
+
+Execute the R script: `installed_packages.R`
+
+### Hints
+
+- Before you run the `apptainer exec` command,
+  make sure that the environment variable `APPTAINER_CACHEDIR` is set in your Bash session.
+- The first time you run an `apptainer exec` command on a new remote container,
+  the command will likely take a minute or two to download the container files.
+  If you see messages like "Copying blob" and "info unpack layer",
+  you are on the right track, keep waiting!
+
+### Solution
+
+```bash
+# Check whether the environment variable is set
+echo $APPTAINER_CACHEDIR
+# Run the script
+apptainer exec \
+  -B /project/shared/resources \
+  docker://bioconductor/bioconductor_docker:devel \
+  Rscript /project/shared/resources/containers/scripts/installed_packages.R
+```
+
+Visually compare the output (R version, list of packages) with the previous exercise.
+
+> Answer:
+> 
+> 128 packages installed in this container instead of 34 in the local one.
+> (25th November 2024)
+
+## Exercise
+
+In the container: `fastqc.sif`
+
+Run the FastQC program on the input file `ERR1755082_1.fastq.gz`,
+and direct the output to your own project directory.
+
+### Hints
+
+- In the container, the `fastqc` command is already on the PATH.
+- The input file `ERR1755082_1.fastq.gz` is stored in the shared resources, next to the container file.
+- For tidiness, manually create a subdirectory in your project directory,
+  and pass the path to this directory to the `fastqc` command.
+- The full command should look like `fastqc -o /path/to/output /path/to/input`.
+- Remember to bind input and output directories to the container.
+
+### Solution
+
+```bash
+# Create output directory
+mkdir -p /project/$USER/containers/fastqc
+# Run FASTQC
+apptainer exec \
+  -B /project/shared/resources \
+  -B /project/$USER \
+  /project/shared/resources/containers/fastqc/fastqc.sif \
+  fastqc \
+    -o /project/$USER/containers/fastqc \
+    /project/shared/resources/containers/fastqc/ERR1755082_1.fastq.gz
+```
+
+## Exercise
+
+Using the prepared container definition file: `samtools.def`
+
+First, build an image file called `samtools.sif` in your project directory.
+
+```bash
+apptainer build \
+  /project/$USER/samtools.sif \
+  /project/shared/resources/containers/samtools/samtools.def
+```
+
+Then, test the image, simply running the command `samtools`.
+
+```bash
+apptainer exec \
+  /project/$USER/samtools.sif \
+  samtools
+```
+
+## Exercise
+
+Choose a program that you already know how to use.
+
+Write a definition file and create an image that includes that program.
+
+```bash
+# Free for all!
+```
+
+Run a test command to prove that the program is successfully installed in the container.
+
+```bash
+# Free for all!
+```
+
+## Exercise
+
+### Step 1. Running the RStudio Server Container
+
+For this first part of the process, you must run the following commands **on the OBDS server**.
+
+Change directory to your project directory.
+
+```bash
+cd /project/$USER
+```
+
+Submit a Slurm job that runs the container.
+
+```bash
+sbatch /project/shared/resources/containers/rstudio-server/rstudio-container.sh
+```
+
+Check that the job is running.
+
+```bash
+squeue --me
+```
+
+Display the contents of the job output file (substitute `*` by the job identifier reported by the previous command).
+
+```bash
+cat slurm-*.out
+```
+
+Make a note of the password displayed by the last command. You will need it in the second part of the process.
+
+## Exercise
+
+### Step 2. Connecting to your RStudio Server Container
+
+This second part of the process takes place **on your own computer** (not on your OBDS account).
+
+Download (from OneDrive) a copy of either script below depending on your operating system.
+
+- Windows: `connect-to-wn-rstudio.bat`
+- Linux / macOS: `connect-to-wn-rstudio.sh`
+
+Run the script.
+
+- Windows: double click on the file.
+- Linux / macOS: In a terminal, type `bash connect-to-rstudio-server-obds.sh`.
+
+Follow the instructions displayed by the script.
+
+- Type your username when prompted (first time only^[The username will be cached in a file in your home directory for subsequent uses.])
+- Open a web browser tab to <http://localhost:8888>
+- Log in using you SSO (username) and the random password copied earlier.
+
+## Exercise
+
+### Step 3. Get to work!
+
+Have a play with the RStudio interface. Here are some ideas:
+
+- Check the initial working directory of the R session.
+- Check the library path(s).
+- Check the list of packages installed.
+- Install packages.
+
+Where do packages get installed?
+How might that impact the reproducibility of your work?
+
+> Answer:
+> 
+> Apptainer automatically binds your home directory to the container.
+> R typically defaults to installing packages in a subdirectory of your home directory.
+> In that case, you would be forced to use that same library for all your projects.
+> Moreover, you could run into quota issues on HPC clusters that impose strict quotas on home directories.
+
