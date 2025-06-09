@@ -135,7 +135,7 @@ plot_data <- tibble(
   empty_droplet = out$FDR > 0.01
 )
 ggplot(plot_data, aes(PC1, PC2, color = empty_droplet)) +
-  geom_jitter(width = 0.1, height = 0) +
+  geom_point() +
   cowplot::theme_cowplot()
 ```
 
