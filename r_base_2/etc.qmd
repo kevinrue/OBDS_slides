@@ -323,6 +323,27 @@ two_by_three <- multiply(2, 3)
 two_by_three
 ```
 
+## Functions
+
+You might sometimes see functions in <i class="fab fa-r-project"></i> without an explicit return statement.
+
+```{r}
+#| eval: true
+#| echo: true
+multiply_no_return <- function(a, b) {
+    result <- a * b
+}
+```
+
+In this case the result of the last expression is returned.
+
+```{r}
+#| eval: true
+#| echo: true
+two_by_four <- multiply_no_return(2, 4)
+two_by_four
+```
+
 ## Reminder about brackets
 
 <br/>
@@ -845,12 +866,11 @@ survey_data <- data.frame(
 
 ### Summarising groups of data
 
-- Compute the mean of each numeric column each month in the `airquality` data frame.
+- Compute the mean of each numeric column each month in the `airquality` data frame using `aggregate()`.
   - Make sure `NA` values are removed.
 - Compute the mean of the `Solar.R` column each month.
   - Make sure the grouping column is called `Month` in the return value.
   - Make sure `NA` values are removed.
-- Compute the standard deviation of the column `Solar.R` in the aggregated data generated in the previous step.
 
 # Lunch break
 
@@ -1043,7 +1063,7 @@ tapply(X = values, INDEX = groups, FUN = sum)
 #### Part 1
 
 - Create a vector of integers from 1 to 10.
-- Compute the square of each value in the vector using either `lapply()` or `sapply()`.
+- Compute the log2 of each value in the vector using either `lapply()` or `sapply()`.
 - Compare the outputs of `lapply()` and `sapply()` in the previous step.
 
 #### Part 2

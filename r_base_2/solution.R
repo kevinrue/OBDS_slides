@@ -1,3 +1,7 @@
+#####################
+# OBDS base R day 2 #
+#####################
+
 # Exercise ---- 
 
 # Workspace management ----
@@ -9,6 +13,14 @@ b <- "some text"
 c <- TRUE
 
 # Save your script.
+
+## macOS: Command-S
+
+## Windows: Control-S
+
+## RStudio menu bar:
+## - File
+## - Save as...
 
 # Save all objects in your workspace to an .RData file.
 
@@ -159,7 +171,7 @@ merge(x = buildings, y = survey_data, by.x = "site", by.y = "location")
 
 # Summarising groups of data ----
 
-# Compute the mean of each numeric column each month in the airquality data frame.
+# Compute the mean of each numeric column each month in the `airquality` data frame using `aggregate()`.
 # Make sure NA values are removed.
 
 aggregate(x = airquality, by = list(Month = airquality$Month), FUN = mean, na.rm = TRUE)
@@ -168,11 +180,7 @@ aggregate(x = airquality, by = list(Month = airquality$Month), FUN = mean, na.rm
 # Make sure the grouping column is called Month in the return value.
 # Make sure NA values are removed.
 
-airquality_aggregated <- aggregate(x = airquality["Solar.R"], by = list(Month = airquality$Month), FUN = mean, na.rm = TRUE)
-
-# Compute the standard deviation of the column Solar.R in the aggregated data generated in the previous step.
-
-sd(airquality_aggregated$Solar.R)
+aggregate(x = airquality["Solar.R"], by = list(Month = airquality$Month), FUN = mean, na.rm = TRUE)
 
 # Exercise ----
 
@@ -201,14 +209,10 @@ hypothenuse(1, 2)
 
 v <- 1:10
 
-# Compute the square of each value in the vector using either lapply() or sapply().
+# Compute the log2 of each value in the vector using either lapply() or sapply().
 
-square <- function(x) {
-    x^2
-}
-
-lapply(v, square)
-sapply(v, square)
+lapply(v, log2)
+sapply(v, log2)
 
 # Compare the outputs of lapply() and sapply() in the previous step.
 
